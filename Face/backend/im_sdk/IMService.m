@@ -32,6 +32,8 @@
 @property(nonatomic)NSMutableDictionary *peerMessages;
 @property(nonatomic)NSMutableDictionary *groupMessages;
 @property(nonatomic)NSMutableDictionary *subs;
+
+@property(nonatomic)NSMutableArray *voipObservers;
 @end
 
 @implementation IMService
@@ -59,6 +61,7 @@
         dispatch_source_set_event_handler(self.heartbeatTimer, ^{
             [self sendHeartbeat];
         });
+        self.voipObservers = [NSMutableArray array];
         self.observers = [NSMutableArray array];
         self.subs = [NSMutableDictionary dictionary];
         self.data = [NSMutableData data];
@@ -239,6 +242,22 @@
     }
 }
 
+-(void)handleVOIPControl:(Message*)msg {
+    VOIPControl *ctl = (VOIPControl*)msg.body;
+    id<VOIPObserver> ob = [self.voipObservers lastObject];
+    if (ob) {
+        [ob onVOIPControl:ctl];
+    }
+}
+
+-(void)handleVOIPData:(Message*)msg {
+    VOIPData *data = (VOIPData*)msg.body;
+    id<VOIPObserver> ob = [self.voipObservers lastObject];
+    if (ob) {
+        [ob onVOIPData:data];
+    }
+}
+
 -(void)publishPeerMessage:(IMMessage*)msg {
     for (id<MessageObserver> ob in self.observers) {
         [ob onPeerMessage:msg];
@@ -296,6 +315,10 @@
         [self handlePeerACK:msg];
     } else if (msg.cmd == MSG_ONLINE_STATE) {
         [self handleOnlineState:msg];
+    } else if (msg.cmd == MSG_VOIP_CONTROL) {
+        [self handleVOIPControl:msg];
+    } else if (msg.cmd == MSG_VOIP_DATA) {
+        [self handleVOIPData:msg];
     }
 }
 
@@ -540,6 +563,35 @@
 -(void)unsubscribeState:(int64_t)uid {
     NSNumber *n = [NSNumber numberWithLongLong:uid];
     [self.subs removeObjectForKey:n];
+}
+
+-(void)pushVOIPObserver:(id<VOIPObserver>)ob {
+    [self.voipObservers addObject:ob];
+}
+
+-(void)popVOIPObserver:(id<VOIPObserver>)ob {
+    int count = [self.voipObservers count];
+    if (count == 0) {
+        return;
+    }
+    id<VOIPObserver> top = [self.voipObservers objectAtIndex:count-1];
+    if (top == ob) {
+        [self.voipObservers removeObject:top];
+    }
+}
+
+-(void)sendVOIPControl:(VOIPControl*)ctl {
+    Message *m = [[Message alloc] init];
+    m.cmd = MSG_VOIP_CONTROL;
+    m.body = ctl;
+    [self sendMessage:m];
+}
+
+-(void)sendVOIPData:(VOIPData*)data {
+    Message *m = [[Message alloc] init];
+    m.cmd = MSG_VOIP_DATA;
+    m.body = data;
+    [self sendMessage:m];
 }
 
 @end

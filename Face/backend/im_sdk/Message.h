@@ -21,11 +21,26 @@
 #define MSG_SUBSCRIBE_ONLINE_STATE 11
 #define MSG_ONLINE_STATE 12
 
+#define MSG_VOIP_CONTROL 64
+#define MSG_VOIP_DATA 65
+
 @interface IMMessage : NSObject
 @property(nonatomic, assign)int64_t sender;
 @property(nonatomic, assign)int64_t receiver;
 @property(nonatomic, assign)int32_t msgLocalID;
 @property(nonatomic, copy)NSString *content;
+@end
+
+@interface VOIPControl : NSObject
+@property(nonatomic, assign)int64_t sender;
+@property(nonatomic, assign)int64_t receiver;
+@property(nonatomic, copy)NSString *content;
+@end
+
+@interface VOIPData : NSObject
+@property(nonatomic, assign)int64_t sender;
+@property(nonatomic, assign)int64_t receiver;
+@property(nonatomic) NSData *content;
 @end
 
 @interface MessageInputing : NSObject

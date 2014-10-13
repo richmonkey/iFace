@@ -15,6 +15,8 @@
 #import "APIRequest.h"
 #import "JSBadgeView.h"
 #import "Constants.h"
+#import "VOIP.h"
+#import "VOIPViewController.h"
 
 @interface MainTabBarController ()
 @property(atomic) Reachability *reach;
@@ -88,6 +90,8 @@
 
     [[self tabBar] setTintColor: RGBACOLOR(48,176,87, 1)];
     [[self tabBar] setBarTintColor: RGBACOLOR(245, 245, 246, 1)];
+    
+    [[IMService instance] pushVOIPObserver:self];
     
 }
 
@@ -167,6 +171,40 @@
 
 -(void)stopRefreshTimer {
     dispatch_suspend(self.refreshTimer);
+}
+
+
+#pragma mark - VOIPObserver
+-(void)onVOIPControl:(VOIPControl*)ctl {
+    VOIP *voip = [VOIP instance];
+    VOIPControlCommand *command = [[VOIPControlCommand alloc] initWithRaw:ctl.content];
+
+    NSLog(@"voip state:%d command:%d", voip.state, command.cmd);
+    if (voip.state == VOIP_LISTENING) {
+        if (command.cmd == VOIP_COMMAND_DIAL) {
+            VOIPViewController *controller = [[VOIPViewController alloc] initWithCallerUID:ctl.sender];
+            [self presentViewController:controller animated:YES completion:nil];
+        }
+    }
+}
+
+-(void)onVOIPData:(VOIPData*)data {
+    VOIP *voip = [VOIP instance];
+    
+    if (voip.state != VOIP_CONNECTED) {
+        [self sendReset:data.sender];
+        NSLog(@"reset voip");
+    }
+}
+
+-(void)sendReset:(int64_t)uid {
+    VOIPControlCommand *command = [[VOIPControlCommand alloc] init];
+    command.cmd = VOIP_COMMAND_RESET;
+    VOIPControl *ctl = [[VOIPControl alloc] init];
+    ctl.sender = [UserPresent instance].uid;
+    ctl.receiver = uid;
+    ctl.content = command.raw;
+    [[IMService instance] sendVOIPControl:ctl];
 }
 
 @end

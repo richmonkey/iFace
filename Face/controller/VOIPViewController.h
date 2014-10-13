@@ -7,7 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "IMService.h"
 
-@interface VOIPViewController : UIViewController
-
+@interface VOIPViewController : UIViewController<VOIPObserver>
+- (id)initWithCalledUID:(int64_t)uid;
+-(id)initWithCallerUID:(int64_t)uid;
 @end

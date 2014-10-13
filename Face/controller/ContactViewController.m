@@ -16,6 +16,8 @@
 #import "ContactHeaderView.h"
 #import "ContactIMUserTableViewCell.h"
 #import "ContactPhoneTableViewCell.h"
+#import "VOIPViewController.h"
+
 /*
  ----------
  tableheaderView
@@ -156,9 +158,9 @@
     if ([self.contact.users count] == 1) {
         NSLog(@"send message");
         User *u = [self.contact.users objectAtIndex:0];
-        IMUser *mu = [[UserDB instance] loadUser:u.uid];
-//        MessageViewController* msgController = [[MessageViewController alloc] initWithRemoteUser:mu];
-//        [self.navigationController pushViewController:msgController animated:YES];
+        VOIPViewController *controller = [[VOIPViewController alloc] initWithCalledUID:u.uid];
+        [self presentViewController:controller animated:YES completion:nil];
+        
     } else if ([self.contact.users count] > 1) {
         if (self.contact.users.count == 2) {
             User *u0 = [self.contact.users objectAtIndex:0];

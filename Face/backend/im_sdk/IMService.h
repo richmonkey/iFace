@@ -31,6 +31,13 @@
 
 @end
 
+@protocol VOIPObserver <NSObject>
+
+-(void)onVOIPControl:(VOIPControl*)ctl;
+-(void)onVOIPData:(VOIPData*)data;
+
+@end
+
 @protocol MessageObserver <NSObject>
 -(void)onPeerMessage:(IMMessage*)msg;
 
@@ -79,5 +86,11 @@
 
 -(void)addMessageObserver:(id<MessageObserver>)ob;
 -(void)removeMessageObserver:(id<MessageObserver>)ob;
+
+-(void)pushVOIPObserver:(id<VOIPObserver>)ob;
+-(void)popVOIPObserver:(id<VOIPObserver>)ob;
+
+-(void)sendVOIPControl:(VOIPControl*)ctl;
+-(void)sendVOIPData:(VOIPData*)data;
 @end
 

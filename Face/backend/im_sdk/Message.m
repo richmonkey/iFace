@@ -15,6 +15,14 @@
 
 @end
 
+@implementation VOIPControl
+
+@end
+
+@implementation VOIPData
+
+@end
+
 @implementation MessageInputing
 
 @end
@@ -55,7 +63,7 @@
         p += 4;
         const char *s = [m.content UTF8String];
         int l = strlen(s);
-        if ((l + 28) > 64*1024) {
+        if ((l + HEAD_SIZE + 20) > 64*1024) {
             return nil;
         }
         memcpy(p, s, l);
@@ -78,7 +86,36 @@
         p += 8;
         writeInt64(inputing.receiver, p);
         return [NSData dataWithBytes:buf length:HEAD_SIZE + 16];
+    } else if (self.cmd == MSG_VOIP_CONTROL) {
+        VOIPControl *ctl = (VOIPControl*)self.body;
+        writeInt64(ctl.sender, p);
+        p += 8;
+        writeInt64(ctl.receiver, p);
+        p += 8;
+        const char *s = [ctl.content UTF8String];
+        int l = strlen(s);
+        if ((l + 28) > 64*1024) {
+            return nil;
+        }
+        memcpy(p, s, l);
+        return [NSData dataWithBytes:buf length:HEAD_SIZE + 16 +l];
+        
+    } else if (self.cmd == MSG_VOIP_DATA) {
+        VOIPData *data = (VOIPData*)self.body;
+        writeInt64(data.sender, p);
+        p += 8;
+        writeInt64(data.receiver, p);
+        p += 8;
+        
+        const void *s = [data.content bytes];
+        int l = [data.content length];
+        if ((l + HEAD_SIZE + 16) > 64*1024) {
+            return nil;
+        }
+        memcpy(p, s, l);
+        return [NSData dataWithBytes:buf length:HEAD_SIZE + 16 + l];
     }
+    
     return nil;
 }
 
@@ -103,7 +140,7 @@
         p += 8;
         m.msgLocalID = readInt32(p);
         p += 4;
-        m.content = [[NSString alloc] initWithBytes:p length:data.length-28 encoding:NSUTF8StringEncoding];
+        m.content = [[NSString alloc] initWithBytes:p length:data.length-HEAD_SIZE-20 encoding:NSUTF8StringEncoding];
         self.body = m;
         return YES;
     } else if (self.cmd == MSG_ACK) {
@@ -133,6 +170,24 @@
         p += 8;
         state.online = readInt32(p);
         self.body = state;
+        return YES;
+    } else if (self.cmd == MSG_VOIP_CONTROL) {
+        VOIPControl *ctl = [[VOIPControl alloc] init];
+        ctl.sender = readInt64(p);
+        p += 8;
+        ctl.receiver = readInt64(p);
+        p += 8;
+        ctl.content = [[NSString alloc] initWithBytes:p length:data.length-HEAD_SIZE-16 encoding:NSUTF8StringEncoding];
+        self.body = ctl;
+        return YES;
+    } else if (self.cmd == MSG_VOIP_DATA) {
+        VOIPData *vdata = [[VOIPData alloc] init];
+        vdata.sender = readInt64(p);
+        p += 8;
+        vdata.receiver = readInt64(p);
+        p += 8;
+        vdata.content = [NSData dataWithBytes:p length:data.length-HEAD_SIZE-16];
+        self.body = data;
         return YES;
     }
 
