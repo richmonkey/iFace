@@ -7,12 +7,115 @@
 //
 
 #import "AppDelegate.h"
+#import "IMService.h"
+#import "Config.h"
+#import "Token.h"
+#import "MainTabBarController.h"
+#import "AskPhoneNumberViewController.h"
+
+@interface PeerMessageHandler : NSObject<IMPeerMessageHandler>
++(PeerMessageHandler*)instance;
+@end
+
+
+@interface GroupMessageHandler : NSObject<IMGroupMessageHandler>
++(GroupMessageHandler*)instance;
+@end
+
+
+
+@implementation PeerMessageHandler
++(PeerMessageHandler*)instance {
+    static PeerMessageHandler *m;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        if (!m) {
+            m = [[PeerMessageHandler alloc] init];
+        }
+    });
+    return m;
+}
+
+-(BOOL)handleMessage:(IMMessage*)msg {
+    return NO;
+}
+
+-(BOOL)handleMessageACK:(int)msgLocalID uid:(int64_t)uid {
+    return NO;
+}
+
+-(BOOL)handleMessageRemoteACK:(int)msgLocalID uid:(int64_t)uid {
+    return NO;
+}
+
+-(BOOL)handleMessageFailure:(int)msgLocalID uid:(int64_t)uid {
+    return NO;
+}
+
+@end
+
+
+
+@implementation GroupMessageHandler
++(GroupMessageHandler*)instance {
+    static GroupMessageHandler *m;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        if (!m) {
+            m = [[GroupMessageHandler alloc] init];
+        }
+    });
+    return m;
+}
+
+-(BOOL)handleMessage:(IMMessage*)im {
+    return NO;
+}
+
+-(BOOL)handleMessageACK:(int)msgLocalID uid:(int64_t)uid {
+    return NO;
+}
+-(BOOL)handleMessageFailure:(int)msgLocalID uid:(int64_t)uid {
+    return NO;
+}
+@end
+
+
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
+    
+    //配置im server地址
+    [IMService instance].host = [Config instance].host;
+    [IMService instance].port = [Config instance].port;
+    [IMService instance].peerMessageHandler = [PeerMessageHandler instance];
+    [IMService instance].groupMessageHandler = [GroupMessageHandler instance];
+    
+    
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    application.statusBarHidden = NO;
+    
+    
+    Token *token = [Token instance];
+    if (token.accessToken) {
+        UITabBarController *tabController = [[MainTabBarController alloc] init];
+        self.tabBarController = tabController;
+        self.window.rootViewController = tabController;
+    }else{
+        AskPhoneNumberViewController *ctl = [[AskPhoneNumberViewController alloc] init];
+        UINavigationController * navCtr = [[UINavigationController alloc] initWithRootViewController: ctl];
+        self.window.rootViewController = navCtr;
+    }
+    
+    
+    self.window.backgroundColor = [UIColor whiteColor];
+    [self.window makeKeyAndVisible];
+    
+    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeNewsstandContentAvailability)];
+    
     return YES;
 }
 							
