@@ -13,9 +13,6 @@
 		6DF3997219EB9AAE009B03C4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6DF3997019EB9AAE009B03C4 /* InfoPlist.strings */; };
 		6DF3997419EB9AAE009B03C4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DF3997319EB9AAE009B03C4 /* main.m */; };
 		6DF3997819EB9AAE009B03C4 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DF3997719EB9AAE009B03C4 /* AppDelegate.m */; };
-		6DF3997B19EB9AAE009B03C4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6DF3997919EB9AAE009B03C4 /* Main.storyboard */; };
-		6DF3997E19EB9AAE009B03C4 /* FirstViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DF3997D19EB9AAE009B03C4 /* FirstViewController.m */; };
-		6DF3998119EB9AAE009B03C4 /* SecondViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DF3998019EB9AAE009B03C4 /* SecondViewController.m */; };
 		6DF3998319EB9AAE009B03C4 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6DF3998219EB9AAE009B03C4 /* Images.xcassets */; };
 		6DF3998A19EB9AAE009B03C4 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF3998919EB9AAE009B03C4 /* XCTest.framework */; };
 		6DF3998B19EB9AAE009B03C4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF3996719EB9AAE009B03C4 /* Foundation.framework */; };
@@ -155,6 +152,7 @@
 		6DF39B3E19EBB7B6009B03C4 /* libyuv_neon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF39B3C19EBB7B6009B03C4 /* libyuv_neon.a */; };
 		6DF39B3F19EBB7B6009B03C4 /* libyuv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF39B3D19EBB7B6009B03C4 /* libyuv.a */; };
 		6DF39B4119EBB8DF009B03C4 /* libvideo_coding_utility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF39B4019EBB8DF009B03C4 /* libvideo_coding_utility.a */; };
+		6DF39B4419EBBD52009B03C4 /* VOIPViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6DF39B4319EBBD52009B03C4 /* VOIPViewController.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -178,11 +176,6 @@
 		6DF3997519EB9AAE009B03C4 /* Face-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Face-Prefix.pch"; sourceTree = "<group>"; };
 		6DF3997619EB9AAE009B03C4 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		6DF3997719EB9AAE009B03C4 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		6DF3997A19EB9AAE009B03C4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		6DF3997C19EB9AAE009B03C4 /* FirstViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FirstViewController.h; sourceTree = "<group>"; };
-		6DF3997D19EB9AAE009B03C4 /* FirstViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FirstViewController.m; sourceTree = "<group>"; };
-		6DF3997F19EB9AAE009B03C4 /* SecondViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SecondViewController.h; sourceTree = "<group>"; };
-		6DF3998019EB9AAE009B03C4 /* SecondViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SecondViewController.m; sourceTree = "<group>"; };
 		6DF3998219EB9AAE009B03C4 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		6DF3998819EB9AAE009B03C4 /* FaceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FaceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6DF3998919EB9AAE009B03C4 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
@@ -403,6 +396,8 @@
 		6DF39B3C19EBB7B6009B03C4 /* libyuv_neon.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libyuv_neon.a; sourceTree = "<group>"; };
 		6DF39B3D19EBB7B6009B03C4 /* libyuv.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libyuv.a; sourceTree = "<group>"; };
 		6DF39B4019EBB8DF009B03C4 /* libvideo_coding_utility.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libvideo_coding_utility.a; sourceTree = "<group>"; };
+		6DF39B4219EBBD52009B03C4 /* VOIPViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VOIPViewController.h; sourceTree = "<group>"; };
+		6DF39B4319EBBD52009B03C4 /* VOIPViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VOIPViewController.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -529,11 +524,6 @@
 				6DF399FE19EBA5CF009B03C4 /* Constants.h */,
 				6DF399F519EBA345009B03C4 /* PublicFunc.h */,
 				6DF399F619EBA345009B03C4 /* PublicFunc.m */,
-				6DF3997919EB9AAE009B03C4 /* Main.storyboard */,
-				6DF3997C19EB9AAE009B03C4 /* FirstViewController.h */,
-				6DF3997D19EB9AAE009B03C4 /* FirstViewController.m */,
-				6DF3997F19EB9AAE009B03C4 /* SecondViewController.h */,
-				6DF3998019EB9AAE009B03C4 /* SecondViewController.m */,
 				6DF3998219EB9AAE009B03C4 /* Images.xcassets */,
 				6DF3996E19EB9AAE009B03C4 /* Supporting Files */,
 			);
@@ -649,6 +639,8 @@
 				6DF399D819EBA313009B03C4 /* ContactViewController.xib */,
 				6DF399D919EBA313009B03C4 /* MainTabBarController.h */,
 				6DF399DA19EBA313009B03C4 /* MainTabBarController.m */,
+				6DF39B4219EBBD52009B03C4 /* VOIPViewController.h */,
+				6DF39B4319EBBD52009B03C4 /* VOIPViewController.mm */,
 			);
 			path = controller;
 			sourceTree = "<group>";
@@ -1026,7 +1018,6 @@
 				6DF39AA919EBA88E009B03C4 /* ContactHeaderView.xib in Resources */,
 				6DF39A7419EBA6CC009B03C4 /* input-bar-flat.png in Resources */,
 				6DF39A8119EBA6CC009B03C4 /* messageSent.aiff in Resources */,
-				6DF3997B19EB9AAE009B03C4 /* Main.storyboard in Resources */,
 				6DF39A7E19EBA6CC009B03C4 /* send.png in Resources */,
 				6DF39A7319EBA6CC009B03C4 /* bubble-typing@2x.png in Resources */,
 				6DF39A7F19EBA6CC009B03C4 /* send@2x.png in Resources */,
@@ -1066,7 +1057,6 @@
 				6DF39A8C19EBA6CC009B03C4 /* SDWebImageDownloaderOperation.m in Sources */,
 				6DF399E219EBA313009B03C4 /* MainTabBarController.m in Sources */,
 				6DF399CA19EBA30B009B03C4 /* Message.m in Sources */,
-				6DF3998119EB9AAE009B03C4 /* SecondViewController.m in Sources */,
 				6DF399DF19EBA313009B03C4 /* ContactListTableViewController.m in Sources */,
 				6DF39A8719EBA6CC009B03C4 /* NSData+ImageContentType.m in Sources */,
 				6DF39A0719EBA67B009B03C4 /* MBProgressHUD.m in Sources */,
@@ -1100,11 +1090,11 @@
 				6DF399EF19EBA31D009B03C4 /* Token.m in Sources */,
 				6DF39A9319EBA6CC009B03C4 /* UIImageView+HighlightedWebCache.m in Sources */,
 				6DF39A9C19EBA6CC009B03C4 /* UIImage+UKImage.m in Sources */,
+				6DF39B4419EBBD52009B03C4 /* VOIPViewController.mm in Sources */,
 				6DF39AAD19EBA8F8009B03C4 /* ContactIMUserTableViewCell.m in Sources */,
 				6DF39B2719EBB0CD009B03C4 /* WebRTC.mm in Sources */,
 				6DF399C619EBA30B009B03C4 /* PhoneNumber.m in Sources */,
 				6DF39A9819EBA6CC009B03C4 /* ESModalImageViewAnimationController.m in Sources */,
-				6DF3997E19EB9AAE009B03C4 /* FirstViewController.m in Sources */,
 				6DF39A8F19EBA6CC009B03C4 /* UIButton+WebCache.m in Sources */,
 				6DF39B2519EBB0CD009B03C4 /* AVSendStream.mm in Sources */,
 				6DF399EE19EBA31D009B03C4 /* LevelDB.mm in Sources */,
@@ -1148,14 +1138,6 @@
 				6DF3997119EB9AAE009B03C4 /* en */,
 			);
 			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		6DF3997919EB9AAE009B03C4 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				6DF3997A19EB9AAE009B03C4 /* Base */,
-			);
-			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
 		6DF3999219EB9AAE009B03C4 /* InfoPlist.strings */ = {

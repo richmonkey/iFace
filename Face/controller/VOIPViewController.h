@@ -1,5 +1,5 @@
 //
-//  FirstViewController.h
+//  VOIPViewController.h
 //  Face
 //
 //  Created by houxh on 14-10-13.
@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface FirstViewController : UIViewController
+@interface VOIPViewController : UIViewController
 
 @end
