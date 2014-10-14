@@ -90,7 +90,7 @@
 -(void)pushVOIPObserver:(id<VOIPObserver>)ob;
 -(void)popVOIPObserver:(id<VOIPObserver>)ob;
 
--(void)sendVOIPControl:(VOIPControl*)ctl;
--(void)sendVOIPData:(VOIPData*)data;
+-(BOOL)sendVOIPControl:(VOIPControl*)ctl;
+-(BOOL)sendVOIPData:(VOIPData*)data;
 @end
 

@@ -12,7 +12,6 @@
 #import "WebRTC.h"
 #import "AVSendStream.h"
 #import "AVReceiveStream.h"
-#include "webrtc/modules/video_render/ios/video_render_ios_view.h"
 
 #import "WebRTC.h"
 
@@ -46,6 +45,7 @@
 #import "UserDB.h"
 #import "UserPresent.h"
 #import "VOIP.h"
+#import "HistoryDB.h"
 
 @interface VOIPViewController ()
 
@@ -59,7 +59,8 @@
 @property(nonatomic) UIButton *hangUpButton;
 @property(nonatomic) UIButton *acceptButton;
 @property(nonatomic) UIButton *refuseButton;
-@property(nonatomic) VideoRenderIosView *render;
+
+@property(nonatomic) History *history;
 @end
 
 @implementation VOIPViewController
@@ -79,6 +80,9 @@
     if (self) {
         self.peerUser = [[UserDB instance] loadUser:uid];
         self.isCaller = YES;
+        self.history = [[History alloc] init];
+        self.history.peerUID = uid;
+        self.history.flag = FLAG_OUT;
     }
     return self;
 }
@@ -89,6 +93,8 @@
     if (self) {
         self.peerUser = [[UserDB instance] loadUser:uid];
         self.isCaller = NO;
+        self.history = [[History alloc] init];
+        self.history.peerUID = uid;
     }
     return self;
 }
@@ -110,10 +116,6 @@
         NSLog(@"invalid voip state:%d", voip.state);
         return;
     }
-    
-    VideoRenderIosView *render = [[VideoRenderIosView alloc] initWithFrame:CGRectMake(0, 200, 320, 200)];
-    [self.view addSubview:render];
-    self.render = render;
 
     UIButton *moreButton = [UIButton buttonWithType:UIButtonTypeCustom];
     moreButton.backgroundColor = [UIColor colorWithRed:0.78f green:0.78f blue:0.8f alpha:1.0f];
@@ -142,29 +144,43 @@
     [self.view addSubview:moreButton];
     self.refuseButton = moreButton;
     
-    
     if (self.isCaller) {
-        voip.state = VOIP_DIALING;
-        [self sendDial];
-        
-        self.dialTimer = [NSTimer scheduledTimerWithTimeInterval: 1
-                                                          target:self
-                                                        selector:@selector(sendDial)
-                                                        userInfo:nil
-                                                         repeats:YES];
-        
-        
         self.acceptButton.hidden = YES;
         self.refuseButton.hidden = YES;
     } else {
-        voip.state = VOIP_ACCEPTING;
         self.hangUpButton.hidden = YES;
     }
+
+    [[AVAudioSession sharedInstance] requestRecordPermission:^(BOOL granted) {
+        if (granted) {
+            if (self.isCaller) {
+                voip.state = VOIP_DIALING;
+                [self sendDial];
+                self.dialTimer = [NSTimer scheduledTimerWithTimeInterval: 1
+                                                                  target:self
+                                                                selector:@selector(sendDial)
+                                                                userInfo:nil
+                                                                 repeats:YES];
+                
+
+            } else {
+                voip.state = VOIP_ACCEPTING;
+            }
+            
+            [[HistoryDB instance] addHistory:self.history];
+        } else {
+            NSLog(@"can't grant record permission");
+            [self dismissViewControllerAnimated:NO completion:nil];
+        }
+    }];
 }
 
 -(void)refuseCall:(UIButton*)button {
     VOIP *voip = [VOIP instance];
     voip.state = VOIP_REFUSED;
+    
+    self.history.flag = self.history.flag&FLAG_REFUSED;
+    [[HistoryDB instance] updateHistoryFlag:self.history];
     
     [self sendDialRefuse];
     
@@ -176,6 +192,10 @@
 -(void)acceptCall:(UIButton*)button {
     VOIP *voip = [VOIP instance];
     voip.state = VOIP_ACCEPTED;
+    
+    self.history.flag = self.history.flag&FLAG_ACCEPTED;
+    [[HistoryDB instance] updateHistoryFlag:self.history];
+    
     self.acceptTimer = [NSTimer scheduledTimerWithTimeInterval: 1
                                                         target:self
                                                       selector:@selector(sendDialAccept)
@@ -186,10 +206,25 @@
 
 -(void)hangUp:(UIButton*)button {
     VOIP *voip = [VOIP instance];
-    if (voip.state == VOIP_DIALING || voip.state == VOIP_CONNECTED) {
+    if (voip.state == VOIP_DIALING ) {
+        [self.dialTimer invalidate];
         [self sendHangUp];
         voip.state = VOIP_HANGED_UP;
-        [self.dialTimer invalidate];
+        
+        self.history.flag = self.history.flag&FLAG_CANCELED;
+        [[HistoryDB instance] updateHistoryFlag:self.history];
+        
+        [self dismissViewControllerAnimated:YES completion:^{
+            voip.state = VOIP_LISTENING;
+            [[IMService instance] popVOIPObserver:self];
+        }];
+        
+    } else if (voip.state == VOIP_CONNECTED) {
+        [self sendHangUp];
+        voip.state = VOIP_HANGED_UP;
+        
+        [self stopStream];
+        
         [self dismissViewControllerAnimated:YES completion:^{
             voip.state = VOIP_LISTENING;
             [[IMService instance] popVOIPObserver:self];
@@ -201,15 +236,17 @@
 
 - (void)sendDial {
     NSLog(@"dial...");
-    self.dialCount = self.dialCount + 1;
     VOIPControlCommand *command = [[VOIPControlCommand alloc] init];
     command.cmd = VOIP_COMMAND_DIAL;
-    command.dialCount = self.dialCount;
+    command.dialCount = self.dialCount + 1;
     VOIPControl *ctl = [[VOIPControl alloc] init];
     ctl.sender = [UserPresent instance].uid;
     ctl.receiver = self.peerUser.uid;
     ctl.content = command.raw;
-    [[IMService instance] sendVOIPControl:ctl];
+    BOOL r = [[IMService instance] sendVOIPControl:ctl];
+    if (r) {
+        self.dialCount = self.dialCount + 1;
+    }
 }
 
 -(void)sendControlCommand:(enum VOIPCommand)cmd {
@@ -274,12 +311,18 @@
     self.recvStream.isLoudspeaker = NO;
     
     [self.recvStream start];
+    
+    self.history.beginTimestamp = time(NULL);
 }
 
 
 -(void)stopStream {
+    if (!self.sendStream && !self.recvStream) return;
+    
     [self.sendStream stop];
     [self.recvStream stop];
+    
+    self.history.endTimestamp = time(NULL);
 }
 
 #pragma mark - VOIPObserver
@@ -295,6 +338,9 @@
     
     if (voip.state == VOIP_DIALING) {
         if (command.cmd == VOIP_COMMAND_ACCEPT) {
+            self.history.flag = self.history.flag&FLAG_ACCEPTED;
+            [[HistoryDB instance] updateHistoryFlag:self.history];
+            
             [self sendConnected];
             voip.state = VOIP_CONNECTED;
             [self.dialTimer invalidate];
@@ -302,6 +348,9 @@
             [self startStream];
         } else if (command.cmd == VOIP_COMMAND_REFUSE) {
             voip.state = VOIP_REFUSED;
+            self.history.flag = self.history.flag&FLAG_REFUSED;
+            [[HistoryDB instance] updateHistoryFlag:self.history];
+            
             [self.dialTimer invalidate];
             [self dismissViewControllerAnimated:YES completion:^{
                 voip.state = VOIP_LISTENING;
@@ -311,6 +360,9 @@
             //simultaneous open
             [self.dialTimer invalidate];
             voip.state = VOIP_ACCEPTED;
+            self.history.flag = self.history.flag&FLAG_ACCEPTED;
+            [[HistoryDB instance] updateHistoryFlag:self.history];
+            
             self.acceptTimer = [NSTimer scheduledTimerWithTimeInterval: 1
                                                                 target:self
                                                               selector:@selector(sendDialAccept)
@@ -390,14 +442,7 @@
         NSLog(@"skip data...");
     }
 }
-#pragma mark VideoTransport
 
--(int)sendRTPPacketV:(const void*)data length:(int)length {
-    return 0;
-}
--(int)sendRTCPPacketV:(const void*)data length:(int)length STOR:(BOOL)STOR {
-    return 0;
-}
 
 #pragma mark VoiceTransport
 -(int)sendRTPPacketA:(const void*)data length:(int)length {
@@ -407,7 +452,10 @@
     vData.receiver = self.peerUser.uid;
     VOIPAVData *avData = [[VOIPAVData alloc] initWithRTPAudio:data length:length];
     vData.content = avData.voipData;
-    [[IMService instance] sendVOIPData:vData];
+    BOOL r = [[IMService instance] sendVOIPData:vData];
+    if (!r) {
+        return 0;
+    }
     return length;
 }
 
@@ -422,7 +470,10 @@
     vData.receiver = self.peerUser.uid;
     VOIPAVData *avData = [[VOIPAVData alloc] initWithRTCPAudio:data length:length];
     vData.content = avData.voipData;
-    [[IMService instance] sendVOIPData:vData];
+    BOOL r = [[IMService instance] sendVOIPData:vData];
+    if (!r) {
+        return 0;
+    }
     return length;
 }
 

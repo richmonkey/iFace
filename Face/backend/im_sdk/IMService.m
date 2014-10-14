@@ -580,18 +580,18 @@
     }
 }
 
--(void)sendVOIPControl:(VOIPControl*)ctl {
+-(BOOL)sendVOIPControl:(VOIPControl*)ctl {
     Message *m = [[Message alloc] init];
     m.cmd = MSG_VOIP_CONTROL;
     m.body = ctl;
-    [self sendMessage:m];
+    return [self sendMessage:m];
 }
 
--(void)sendVOIPData:(VOIPData*)data {
+-(BOOL)sendVOIPData:(VOIPData*)data {
     Message *m = [[Message alloc] init];
     m.cmd = MSG_VOIP_DATA;
     m.body = data;
-    [self sendMessage:m];
+    return [self sendMessage:m];
 }
 
 @end

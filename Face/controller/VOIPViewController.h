@@ -10,7 +10,7 @@
 #import "IMService.h"
 #import "AVTransport.h"
 
-@interface VOIPViewController : UIViewController<VOIPObserver, VideoTransport, VoiceTransport>
+@interface VOIPViewController : UIViewController<VOIPObserver, VoiceTransport>
 - (id)initWithCalledUID:(int64_t)uid;
 -(id)initWithCallerUID:(int64_t)uid;
 @end

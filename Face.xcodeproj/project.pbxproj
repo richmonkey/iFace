@@ -154,6 +154,8 @@
 		6DF39BAE19EC4C6D009B03C4 /* AVReceiveStream.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6DF39BA719EC4C6D009B03C4 /* AVReceiveStream.mm */; };
 		6DF39BAF19EC4C6D009B03C4 /* AVSendStream.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6DF39BA919EC4C6D009B03C4 /* AVSendStream.mm */; };
 		6DF39BB019EC4C6D009B03C4 /* WebRTC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6DF39BAD19EC4C6D009B03C4 /* WebRTC.mm */; };
+		6DF39BB319ECFD5F009B03C4 /* History.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DF39BB219ECFD5F009B03C4 /* History.m */; };
+		6DF39BB619ED01E3009B03C4 /* HistoryDB.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DF39BB519ED01E3009B03C4 /* HistoryDB.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -401,6 +403,10 @@
 		6DF39BAB19EC4C6D009B03C4 /* ChannelTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChannelTransport.h; sourceTree = "<group>"; };
 		6DF39BAC19EC4C6D009B03C4 /* WebRTC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebRTC.h; sourceTree = "<group>"; };
 		6DF39BAD19EC4C6D009B03C4 /* WebRTC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebRTC.mm; sourceTree = "<group>"; };
+		6DF39BB119ECFD5F009B03C4 /* History.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = History.h; sourceTree = "<group>"; };
+		6DF39BB219ECFD5F009B03C4 /* History.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = History.m; sourceTree = "<group>"; };
+		6DF39BB419ED01E3009B03C4 /* HistoryDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HistoryDB.h; sourceTree = "<group>"; };
+		6DF39BB519ED01E3009B03C4 /* HistoryDB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HistoryDB.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -663,6 +669,10 @@
 				6DF399EB19EBA31D009B03C4 /* UserDB.m */,
 				6DF399EC19EBA31D009B03C4 /* UserPresent.h */,
 				6DF399ED19EBA31D009B03C4 /* UserPresent.m */,
+				6DF39BB119ECFD5F009B03C4 /* History.h */,
+				6DF39BB219ECFD5F009B03C4 /* History.m */,
+				6DF39BB419ED01E3009B03C4 /* HistoryDB.h */,
+				6DF39BB519ED01E3009B03C4 /* HistoryDB.m */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -1089,6 +1099,7 @@
 				6DF39A0119EBA624009B03C4 /* APIRequest.m in Sources */,
 				6DF3997819EB9AAE009B03C4 /* AppDelegate.m in Sources */,
 				6DF39BAF19EC4C6D009B03C4 /* AVSendStream.mm in Sources */,
+				6DF39BB319ECFD5F009B03C4 /* History.m in Sources */,
 				6DF39BAE19EC4C6D009B03C4 /* AVReceiveStream.mm in Sources */,
 				6DF39A8619EBA6CC009B03C4 /* MKAnnotationView+WebCache.m in Sources */,
 				6DF39A6F19EBA6CC009B03C4 /* JSBadgeView.m in Sources */,
@@ -1102,6 +1113,7 @@
 				6DF39AAD19EBA8F8009B03C4 /* ContactIMUserTableViewCell.m in Sources */,
 				6DF399C619EBA30B009B03C4 /* PhoneNumber.m in Sources */,
 				6DF39A9819EBA6CC009B03C4 /* ESModalImageViewAnimationController.m in Sources */,
+				6DF39BB619ED01E3009B03C4 /* HistoryDB.m in Sources */,
 				6DF39A8F19EBA6CC009B03C4 /* UIButton+WebCache.m in Sources */,
 				6DF399EE19EBA31D009B03C4 /* LevelDB.mm in Sources */,
 				6DF39A9419EBA6CC009B03C4 /* UIImageView+WebCache.m in Sources */,
