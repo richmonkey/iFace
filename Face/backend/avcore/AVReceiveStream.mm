@@ -43,7 +43,9 @@
 
 
 - (void)dealloc {
-    NSAssert(self.voiceChannelTransport == NULL, @"");
+    delete self.voiceChannelTransport;
+    self.voiceChannelTransport = NULL;
+    IMLog(@"audio receive stream dealloc");
 }
 
 
@@ -88,8 +90,7 @@
     rtc.voe_base->StopPlayout(self.voiceChannel);
     rtc.voe_base->DeleteChannel(self.voiceChannel);
     rtc.base->DisconnectAudioChannel(self.voiceChannel);
-    delete self.voiceChannelTransport;
-    self.voiceChannelTransport = NULL;
+
 
     return YES;
 }

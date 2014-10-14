@@ -92,14 +92,16 @@
         p += 8;
         writeInt64(ctl.receiver, p);
         p += 8;
-        const char *s = [ctl.content UTF8String];
-        int l = strlen(s);
-        if ((l + 28) > 64*1024) {
-            return nil;
+
+        writeInt32(ctl.cmd, p);
+        p += 4;
+        if (ctl.cmd == VOIP_COMMAND_DIAL) {
+            writeInt32(ctl.dialCount, p);
+            p += 4;
+            return [NSData dataWithBytes:buf length:HEAD_SIZE+24];
+        } else {
+            return [NSData dataWithBytes:buf length:HEAD_SIZE+20];
         }
-        memcpy(p, s, l);
-        return [NSData dataWithBytes:buf length:HEAD_SIZE + 16 +l];
-        
     } else if (self.cmd == MSG_VOIP_DATA) {
         VOIPData *data = (VOIPData*)self.body;
         writeInt64(data.sender, p);
@@ -177,7 +179,11 @@
         p += 8;
         ctl.receiver = readInt64(p);
         p += 8;
-        ctl.content = [[NSString alloc] initWithBytes:p length:data.length-HEAD_SIZE-16 encoding:NSUTF8StringEncoding];
+        ctl.cmd = readInt32(p);
+        p += 4;
+        if (ctl.cmd == VOIP_COMMAND_DIAL) {
+            ctl.dialCount = readInt32(p);
+        }
         self.body = ctl;
         return YES;
     } else if (self.cmd == MSG_VOIP_DATA) {

@@ -51,8 +51,9 @@
 
 - (void)dealloc
 {
-    NSAssert(self.voiceChannelTransport == NULL, @"");
-    IMLog(@"av send stream dealloc");
+    delete self.voiceChannelTransport;
+    self.voiceChannelTransport = NULL;
+    IMLog(@"audio send stream dealloc");
 }
 
 
@@ -125,13 +126,11 @@
 
 -(BOOL)stop {
     WebRTC *rtc = [WebRTC sharedWebRTC];
-    
+
     rtc.voe_base->StopReceive(self.voiceChannel);
     rtc.voe_base->StopSend(self.voiceChannel);
     rtc.voe_base->DeleteChannel(self.voiceChannel);
     rtc.base->DisconnectAudioChannel(self.voiceChannel);
-    delete self.voiceChannelTransport;
-    self.voiceChannelTransport = NULL;
     return YES;
 }
 

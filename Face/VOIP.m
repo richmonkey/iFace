@@ -19,24 +19,26 @@
  "talking":{}
  }
  */
+/*
 @implementation VOIPControlCommand
 
 -(NSString*)raw {
     NSDictionary *dic = nil;
     if (self.cmd == VOIP_COMMAND_DIAL) {
-        dic = @{@"dial":@""};
+        NSDictionary *o = @{@"count":[NSNumber numberWithInt:self.dialCount]};
+        dic = @{@"dial":o};
     } else if (self.cmd == VOIP_COMMAND_ACCEPT) {
-        dic = @{@"accept":@""};
+        dic = @{@"accept":@{}};
     } else if (self.cmd == VOIP_COMMAND_CONNECTED) {
-        dic = @{@"connected":@""};
+        dic = @{@"connected":@{}};
     } else if (self.cmd == VOIP_COMMAND_HANG_UP) {
-        dic = @{@"hang_up":@""};
+        dic = @{@"hang_up":@{}};
     } else if (self.cmd == VOIP_COMMAND_REFUSE) {
-        dic = @{@"refuse":@""};
+        dic = @{@"refuse":@{}};
     } else if (self.cmd == VOIP_COMMAND_RESET) {
-        dic = @{@"reset":@""};
+        dic = @{@"reset":@{}};
     } else if (self.cmd == VOIP_COMMAND_TALKING) {
-        dic = @{@"talking":@""};
+        dic = @{@"talking":@{}};
     } else {
         NSLog(@"unknow cmd:%d", self.cmd);
         return @"";
@@ -54,6 +56,7 @@
         NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];
         if ([dict objectForKey:@"dial"]) {
             self.cmd = VOIP_COMMAND_DIAL;
+            self.dialCount = [[[dict objectForKey:@"dial"] objectForKey:@"count"] intValue];
         } else if ([dict objectForKey:@"accept"]) {
             self.cmd = VOIP_COMMAND_ACCEPT;
         } else if ([dict objectForKey:@"refuse"]) {
@@ -75,6 +78,7 @@
 }
 
 @end
+*/
 
 @implementation VOIPAVData
 

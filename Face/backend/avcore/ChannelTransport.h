@@ -1,5 +1,6 @@
+#ifndef VOIP_CHANNEL_TRANSPORT_H
+#define VOIP_CHANNEL_TRANSPORT_H
 
-#ifndef TESTWEBRTC
 class VoiceChannelTransport:webrtc::Transport{
 public:
     VoiceChannelTransport(webrtc::VoENetwork* voe_network, int channel,
@@ -29,7 +30,7 @@ public:
 private:
     int channel_;
     webrtc::VoENetwork* voe_network_;
-    id<VoiceTransport> transport_;
+    __weak id<VoiceTransport> transport_;
     BOOL STOR_;
 };
 
@@ -64,7 +65,7 @@ public:
 private:
     int channel_;
     webrtc::ViENetwork* vie_network_;
-    id<VideoTransport> transport_;
+    __weak id<VideoTransport> transport_;
     BOOL STOR_;
 };
 

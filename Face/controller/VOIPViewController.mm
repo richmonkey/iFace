@@ -99,6 +99,9 @@
     return self;
 }
 
+-(void)dealloc {
+    NSLog(@"voip view controller dealloc");
+}
 
 - (void)didReceiveMemoryWarning
 {
@@ -236,26 +239,24 @@
 
 - (void)sendDial {
     NSLog(@"dial...");
-    VOIPControlCommand *command = [[VOIPControlCommand alloc] init];
-    command.cmd = VOIP_COMMAND_DIAL;
-    command.dialCount = self.dialCount + 1;
     VOIPControl *ctl = [[VOIPControl alloc] init];
     ctl.sender = [UserPresent instance].uid;
     ctl.receiver = self.peerUser.uid;
-    ctl.content = command.raw;
+    ctl.cmd = VOIP_COMMAND_DIAL;
+    ctl.dialCount = self.dialCount + 1;
     BOOL r = [[IMService instance] sendVOIPControl:ctl];
     if (r) {
         self.dialCount = self.dialCount + 1;
+    } else {
+        NSLog(@"dial fail");
     }
 }
 
 -(void)sendControlCommand:(enum VOIPCommand)cmd {
-    VOIPControlCommand *command = [[VOIPControlCommand alloc] init];
-    command.cmd = cmd;
     VOIPControl *ctl = [[VOIPControl alloc] init];
     ctl.sender = [UserPresent instance].uid;
     ctl.receiver = self.peerUser.uid;
-    ctl.content = command.raw;
+    ctl.cmd = cmd;
     [[IMService instance] sendVOIPControl:ctl];
 }
 
@@ -280,6 +281,7 @@
 }
 
 -(void)sendHangUp {
+    NSLog(@"send hang up");
     [self sendControlCommand:VOIP_COMMAND_HANG_UP];
 }
 
@@ -299,6 +301,7 @@
 - (void)startStream {
     if (self.sendStream || self.recvStream) return;
     
+    NSLog(@"start stream");
     BOOL isHeadphone = [self isHeadsetPluggedIn];
     
     self.sendStream = [[AudioSendStream alloc] init];
@@ -318,7 +321,7 @@
 
 -(void)stopStream {
     if (!self.sendStream && !self.recvStream) return;
-    
+    NSLog(@"stop stream");
     [self.sendStream stop];
     [self.recvStream stop];
     
@@ -328,16 +331,15 @@
 #pragma mark - VOIPObserver
 -(void)onVOIPControl:(VOIPControl*)ctl {
     VOIP *voip = [VOIP instance];
-    VOIPControlCommand *command = [[VOIPControlCommand alloc] initWithRaw:ctl.content];
     
     if (ctl.sender != self.peerUser.uid) {
         [self sendTalking];
         return;
     }
-    NSLog(@"voip state:%d command:%d", voip.state, command.cmd);
+    NSLog(@"voip state:%d command:%d", voip.state, ctl.cmd);
     
     if (voip.state == VOIP_DIALING) {
-        if (command.cmd == VOIP_COMMAND_ACCEPT) {
+        if (ctl.cmd == VOIP_COMMAND_ACCEPT) {
             self.history.flag = self.history.flag&FLAG_ACCEPTED;
             [[HistoryDB instance] updateHistoryFlag:self.history];
             
@@ -346,7 +348,7 @@
             [self.dialTimer invalidate];
             NSLog(@"call voip connected");
             [self startStream];
-        } else if (command.cmd == VOIP_COMMAND_REFUSE) {
+        } else if (ctl.cmd == VOIP_COMMAND_REFUSE) {
             voip.state = VOIP_REFUSED;
             self.history.flag = self.history.flag&FLAG_REFUSED;
             [[HistoryDB instance] updateHistoryFlag:self.history];
@@ -356,7 +358,7 @@
                 voip.state = VOIP_LISTENING;
                 [[IMService instance] popVOIPObserver:self];
             }];
-        } else if (command.cmd == VOIP_COMMAND_DIAL) {
+        } else if (ctl.cmd == VOIP_COMMAND_DIAL) {
             //simultaneous open
             [self.dialTimer invalidate];
             voip.state = VOIP_ACCEPTED;
@@ -373,7 +375,7 @@
     } else if (voip.state == VOIP_ACCEPTING) {
         
     } else if (voip.state == VOIP_ACCEPTED) {
-        if (command.cmd == VOIP_COMMAND_CONNECTED) {
+        if (ctl.cmd == VOIP_COMMAND_CONNECTED) {
             NSLog(@"called voip connected");
             [self.acceptTimer invalidate];
             voip.state = VOIP_CONNECTED;
@@ -382,7 +384,7 @@
             self.hangUpButton.hidden = NO;
             self.acceptButton.hidden = YES;
             self.refuseButton.hidden = YES;
-        } else if (command.cmd == VOIP_COMMAND_ACCEPT) {
+        } else if (ctl.cmd == VOIP_COMMAND_ACCEPT) {
             //simultaneous open
             NSLog(@"simultaneous voip connected");
             [self.acceptTimer invalidate];
@@ -394,21 +396,21 @@
             self.refuseButton.hidden = YES;
         }
     } else if (voip.state == VOIP_CONNECTED) {
-        if (command.cmd == VOIP_COMMAND_HANG_UP) {
+        if (ctl.cmd == VOIP_COMMAND_HANG_UP) {
             voip.state = VOIP_HANGED_UP;
             [self stopStream];
             [self dismissViewControllerAnimated:YES completion:^{
                 voip.state = VOIP_LISTENING;
                 [[IMService instance] popVOIPObserver:self];
             }];
-        } else if (command.cmd == VOIP_COMMAND_RESET) {
+        } else if (ctl.cmd == VOIP_COMMAND_RESET) {
             voip.state = VOIP_RESETED;
             [self stopStream];
             [self dismissViewControllerAnimated:YES completion:^{
                 voip.state = VOIP_LISTENING;
                 [[IMService instance] popVOIPObserver:self];
             }];
-        } else if (command.cmd == VOIP_COMMAND_ACCEPT) {
+        } else if (ctl.cmd == VOIP_COMMAND_ACCEPT) {
             [self sendConnected];
         }
     }
@@ -446,16 +448,20 @@
 
 #pragma mark VoiceTransport
 -(int)sendRTPPacketA:(const void*)data length:(int)length {
-    VOIPData *vData = [[VOIPData alloc] init];
-    
-    vData.sender = [UserPresent instance].uid;
-    vData.receiver = self.peerUser.uid;
-    VOIPAVData *avData = [[VOIPAVData alloc] initWithRTPAudio:data length:length];
-    vData.content = avData.voipData;
-    BOOL r = [[IMService instance] sendVOIPData:vData];
-    if (!r) {
-        return 0;
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSLog(@"send rtp package");
+        
+        VOIPData *vData = [[VOIPData alloc] init];
+        
+        vData.sender = [UserPresent instance].uid;
+        vData.receiver = self.peerUser.uid;
+        VOIPAVData *avData = [[VOIPAVData alloc] initWithRTPAudio:data length:length];
+        vData.content = avData.voipData;
+        BOOL r = [[IMService instance] sendVOIPData:vData];
+        if (!r) {
+            NSLog(@"send rtp data fail");
+        }
+    });
     return length;
 }
 
@@ -463,17 +469,22 @@
     if (!STOR) {
         return 0;
     }
-    
-    VOIPData *vData = [[VOIPData alloc] init];
-    
-    vData.sender = [UserPresent instance].uid;
-    vData.receiver = self.peerUser.uid;
-    VOIPAVData *avData = [[VOIPAVData alloc] initWithRTCPAudio:data length:length];
-    vData.content = avData.voipData;
-    BOOL r = [[IMService instance] sendVOIPData:vData];
-    if (!r) {
-        return 0;
-    }
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSLog(@"send rtcp package");
+        
+        
+        VOIPData *vData = [[VOIPData alloc] init];
+        
+        vData.sender = [UserPresent instance].uid;
+        vData.receiver = self.peerUser.uid;
+        VOIPAVData *avData = [[VOIPAVData alloc] initWithRTCPAudio:data length:length];
+        vData.content = avData.voipData;
+        BOOL r = [[IMService instance] sendVOIPData:vData];
+        if (!r) {
+            NSLog(@"send rtcp data fail");
+        }
+    });
     return length;
 }
 

@@ -20,28 +20,6 @@ enum VOIPState {
     VOIP_RESETED,//通话连接被重置
 };
 
-enum VOIPCommand {
-    VOIP_COMMAND_DIAL,
-    VOIP_COMMAND_ACCEPT,
-    VOIP_COMMAND_CONNECTED,
-    VOIP_COMMAND_REFUSE,
-    VOIP_COMMAND_HANG_UP,
-    VOIP_COMMAND_RESET,
-    
-    //通话中
-    VOIP_COMMAND_TALKING,
-    
-};
-
-@interface VOIPControlCommand : NSObject
-
-@property(nonatomic, readonly) NSString *raw;
-@property(nonatomic, assign)enum VOIPCommand cmd;
-@property(nonatomic, assign)int dialCount;
-
--(VOIPControlCommand*)initWithRaw:(NSString*)raw;
-
-@end
 
 
 #define VOIP_AUDIO 1

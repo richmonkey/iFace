@@ -177,11 +177,10 @@
 #pragma mark - VOIPObserver
 -(void)onVOIPControl:(VOIPControl*)ctl {
     VOIP *voip = [VOIP instance];
-    VOIPControlCommand *command = [[VOIPControlCommand alloc] initWithRaw:ctl.content];
 
-    NSLog(@"voip state:%d command:%d", voip.state, command.cmd);
+    NSLog(@"voip state:%d command:%d", voip.state, ctl.cmd);
     if (voip.state == VOIP_LISTENING) {
-        if (command.cmd == VOIP_COMMAND_DIAL) {
+        if (ctl.cmd == VOIP_COMMAND_DIAL) {
             VOIPViewController *controller = [[VOIPViewController alloc] initWithCallerUID:ctl.sender];
             [self presentViewController:controller animated:YES completion:nil];
         }
@@ -198,12 +197,11 @@
 }
 
 -(void)sendReset:(int64_t)uid {
-    VOIPControlCommand *command = [[VOIPControlCommand alloc] init];
-    command.cmd = VOIP_COMMAND_RESET;
     VOIPControl *ctl = [[VOIPControl alloc] init];
     ctl.sender = [UserPresent instance].uid;
     ctl.receiver = uid;
-    ctl.content = command.raw;
+    ctl.cmd = VOIP_COMMAND_RESET;
+
     [[IMService instance] sendVOIPControl:ctl];
 }
 

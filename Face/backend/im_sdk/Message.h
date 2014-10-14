@@ -24,6 +24,19 @@
 #define MSG_VOIP_CONTROL 64
 #define MSG_VOIP_DATA 65
 
+
+enum VOIPCommand {
+    VOIP_COMMAND_DIAL = 1,
+    VOIP_COMMAND_ACCEPT,
+    VOIP_COMMAND_CONNECTED,
+    VOIP_COMMAND_REFUSE,
+    VOIP_COMMAND_HANG_UP,
+    VOIP_COMMAND_RESET,
+    
+    //通话中
+    VOIP_COMMAND_TALKING,
+    
+};
 @interface IMMessage : NSObject
 @property(nonatomic, assign)int64_t sender;
 @property(nonatomic, assign)int64_t receiver;
@@ -34,7 +47,8 @@
 @interface VOIPControl : NSObject
 @property(nonatomic, assign)int64_t sender;
 @property(nonatomic, assign)int64_t receiver;
-@property(nonatomic, copy)NSString *content;
+@property(nonatomic, assign) int32_t cmd;
+@property(nonatomic, assign) int32_t dialCount;//只对VOIP_COMMAND_DIAL有意义
 @end
 
 @interface VOIPData : NSObject
