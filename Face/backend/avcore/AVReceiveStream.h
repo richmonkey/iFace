@@ -1,6 +1,18 @@
 #include <Foundation/Foundation.h>
 #import "AVTransport.h"
 
+@interface AudioReceiveStream : NSObject
+@property (weak, nonatomic) id<VoiceTransport> voiceTransport;
+@property(assign, nonatomic)int voiceChannel;
+
+@property (assign, nonatomic) BOOL isHeadphone;
+@property (assign, nonatomic) BOOL isLoudspeaker;
+
+
+-(BOOL)start;
+-(BOOL)stop;
+@end
+
 @interface AVReceiveStream : NSObject {
     
 }
@@ -15,7 +27,7 @@
 @property (assign, nonatomic) BOOL isLoudspeaker;
 
 
--(void)start;
--(void)stop;
+-(BOOL)start;
+-(BOOL)stop;
 @end
 

@@ -6,11 +6,40 @@
 //  Copyright (c) 2014年 beetle. All rights reserved.
 //
 
+#import <AVFoundation/AVAudioSession.h>
+
 #import "VOIPViewController.h"
 #import "WebRTC.h"
 #import "AVSendStream.h"
 #import "AVReceiveStream.h"
+#include "webrtc/modules/video_render/ios/video_render_ios_view.h"
 
+#import "WebRTC.h"
+
+#include "webrtc/voice_engine/include/voe_base.h"
+#include "webrtc/common_types.h"
+#include "webrtc/system_wrappers/interface/constructor_magic.h"
+#include "webrtc/video_engine/include/vie_base.h"
+#include "webrtc/video_engine/include/vie_capture.h"
+#include "webrtc/video_engine/include/vie_codec.h"
+#include "webrtc/video_engine/include/vie_image_process.h"
+#include "webrtc/video_engine/include/vie_network.h"
+#include "webrtc/video_engine/include/vie_render.h"
+#include "webrtc/video_engine/include/vie_rtp_rtcp.h"
+#include "webrtc/video_engine/vie_defines.h"
+#include "webrtc/video_engine/include/vie_errors.h"
+#include "webrtc/video_engine/include/vie_render.h"
+
+#include "webrtc/voice_engine/include/voe_network.h"
+#include "webrtc/voice_engine/include/voe_base.h"
+#include "webrtc/voice_engine/include/voe_audio_processing.h"
+#include "webrtc/voice_engine/include/voe_dtmf.h"
+#include "webrtc/voice_engine/include/voe_codec.h"
+#include "webrtc/voice_engine/include/voe_errors.h"
+#include "webrtc/voice_engine/include/voe_neteq_stats.h"
+#include "webrtc/voice_engine/include/voe_file.h"
+#include "webrtc/voice_engine/include/voe_rtp_rtcp.h"
+#include "webrtc/voice_engine/include/voe_hardware.h"
 
 
 #import "User.h"
@@ -20,8 +49,8 @@
 
 @interface VOIPViewController ()
 
-@property(strong, nonatomic) AVSendStream *sendStream;
-@property(strong, nonatomic) AVReceiveStream *recvStream;
+@property(strong, nonatomic) AudioSendStream *sendStream;
+@property(strong, nonatomic) AudioReceiveStream *recvStream;
 @property(nonatomic, assign) BOOL isCaller;
 @property(nonatomic) User* peerUser;
 @property(nonatomic, assign) int dialCount;
@@ -30,6 +59,7 @@
 @property(nonatomic) UIButton *hangUpButton;
 @property(nonatomic) UIButton *acceptButton;
 @property(nonatomic) UIButton *refuseButton;
+@property(nonatomic) VideoRenderIosView *render;
 @end
 
 @implementation VOIPViewController
@@ -81,6 +111,9 @@
         return;
     }
     
+    VideoRenderIosView *render = [[VideoRenderIosView alloc] initWithFrame:CGRectMake(0, 200, 320, 200)];
+    [self.view addSubview:render];
+    self.render = render;
 
     UIButton *moreButton = [UIButton buttonWithType:UIButtonTypeCustom];
     moreButton.backgroundColor = [UIColor colorWithRed:0.78f green:0.78f blue:0.8f alpha:1.0f];
@@ -213,6 +246,42 @@
     [self sendControlCommand:VOIP_COMMAND_HANG_UP];
 }
 
+- (BOOL)isHeadsetPluggedIn
+{
+    AVAudioSessionRouteDescription *route = [[AVAudioSession sharedInstance] currentRoute];
+    
+    BOOL headphonesLocated = NO;
+    for( AVAudioSessionPortDescription *portDescription in route.outputs )
+    {
+        headphonesLocated |= ( [portDescription.portType isEqualToString:AVAudioSessionPortHeadphones] );
+    }
+    return headphonesLocated;
+}
+
+
+- (void)startStream {
+    if (self.sendStream || self.recvStream) return;
+    
+    BOOL isHeadphone = [self isHeadsetPluggedIn];
+    
+    self.sendStream = [[AudioSendStream alloc] init];
+    self.sendStream.voiceTransport = self;
+    [self.sendStream start];
+
+    self.recvStream = [[AudioReceiveStream alloc] init];
+    self.recvStream.voiceTransport = self;
+    self.recvStream.isHeadphone = isHeadphone;
+    self.recvStream.isLoudspeaker = NO;
+    
+    [self.recvStream start];
+}
+
+
+-(void)stopStream {
+    [self.sendStream stop];
+    [self.recvStream stop];
+}
+
 #pragma mark - VOIPObserver
 -(void)onVOIPControl:(VOIPControl*)ctl {
     VOIP *voip = [VOIP instance];
@@ -230,8 +299,7 @@
             voip.state = VOIP_CONNECTED;
             [self.dialTimer invalidate];
             NSLog(@"call voip connected");
-            //todo 发送语音数据
-            
+            [self startStream];
         } else if (command.cmd == VOIP_COMMAND_REFUSE) {
             voip.state = VOIP_REFUSED;
             [self.dialTimer invalidate];
@@ -249,7 +317,6 @@
                                                               userInfo:nil
                                                                repeats:YES];
             [self sendDialAccept];
-        
         }
     } else if (voip.state == VOIP_ACCEPTING) {
         
@@ -258,33 +325,41 @@
             NSLog(@"called voip connected");
             [self.acceptTimer invalidate];
             voip.state = VOIP_CONNECTED;
+            [self startStream];
+            
             self.hangUpButton.hidden = NO;
             self.acceptButton.hidden = YES;
             self.refuseButton.hidden = YES;
-            //todo 发送语音数据
         } else if (command.cmd == VOIP_COMMAND_ACCEPT) {
             //simultaneous open
             NSLog(@"simultaneous voip connected");
             [self.acceptTimer invalidate];
             voip.state = VOIP_CONNECTED;
+            [self startStream];
+            
             self.hangUpButton.hidden = NO;
             self.acceptButton.hidden = YES;
             self.refuseButton.hidden = YES;
-            //todo 发送语音数据
         }
     } else if (voip.state == VOIP_CONNECTED) {
         if (command.cmd == VOIP_COMMAND_HANG_UP) {
             voip.state = VOIP_HANGED_UP;
-            
-            //todo 停止发送语音数据, dismiss self
+            [self stopStream];
+            [self dismissViewControllerAnimated:YES completion:^{
+                voip.state = VOIP_LISTENING;
+                [[IMService instance] popVOIPObserver:self];
+            }];
         } else if (command.cmd == VOIP_COMMAND_RESET) {
             voip.state = VOIP_RESETED;
-            //todo 停止发送语音数据, dismiss self
+            [self stopStream];
+            [self dismissViewControllerAnimated:YES completion:^{
+                voip.state = VOIP_LISTENING;
+                [[IMService instance] popVOIPObserver:self];
+            }];
         } else if (command.cmd == VOIP_COMMAND_ACCEPT) {
             [self sendConnected];
         }
     }
-    
 }
 
 -(void)onVOIPData:(VOIPData*)data {
@@ -295,10 +370,60 @@
     VOIP *voip = [VOIP instance];
 
     if (voip.state == VOIP_CONNECTED) {
-        //todo 读取数据
+        VOIPAVData *avData = [[VOIPAVData alloc] initWithVOIPData:data.content];
+        
+        const void *packet = [avData.avData bytes];
+        int packet_length = [avData.avData length];
+        
+        WebRTC *rtc = [WebRTC sharedWebRTC];
+    
+        if (avData.isRTP) {
+            if (avData.type == VOIP_AUDIO) {
+                rtc.voe_network->ReceivedRTPPacket(self.recvStream.voiceChannel, packet, packet_length);
+            }
+        } else {
+            if (avData.type == VOIP_AUDIO) {
+                rtc.voe_network->ReceivedRTCPPacket(self.recvStream.voiceChannel, packet, packet_length);
+            }
+        }
     } else {
         NSLog(@"skip data...");
     }
+}
+#pragma mark VideoTransport
+
+-(int)sendRTPPacketV:(const void*)data length:(int)length {
+    return 0;
+}
+-(int)sendRTCPPacketV:(const void*)data length:(int)length STOR:(BOOL)STOR {
+    return 0;
+}
+
+#pragma mark VoiceTransport
+-(int)sendRTPPacketA:(const void*)data length:(int)length {
+    VOIPData *vData = [[VOIPData alloc] init];
+    
+    vData.sender = [UserPresent instance].uid;
+    vData.receiver = self.peerUser.uid;
+    VOIPAVData *avData = [[VOIPAVData alloc] initWithRTPAudio:data length:length];
+    vData.content = avData.voipData;
+    [[IMService instance] sendVOIPData:vData];
+    return length;
+}
+
+-(int)sendRTCPPacketA:(const void*)data length:(int)length STOR:(BOOL)STOR {
+    if (!STOR) {
+        return 0;
+    }
+    
+    VOIPData *vData = [[VOIPData alloc] init];
+    
+    vData.sender = [UserPresent instance].uid;
+    vData.receiver = self.peerUser.uid;
+    VOIPAVData *avData = [[VOIPAVData alloc] initWithRTCPAudio:data length:length];
+    vData.content = avData.voipData;
+    [[IMService instance] sendVOIPData:vData];
+    return length;
 }
 
 @end

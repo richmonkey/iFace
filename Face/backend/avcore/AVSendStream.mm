@@ -42,10 +42,104 @@
 
 #define DEFAULT_AUDIO_CODEC                             "ILBC"//"ISAC"
 
-@interface AVSendStream() {
 
+@interface AudioSendStream()
+@property(assign, nonatomic)VoiceChannelTransport *voiceChannelTransport;
+@end
+
+@implementation AudioSendStream
+
+- (void)dealloc
+{
+    NSAssert(self.voiceChannelTransport == NULL, @"");
+    IMLog(@"av send stream dealloc");
 }
 
+
+- (void)startSend
+{
+    WebRTC *rtc = [WebRTC sharedWebRTC];
+    rtc.voe_base->StartSend(self.voiceChannel);
+}
+
+- (void)startReceive
+{
+    WebRTC *rtc = [WebRTC sharedWebRTC];
+    rtc.voe_base->StartReceive(self.voiceChannel);
+}
+
+-(void)setSendVoiceCodec {
+    int error;
+    WebRTC *rtc = [WebRTC sharedWebRTC];
+    rtc.voe_codec->NumOfCodecs();
+    webrtc::CodecInst audio_codec;
+    memset(&audio_codec, 0, sizeof(webrtc::CodecInst));
+    for (int codec_idx = 0; codec_idx < rtc.voe_codec->NumOfCodecs(); codec_idx++) {
+        error = rtc.voe_codec->GetCodec(codec_idx, audio_codec);
+        
+        if (strcmp(audio_codec.plname, DEFAULT_AUDIO_CODEC) == 0) {
+            break;
+        }
+    }
+    
+    error = rtc.voe_codec->SetSendCodec(self.voiceChannel, audio_codec);
+    NSLog(@"codec:%s", audio_codec.plname);
+}
+
+-(BOOL) start
+{
+    WebRTC *rtc = [WebRTC sharedWebRTC];
+    
+    self.voiceChannel = rtc.voe_base->CreateChannel();
+    self.voiceChannelTransport = new VoiceChannelTransport(rtc.voe_network,
+                                                           self.voiceChannel,
+                                                           self.voiceTransport, YES);
+    
+    int error = 0;
+    int audio_capture_device_index = 0;
+    error = rtc.voe_hardware->SetRecordingDevice(audio_capture_device_index);
+    
+    [self setSendVoiceCodec];
+    error = rtc.voe_apm->SetAgcStatus(true, webrtc::kAgcDefault);
+    error = rtc.voe_apm->SetNsStatus(true, webrtc::kNsHighSuppression);
+    
+    
+    int videoChannel;
+    
+    error = rtc.base->CreateChannel(videoChannel);
+    if (error != 0) {
+        return NO;
+    }
+    
+    rtc.rtp_rtcp->SetRTCPStatus(videoChannel,
+                                webrtc::kRtcpCompound_RFC4585);
+    rtc.rtp_rtcp->SetKeyFrameRequestMethod(videoChannel,
+                                           webrtc::kViEKeyFrameRequestPliRtcp);
+  
+    
+    [self startSend];
+    [self startReceive];
+    
+    return YES;
+}
+
+-(BOOL)stop {
+    WebRTC *rtc = [WebRTC sharedWebRTC];
+    
+    rtc.voe_base->StopReceive(self.voiceChannel);
+    rtc.voe_base->StopSend(self.voiceChannel);
+    rtc.voe_base->DeleteChannel(self.voiceChannel);
+    rtc.base->DisconnectAudioChannel(self.voiceChannel);
+    delete self.voiceChannelTransport;
+    self.voiceChannelTransport = NULL;
+    return YES;
+}
+
+@end
+
+
+
+@interface AVSendStream() 
 
 @property(assign, nonatomic)VideoChannelTransport *channelTransport;
 @property(assign, nonatomic)VoiceChannelTransport *voiceChannelTransport;
@@ -73,14 +167,14 @@
 - (void)startSend
 {
     WebRTC *rtc = [WebRTC sharedWebRTC];
-    EXPECT_EQ(0, rtc.base->StartSend(self.videoChannel));
+    rtc.base->StartSend(self.videoChannel);
     rtc.voe_base->StartSend(self.voiceChannel);
 }
 
 - (void)startReceive
 {
     WebRTC *rtc = [WebRTC sharedWebRTC];
-    EXPECT_EQ(0, rtc.base->StartReceive(self.videoChannel));
+    rtc.base->StartReceive(self.videoChannel);
     rtc.voe_base->StartReceive(self.voiceChannel);
 }
 - (void)startCapture
@@ -185,7 +279,7 @@
     EXPECT_TRUE(sendCodecSet);
 }
 
--(void) start
+-(BOOL) start
 {
     WebRTC *rtc = [WebRTC sharedWebRTC];
     
@@ -205,7 +299,10 @@
     
     int videoChannel;
     
-    EXPECT_EQ(0, rtc.base->CreateChannel(videoChannel));
+    error = rtc.base->CreateChannel(videoChannel);
+    if (error != 0) {
+        return NO;
+    }
     self.videoChannel = videoChannel;
     
     rtc.base->ConnectAudioChannel(videoChannel, self.voiceChannel);
@@ -223,7 +320,10 @@
     if (self.hasVideo) {
         [self startCapture];
     
-        EXPECT_EQ(0, rtc.capture->ConnectCaptureDevice(self.captureId, self.videoChannel));
+        error = rtc.capture->ConnectCaptureDevice(self.captureId, self.videoChannel);
+        if (error != 0) {
+            return NO;
+        }
     }
     
     [self startSend];
@@ -235,17 +335,17 @@
         void *window1 = (__bridge void*)self.render;
         _vrm1 = webrtc::VideoRender::CreateVideoRender(4561, window1, false, _renderType);
         
-        EXPECT_EQ(0, rtc.render->RegisterVideoRenderModule(*_vrm1));
-        EXPECT_EQ(0, rtc.render->AddRenderer(
-                                             self.captureId, window1, 0, 0.0, 0.0, 1.0, 1.0));
-        EXPECT_EQ(0, rtc.render->StartRender(self.captureId));
+        error = rtc.render->RegisterVideoRenderModule(*_vrm1);
+        error = rtc.render->AddRenderer(self.captureId, window1, 0, 0.0, 0.0, 1.0, 1.0);
+        error = rtc.render->StartRender(self.captureId);
         
         NSLog(@"\nCapture device is renderered in Window 1");
     }
     
+    return YES;
 }
 
--(void)stop {
+-(BOOL)stop {
     
     WebRTC *rtc = [WebRTC sharedWebRTC];
     
@@ -265,13 +365,18 @@
     rtc.capture->DisconnectCaptureDevice(self.videoChannel);
     rtc.capture->ReleaseCaptureDevice(self.captureId);
     
-    EXPECT_EQ(0, rtc.base->DeleteChannel(self.videoChannel));
+    int error = rtc.base->DeleteChannel(self.videoChannel);
+    if (error != 0) {
+        return NO;
+    }
+    
     delete self.channelTransport;
     self.channelTransport = NULL;
     if (self.captureModule) {
         self.captureModule->Release();
         self.captureModule = NULL;
     }
+    return YES;
 }
 
 

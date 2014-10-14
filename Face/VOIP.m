@@ -76,6 +76,82 @@
 
 @end
 
+@implementation VOIPAVData
+
+
+-(VOIPAVData*)initWithRTPAudio:(const void*)p length:(int)length {
+    self = [super init];
+    if (self) {
+        NSMutableData *data = [NSMutableData dataWithLength:length+2];
+        char *t = [data mutableBytes];
+        t[0] = VOIP_AUDIO;
+        t[1] = VOIP_RTP;
+        memcpy(t+2, p, length);
+        self.voipData = data;
+    }
+    return self;
+}
+
+-(VOIPAVData*)initWithRTCPAudio:(const void*)p length:(int)length {
+    self = [super init];
+    if (self) {
+        NSMutableData *data = [NSMutableData dataWithLength:length+2];
+        char *t = [data mutableBytes];
+        t[0] = VOIP_AUDIO;
+        t[1] = VOIP_RTCP;
+        memcpy(t+2, p, length);
+        self.voipData = data;
+    }
+    return self;
+}
+
+-(VOIPAVData*)initWithRTPVideo:(const void*)p length:(int)length {
+    self = [super init];
+    if (self) {
+        NSMutableData *data = [NSMutableData dataWithLength:length+2];
+        char *t = [data mutableBytes];
+        t[0] = VOIP_VIDEO;
+        t[1] = VOIP_RTP;
+        memcpy(t+2, p, length);
+        self.voipData = data;
+    }
+    return self;
+}
+
+-(VOIPAVData*)initWithRTCPVideo:(const void*)p length:(int)length {
+    self = [super init];
+    if (self) {
+        NSMutableData *data = [NSMutableData dataWithLength:length+2];
+        char *t = [data mutableBytes];
+        t[0] = VOIP_VIDEO;
+        t[1] = VOIP_RTCP;
+        memcpy(t+2, p, length);
+        self.voipData = data;
+    }
+    return self;
+}
+
+
+-(VOIPAVData*)initWithVOIPData:(NSData*)data {
+    self = [super init];
+    if (self) {
+        if (data.length > 2) {
+            const char *p = [data bytes];
+            self.type = p[0];
+            if (p[1] == VOIP_RTP) {
+                self.rtp = YES;
+            } else {
+                self.rtp = NO;
+            }
+            NSRange r = NSMakeRange(2, data.length-2);
+            self.avData = [data subdataWithRange:r];
+        }
+    }
+    return self;
+}
+
+@end
+
 @implementation VOIP
 +(VOIP*)instance {
     static VOIP *voip;

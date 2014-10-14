@@ -1,5 +1,17 @@
 #include <Foundation/Foundation.h>
 #import "AVTransport.h"
+
+@interface AudioSendStream : NSObject {
+}
+
+@property (weak, nonatomic) id<VoiceTransport> voiceTransport;
+
+@property(assign, nonatomic)int voiceChannel;
+
+-(BOOL)start;
+-(BOOL)stop;
+@end
+
 @interface AVSendStream : NSObject {
 }
 @property (weak, nonatomic) UIView *render;
@@ -11,7 +23,7 @@
 @property (assign, nonatomic)BOOL hasVideo;
 
 -(void)sendKeyFrame;
--(void)start;
--(void)stop;
+-(BOOL)start;
+-(BOOL)stop;
 @end
 
