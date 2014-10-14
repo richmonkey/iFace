@@ -53,9 +53,14 @@
 @property(strong, nonatomic) AudioReceiveStream *recvStream;
 @property(nonatomic, assign) BOOL isCaller;
 @property(nonatomic) User* peerUser;
+
 @property(nonatomic, assign) int dialCount;
+@property(nonatomic, assign) time_t dialBeginTimestamp;
 @property(nonatomic) NSTimer *dialTimer;
+
+@property(nonatomic, assign) time_t acceptTimestamp;
 @property(nonatomic) NSTimer *acceptTimer;
+
 @property(nonatomic) UIButton *hangUpButton;
 @property(nonatomic) UIButton *acceptButton;
 @property(nonatomic) UIButton *refuseButton;
@@ -83,6 +88,7 @@
         self.history = [[History alloc] init];
         self.history.peerUID = uid;
         self.history.flag = FLAG_OUT;
+        self.history.createTimestamp = time(NULL);
     }
     return self;
 }
@@ -95,6 +101,7 @@
         self.isCaller = NO;
         self.history = [[History alloc] init];
         self.history.peerUID = uid;
+        self.history.createTimestamp = time(NULL);
     }
     return self;
 }
@@ -159,6 +166,7 @@
             if (self.isCaller) {
                 voip.state = VOIP_DIALING;
                 [self sendDial];
+                self.dialBeginTimestamp = time(NULL);
                 self.dialTimer = [NSTimer scheduledTimerWithTimeInterval: 1
                                                                   target:self
                                                                 selector:@selector(sendDial)
@@ -204,6 +212,7 @@
     self.history.flag = self.history.flag&FLAG_ACCEPTED;
 
     
+    self.acceptTimestamp = time(NULL);
     self.acceptTimer = [NSTimer scheduledTimerWithTimeInterval: 1
                                                         target:self
                                                       selector:@selector(sendDialAccept)
@@ -247,6 +256,14 @@
     } else {
         NSLog(@"dial fail");
     }
+    
+    time_t now = time(NULL);
+    if (now - self.dialBeginTimestamp >= 60) {
+        NSLog(@"dial timeout");
+        [self.dialTimer invalidate];
+        self.history.flag = self.history.flag&FLAG_UNRECEIVED;
+        [self dismiss];
+    }
 }
 
 -(void)sendControlCommand:(enum VOIPCommand)cmd {
@@ -271,6 +288,13 @@
 
 -(void)sendDialAccept {
     [self sendControlCommand:VOIP_COMMAND_ACCEPT];
+    
+    time_t now = time(NULL);
+    if (now - self.acceptTimestamp >= 10) {
+        NSLog(@"accept timeout");
+        [self.acceptTimer invalidate];
+        [self dismiss];
+    }
 }
 
 -(void)sendDialRefuse {
@@ -359,7 +383,8 @@
             voip.state = VOIP_ACCEPTED;
             self.history.flag = self.history.flag&FLAG_ACCEPTED;
 
-            
+
+            self.acceptTimestamp = time(NULL);
             self.acceptTimer = [NSTimer scheduledTimerWithTimeInterval: 1
                                                                 target:self
                                                               selector:@selector(sendDialAccept)

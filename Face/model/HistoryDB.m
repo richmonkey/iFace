@@ -38,7 +38,8 @@
         if (!r) {
             NSLog(@"open db error:%@", [self.db lastErrorMessage]);
         }
-        NSString *sql = @"CREATE TABLE IF NOT EXISTS history(hid INTEGER PRIMARY KEY AUTOINCREMENT, flag INT, begin_timestamp INT, end_timestamp INT)";
+        NSString *sql = @"CREATE TABLE IF NOT EXISTS history(hid INTEGER PRIMARY KEY AUTOINCREMENT,\
+                            flag INT, create_timestamp INT, begin_timestamp INT, end_timestamp INT)";
         r = [self.db executeUpdate:sql];
         if (!r) {
             NSLog(@"create table last error:%d %@", [self.db lastErrorCode], [self.db lastErrorMessage]);
@@ -48,9 +49,11 @@
 }
 
 -(BOOL)addHistory:(History*)h {
-    NSString *sql = @"INSERT INTO history(flag, begin_timestamp, end_timestamp) VALUES(:flag, :begin_timestamp, :end_timestamp)";
+    NSString *sql = @"INSERT INTO history(flag, create_timestamp, begin_timestamp, end_timestamp) \
+                        VALUES(:flag, :create_timestamp, :begin_timestamp, :end_timestamp)";
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [dict setObject:[NSNumber numberWithInt:h.flag] forKey:@"flag"];
+    [dict setObject:[NSNumber numberWithLong:h.createTimestamp] forKey:@"create_timestamp"];
     [dict setObject:[NSNumber numberWithLong:h.beginTimestamp] forKey:@"begin_timestamp"];
     [dict setObject:[NSNumber numberWithLong:h.endTimestamp] forKey:@"end_timestamp"];
      
@@ -65,7 +68,7 @@
 
 
 -(NSArray*)loadHistoryDB {
-    NSString *sql = @"SELECT hid, flag, begin_timestamp, end_timestamp FROM history ORDER BY hid DESC";
+    NSString *sql = @"SELECT hid, flag, create_timestamp, begin_timestamp, end_timestamp FROM history ORDER BY hid DESC";
     FMResultSet *rs = [self.db executeQuery:sql];
     if (rs == nil) {
         NSLog(@"select table error:%@", [self.db lastErrorMessage]);
@@ -76,6 +79,7 @@
         History *h = [[History alloc] init];
         h.hid = [rs longLongIntForColumn:@"hid"];
         h.flag = [rs intForColumn:@"flag"];
+        h.createTimestamp = [rs longForColumn:@"create_timestamp"];
         h.beginTimestamp = [rs longForColumn:@"begin_timestamp"];
         h.endTimestamp = [rs longForColumn:@"end_timestamp"];
         [array addObject:h];

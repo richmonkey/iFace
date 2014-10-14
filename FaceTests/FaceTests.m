@@ -29,6 +29,7 @@
 - (void)testHistoryDB
 {
     History *h = [[History alloc] init];
+    h.createTimestamp = 100;
     h.beginTimestamp = 1;
     h.endTimestamp = 2;
     h.flag = FLAG_OUT;
@@ -36,7 +37,7 @@
     
     NSArray *array = [[HistoryDB instance] loadHistoryDB];
     for (History *h in array) {
-        NSLog(@"history:%lld %d %ld %ld", h.hid, h.flag, h.beginTimestamp, h.endTimestamp);
+        NSLog(@"history:%lld %d %ld, %ld %ld", h.hid, h.flag, h.createTimestamp, h.beginTimestamp, h.endTimestamp);
     }
 }
 
