@@ -7,7 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
-
+#import "HistoryDB.h"
 @interface FaceTests : XCTestCase
 
 @end
@@ -26,9 +26,18 @@
     [super tearDown];
 }
 
-- (void)testExample
+- (void)testHistoryDB
 {
-    XCTFail(@"No implementation for \"%s\"", __PRETTY_FUNCTION__);
+    History *h = [[History alloc] init];
+    h.beginTimestamp = 1;
+    h.endTimestamp = 2;
+    h.flag = FLAG_OUT;
+    [[HistoryDB instance] addHistory:h];
+    
+    NSArray *array = [[HistoryDB instance] loadHistoryDB];
+    for (History *h in array) {
+        NSLog(@"history:%lld %d %ld %ld", h.hid, h.flag, h.beginTimestamp, h.endTimestamp);
+    }
 }
 
 @end

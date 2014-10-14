@@ -112,13 +112,13 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [[IMService instance] pushVOIPObserver:self];
-    
     VOIP *voip = [VOIP instance];
     if (voip.state != VOIP_LISTENING) {
         NSLog(@"invalid voip state:%d", voip.state);
         return;
     }
+    
+    [[IMService instance] pushVOIPObserver:self];
 
     UIButton *moreButton = [UIButton buttonWithType:UIButtonTypeCustom];
     moreButton.backgroundColor = [UIColor colorWithRed:0.78f green:0.78f blue:0.8f alpha:1.0f];
@@ -169,27 +169,32 @@
             } else {
                 voip.state = VOIP_ACCEPTING;
             }
-            
-            [[HistoryDB instance] addHistory:self.history];
+
         } else {
             NSLog(@"can't grant record permission");
-            [self dismissViewControllerAnimated:NO completion:nil];
+            [self dismissViewControllerAnimated:NO completion:^{
+                [[IMService instance] popVOIPObserver:self];
+            }];
         }
+    }];
+}
+
+-(void)dismiss {
+    [self dismissViewControllerAnimated:YES completion:^{
+        VOIP *voip = [VOIP instance];
+        voip.state = VOIP_LISTENING;
+        [[IMService instance] popVOIPObserver:self];
+        [[HistoryDB instance] addHistory:self.history];
     }];
 }
 
 -(void)refuseCall:(UIButton*)button {
     VOIP *voip = [VOIP instance];
     voip.state = VOIP_REFUSED;
-    
     self.history.flag = self.history.flag&FLAG_REFUSED;
-    [[HistoryDB instance] updateHistoryFlag:self.history];
-    
     [self sendDialRefuse];
     
-    [self dismissViewControllerAnimated:NO completion:^{
-        voip.state = VOIP_LISTENING;
-    }];
+    [self dismiss];
 }
 
 -(void)acceptCall:(UIButton*)button {
@@ -197,7 +202,7 @@
     voip.state = VOIP_ACCEPTED;
     
     self.history.flag = self.history.flag&FLAG_ACCEPTED;
-    [[HistoryDB instance] updateHistoryFlag:self.history];
+
     
     self.acceptTimer = [NSTimer scheduledTimerWithTimeInterval: 1
                                                         target:self
@@ -215,23 +220,15 @@
         voip.state = VOIP_HANGED_UP;
         
         self.history.flag = self.history.flag&FLAG_CANCELED;
-        [[HistoryDB instance] updateHistoryFlag:self.history];
-        
-        [self dismissViewControllerAnimated:YES completion:^{
-            voip.state = VOIP_LISTENING;
-            [[IMService instance] popVOIPObserver:self];
-        }];
-        
+
+        [self dismiss];
     } else if (voip.state == VOIP_CONNECTED) {
         [self sendHangUp];
         voip.state = VOIP_HANGED_UP;
         
         [self stopStream];
         
-        [self dismissViewControllerAnimated:YES completion:^{
-            voip.state = VOIP_LISTENING;
-            [[IMService instance] popVOIPObserver:self];
-        }];
+        [self dismiss];
     } else {
         NSLog(@"invalid voip state:%d", voip.state);
     }
@@ -341,7 +338,7 @@
     if (voip.state == VOIP_DIALING) {
         if (ctl.cmd == VOIP_COMMAND_ACCEPT) {
             self.history.flag = self.history.flag&FLAG_ACCEPTED;
-            [[HistoryDB instance] updateHistoryFlag:self.history];
+
             
             [self sendConnected];
             voip.state = VOIP_CONNECTED;
@@ -351,19 +348,17 @@
         } else if (ctl.cmd == VOIP_COMMAND_REFUSE) {
             voip.state = VOIP_REFUSED;
             self.history.flag = self.history.flag&FLAG_REFUSED;
-            [[HistoryDB instance] updateHistoryFlag:self.history];
+ 
             
             [self.dialTimer invalidate];
-            [self dismissViewControllerAnimated:YES completion:^{
-                voip.state = VOIP_LISTENING;
-                [[IMService instance] popVOIPObserver:self];
-            }];
+            
+            [self dismiss];
         } else if (ctl.cmd == VOIP_COMMAND_DIAL) {
             //simultaneous open
             [self.dialTimer invalidate];
             voip.state = VOIP_ACCEPTED;
             self.history.flag = self.history.flag&FLAG_ACCEPTED;
-            [[HistoryDB instance] updateHistoryFlag:self.history];
+
             
             self.acceptTimer = [NSTimer scheduledTimerWithTimeInterval: 1
                                                                 target:self
@@ -399,17 +394,13 @@
         if (ctl.cmd == VOIP_COMMAND_HANG_UP) {
             voip.state = VOIP_HANGED_UP;
             [self stopStream];
-            [self dismissViewControllerAnimated:YES completion:^{
-                voip.state = VOIP_LISTENING;
-                [[IMService instance] popVOIPObserver:self];
-            }];
+            [self dismiss];
         } else if (ctl.cmd == VOIP_COMMAND_RESET) {
             voip.state = VOIP_RESETED;
             [self stopStream];
-            [self dismissViewControllerAnimated:YES completion:^{
-                voip.state = VOIP_LISTENING;
-                [[IMService instance] popVOIPObserver:self];
-            }];
+            
+            [self dismiss];
+
         } else if (ctl.cmd == VOIP_COMMAND_ACCEPT) {
             [self sendConnected];
         }

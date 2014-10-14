@@ -13,7 +13,6 @@
 +(HistoryDB*)instance;
 
 -(BOOL)addHistory:(History*)h;
--(BOOL)updateHistoryFlag:(History*)h;
 
 -(NSArray*)loadHistoryDB;
 
