@@ -67,6 +67,7 @@
 
 @property(nonatomic)NSString *host;
 @property(nonatomic)int port;
+@property(nonatomic)int voipPort;
 @property(nonatomic, assign)int connectState;
 @property(nonatomic, weak)id<IMPeerMessageHandler> peerMessageHandler;
 @property(nonatomic, weak)id<IMGroupMessageHandler> groupMessageHandler;

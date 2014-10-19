@@ -102,22 +102,7 @@
         } else {
             return [NSData dataWithBytes:buf length:HEAD_SIZE+20];
         }
-    } else if (self.cmd == MSG_VOIP_DATA) {
-        VOIPData *data = (VOIPData*)self.body;
-        writeInt64(data.sender, p);
-        p += 8;
-        writeInt64(data.receiver, p);
-        p += 8;
-        
-        const void *s = [data.content bytes];
-        int l = [data.content length];
-        if ((l + HEAD_SIZE + 16) > 64*1024) {
-            return nil;
-        }
-        memcpy(p, s, l);
-        return [NSData dataWithBytes:buf length:HEAD_SIZE + 16 + l];
-    }
-    
+    } 
     return nil;
 }
 
@@ -186,17 +171,7 @@
         }
         self.body = ctl;
         return YES;
-    } else if (self.cmd == MSG_VOIP_DATA) {
-        VOIPData *vdata = [[VOIPData alloc] init];
-        vdata.sender = readInt64(p);
-        p += 8;
-        vdata.receiver = readInt64(p);
-        p += 8;
-        vdata.content = [NSData dataWithBytes:p length:data.length-HEAD_SIZE-16];
-        self.body = data;
-        return YES;
     }
-
     return NO;
 }
 

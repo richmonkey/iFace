@@ -34,6 +34,9 @@
 @property(nonatomic)NSMutableDictionary *subs;
 
 @property(nonatomic)NSMutableArray *voipObservers;
+
+@property(nonatomic, assign)int udpFD;
+@property(nonatomic, strong)dispatch_source_t readSource;
 @end
 
 @implementation IMService
@@ -69,8 +72,65 @@
         self.groupMessages = [NSMutableDictionary dictionary];
         self.connectState = STATE_UNCONNECTED;
         self.stopped = YES;
+        
+        self.udpFD = -1;
+
     }
     return self;
+}
+
+-(void)handleRead {
+    char buf[64*1024];
+    struct sockaddr_in addr;
+    socklen_t len;
+    int n = recvfrom(self.udpFD, buf, 64*1024, 0, (struct sockaddr*)&addr, &len);
+    if (n <= 0) {
+        NSLog(@"recv udp error");
+        return;
+    }
+
+    if (n <= 16) {
+        NSLog(@"invalid voip data length");
+        return;
+    }
+    
+    VOIPData *vdata = [[VOIPData alloc] init];
+    char *p = buf;
+    
+    vdata.sender = readInt64(p);
+    p += 8;
+    vdata.receiver = readInt64(p);
+    p += 8;
+    vdata.content = [NSData dataWithBytes:p length:n-16];
+    id<VOIPObserver> ob = [self.voipObservers lastObject];
+    if (ob) {
+        [ob onVOIPData:vdata];
+    }
+}
+
+-(void)listenVOIP {
+    if (self.readSource) {
+        return;
+    }
+    
+    struct sockaddr_in addr;
+    self.udpFD = socket(AF_INET,SOCK_DGRAM,0);
+    bzero(&addr,sizeof(addr));
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr=htonl(INADDR_ANY);
+    addr.sin_port=htons(self.voipPort);
+    bind(self.udpFD, (struct sockaddr *)&addr,sizeof(addr));
+    
+    sock_nonblock(self.udpFD, 1);
+    
+    dispatch_queue_t queue = dispatch_get_main_queue();
+    self.readSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_READ, self.udpFD, 0, queue);
+    __weak IMService *wself = self;
+    dispatch_source_set_event_handler(self.readSource, ^{
+        [wself handleRead];
+    });
+    
+    dispatch_resume(self.readSource);
 }
 
 -(void)start:(int64_t)uid {
@@ -93,6 +153,7 @@
     dispatch_source_set_timer(self.heartbeatTimer, w, HEARTBEAT, HEARTBEAT/2);
     dispatch_resume(self.heartbeatTimer);
     
+    [self listenVOIP];
     [self refreshHostIP];
 }
 
@@ -109,6 +170,19 @@
     self.connectState = STATE_UNCONNECTED;
     [self publishConnectState:STATE_UNCONNECTED];
     [self close];
+    
+    [self closeUDP];
+}
+
+-(void)closeUDP {
+    if (self.readSource) {
+        dispatch_source_set_cancel_handler(self.readSource, ^{
+            close(self.udpFD);
+            self.udpFD = -1;
+            self.readSource = nil;
+        });
+        dispatch_source_cancel(self.readSource);
+    }
 }
 
 -(void)close {
@@ -250,14 +324,6 @@
     }
 }
 
--(void)handleVOIPData:(Message*)msg {
-    VOIPData *data = (VOIPData*)msg.body;
-    id<VOIPObserver> ob = [self.voipObservers lastObject];
-    if (ob) {
-        [ob onVOIPData:data];
-    }
-}
-
 -(void)publishPeerMessage:(IMMessage*)msg {
     for (id<MessageObserver> ob in self.observers) {
         [ob onPeerMessage:msg];
@@ -317,8 +383,6 @@
         [self handleOnlineState:msg];
     } else if (msg.cmd == MSG_VOIP_CONTROL) {
         [self handleVOIPControl:msg];
-    } else if (msg.cmd == MSG_VOIP_DATA) {
-        [self handleVOIPData:msg];
     }
 }
 
@@ -588,10 +652,35 @@
 }
 
 -(BOOL)sendVOIPData:(VOIPData*)data {
-    Message *m = [[Message alloc] init];
-    m.cmd = MSG_VOIP_DATA;
-    m.body = data;
-    return [self sendMessage:m];
+    if (self.hostIP.length == 0) {
+        [self refreshHostIP];
+        return NO;
+    }
+    if (data.content.length + 16 > 64*1024) {
+        return NO;
+    }
+    
+    char buff[64*1024];
+    char *p = buff;
+    writeInt64(data.sender, p);
+    p += 8;
+    writeInt64(data.receiver, p);
+    p += 8;
+
+    const void *src = [data.content bytes];
+    int len = [data.content length];
+    
+    memcpy(p, src, len);
+
+    struct sockaddr_in addr;
+    bzero(&addr, sizeof(addr));
+    
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr=inet_addr([self.hostIP UTF8String]);
+    addr.sin_port=htons(self.voipPort);
+    
+    sendto(self.udpFD, buff, len + 16, 0, (struct sockaddr*)&addr, sizeof(addr));
+    return YES;
 }
 
 @end

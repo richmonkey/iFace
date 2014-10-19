@@ -25,10 +25,11 @@
     if (self) {
         self.host = @"106.185.43.85";
         self.port = 23000;
+        self.voipPort = 23001;
     }
     return self;
 }
 -(NSString*)URL {
-    return @"http://im.yufeng.me:5000";
+    return @"http://106.186.122.158:5000";
 }
 @end

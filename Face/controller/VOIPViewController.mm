@@ -165,8 +165,10 @@
         if (granted) {
             if (self.isCaller) {
                 voip.state = VOIP_DIALING;
-                [self sendDial];
+                
                 self.dialBeginTimestamp = time(NULL);
+                [self sendDial];
+
                 self.dialTimer = [NSTimer scheduledTimerWithTimeInterval: 1
                                                                   target:self
                                                                 selector:@selector(sendDial)
@@ -438,24 +440,27 @@
         return;
     }
     VOIP *voip = [VOIP instance];
-
     if (voip.state == VOIP_CONNECTED) {
+        int channel = self.recvStream.voiceChannel;
         VOIPAVData *avData = [[VOIPAVData alloc] initWithVOIPData:data.content];
         
         const void *packet = [avData.avData bytes];
         int packet_length = [avData.avData length];
         
         WebRTC *rtc = [WebRTC sharedWebRTC];
-    
+        
         if (avData.isRTP) {
             if (avData.type == VOIP_AUDIO) {
-                rtc.voe_network->ReceivedRTPPacket(self.recvStream.voiceChannel, packet, packet_length);
+                NSLog(@"audio data:%d", packet_length);
+                rtc.voe_network->ReceivedRTPPacket(channel, packet, packet_length);
             }
         } else {
             if (avData.type == VOIP_AUDIO) {
-                rtc.voe_network->ReceivedRTCPPacket(self.recvStream.voiceChannel, packet, packet_length);
+                NSLog(@"audio rtcp data:%d", packet_length);
+                rtc.voe_network->ReceivedRTCPPacket(channel, packet, packet_length);
             }
         }
+
     } else {
         NSLog(@"skip data...");
     }
@@ -465,7 +470,7 @@
 #pragma mark VoiceTransport
 -(int)sendRTPPacketA:(const void*)data length:(int)length {
     dispatch_async(dispatch_get_main_queue(), ^{
-        NSLog(@"send rtp package");
+//        NSLog(@"send rtp package:%d", length);
         
         VOIPData *vData = [[VOIPData alloc] init];
         
@@ -487,7 +492,7 @@
     }
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        NSLog(@"send rtcp package");
+        NSLog(@"send rtcp package:%d", length);
         
         
         VOIPData *vData = [[VOIPData alloc] init];

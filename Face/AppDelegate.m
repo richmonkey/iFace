@@ -91,6 +91,7 @@
     //配置im server地址
     [IMService instance].host = [Config instance].host;
     [IMService instance].port = [Config instance].port;
+    [IMService instance].voipPort = [Config instance].voipPort;
     [IMService instance].peerMessageHandler = [PeerMessageHandler instance];
     [IMService instance].groupMessageHandler = [GroupMessageHandler instance];
     

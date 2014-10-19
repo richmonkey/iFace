@@ -111,6 +111,8 @@
     void (^on_cancel)() = ^{
         --count;
         if (count == 0) {
+            close(self.sock);
+            self.sock = -1;
             self.close_cb(self, 0);
         }
     };
