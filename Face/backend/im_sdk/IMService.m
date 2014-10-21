@@ -101,7 +101,15 @@
     p += 8;
     vdata.receiver = readInt64(p);
     p += 8;
-    vdata.content = [NSData dataWithBytes:p length:n-16];
+    vdata.type = *p++;
+    if (*p == VOIP_RTP) {
+        vdata.rtp = YES;
+    } else if (*p == VOIP_RTCP) {
+        vdata.rtp = NO;
+    }
+    p++;
+    
+    vdata.content = [NSData dataWithBytes:p length:n-18];
     id<VOIPObserver> ob = [self.voipObservers lastObject];
     if (ob) {
         [ob onVOIPData:vdata];
@@ -656,7 +664,7 @@
         [self refreshHostIP];
         return NO;
     }
-    if (data.content.length + 16 > 64*1024) {
+    if (data.content.length > 60*1024) {
         return NO;
     }
     
@@ -666,6 +674,13 @@
     p += 8;
     writeInt64(data.receiver, p);
     p += 8;
+    
+    *p++ = data.type;
+    if (data.isRTP) {
+        *p++ = VOIP_RTP;
+    } else {
+        *p++ = VOIP_RTCP;
+    }
 
     const void *src = [data.content bytes];
     int len = [data.content length];
@@ -679,7 +694,7 @@
     addr.sin_addr.s_addr=inet_addr([self.hostIP UTF8String]);
     addr.sin_port=htons(self.voipPort);
     
-    sendto(self.udpFD, buff, len + 16, 0, (struct sockaddr*)&addr, sizeof(addr));
+    sendto(self.udpFD, buff, len + 18, 0, (struct sockaddr*)&addr, sizeof(addr));
     return YES;
 }
 

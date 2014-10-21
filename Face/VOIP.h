@@ -21,29 +21,6 @@ enum VOIPState {
 };
 
 
-
-#define VOIP_AUDIO 1
-#define VOIP_VIDEO 2
-
-#define VOIP_RTP 1
-#define VOIP_RTCP 2
-
-@interface VOIPAVData : NSObject
-
-@property(nonatomic, readwrite) NSData *voipData;
-@property(nonatomic, assign) int type;
-@property(nonatomic) NSData *avData;
-@property(nonatomic, getter = isRTP) BOOL rtp;
-
--(VOIPAVData*)initWithRTPAudio:(const void*)p length:(int)length;
--(VOIPAVData*)initWithRTCPAudio:(const void*)p length:(int)length;
--(VOIPAVData*)initWithRTPVideo:(const void*)p length:(int)length;
--(VOIPAVData*)initWithRTCPVideo:(const void*)p length:(int)length;
-
--(VOIPAVData*)initWithVOIPData:(NSData*)data;
-
-@end
-
 @interface VOIP : NSObject
 +(VOIP*)instance;
 

@@ -442,20 +442,19 @@
     VOIP *voip = [VOIP instance];
     if (voip.state == VOIP_CONNECTED) {
         int channel = self.recvStream.voiceChannel;
-        VOIPAVData *avData = [[VOIPAVData alloc] initWithVOIPData:data.content];
         
-        const void *packet = [avData.avData bytes];
-        int packet_length = [avData.avData length];
+        const void *packet = [data.content bytes];
+        int packet_length = [data.content length];
         
         WebRTC *rtc = [WebRTC sharedWebRTC];
         
-        if (avData.isRTP) {
-            if (avData.type == VOIP_AUDIO) {
+        if (data.isRTP) {
+            if (data.type == VOIP_AUDIO) {
                 NSLog(@"audio data:%d content:%d", packet_length, data.content.length);
                 rtc.voe_network->ReceivedRTPPacket(channel, packet, packet_length);
             }
         } else {
-            if (avData.type == VOIP_AUDIO) {
+            if (data.type == VOIP_AUDIO) {
                 NSLog(@"audio rtcp data:%d", packet_length);
                 rtc.voe_network->ReceivedRTCPPacket(channel, packet, packet_length);
             }
@@ -469,21 +468,19 @@
 
 #pragma mark VoiceTransport
 -(int)sendRTPPacketA:(const void*)data length:(int)length {
-//    dispatch_async(dispatch_get_main_queue(), ^{
-
-        VOIPData *vData = [[VOIPData alloc] init];
-        
-        vData.sender = [UserPresent instance].uid;
-        vData.receiver = self.peerUser.uid;
-        VOIPAVData *avData = [[VOIPAVData alloc] initWithRTPAudio:data length:length];
-        vData.content = avData.voipData;
+    VOIPData *vData = [[VOIPData alloc] init];
     
-        NSLog(@"send rtp package:%d content:%d", length, vData.content.length);
-        BOOL r = [[IMService instance] sendVOIPData:vData];
-        if (!r) {
-            NSLog(@"send rtp data fail");
-        }
-//    });
+    vData.sender = [UserPresent instance].uid;
+    vData.receiver = self.peerUser.uid;
+    vData.type = VOIP_AUDIO;
+    vData.rtp = YES;
+    vData.content = [NSData dataWithBytes:data length:length];
+    NSLog(@"send rtp package:%d", length);
+    BOOL r = [[IMService instance] sendVOIPData:vData];
+    if (!r) {
+        NSLog(@"send rtp data fail");
+    }
+    
     return length;
 }
 
@@ -492,21 +489,18 @@
         return 0;
     }
 
-//    dispatch_async(dispatch_get_main_queue(), ^{
-        NSLog(@"send rtcp package:%d", length);
-        
-        
-        VOIPData *vData = [[VOIPData alloc] init];
-        
-        vData.sender = [UserPresent instance].uid;
-        vData.receiver = self.peerUser.uid;
-        VOIPAVData *avData = [[VOIPAVData alloc] initWithRTCPAudio:data length:length];
-        vData.content = avData.voipData;
-        BOOL r = [[IMService instance] sendVOIPData:vData];
-        if (!r) {
-            NSLog(@"send rtcp data fail");
-        }
-//    });
+    NSLog(@"send rtcp package:%d", length);
+    VOIPData *vData = [[VOIPData alloc] init];
+    
+    vData.sender = [UserPresent instance].uid;
+    vData.receiver = self.peerUser.uid;
+    vData.rtp = NO;
+    vData.type = VOIP_AUDIO;
+    vData.content = [NSData dataWithBytes:data length:length];
+    BOOL r = [[IMService instance] sendVOIPData:vData];
+    if (!r) {
+        NSLog(@"send rtcp data fail");
+    }
     return length;
 }
 

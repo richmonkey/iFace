@@ -37,6 +37,13 @@ enum VOIPCommand {
     VOIP_COMMAND_TALKING,
     
 };
+
+#define VOIP_AUDIO 1
+#define VOIP_VIDEO 2
+
+#define VOIP_RTP 1
+#define VOIP_RTCP 2
+
 @interface IMMessage : NSObject
 @property(nonatomic, assign)int64_t sender;
 @property(nonatomic, assign)int64_t receiver;
@@ -54,6 +61,8 @@ enum VOIPCommand {
 @interface VOIPData : NSObject
 @property(nonatomic, assign)int64_t sender;
 @property(nonatomic, assign)int64_t receiver;
+@property(nonatomic, assign) int type;
+@property(nonatomic, getter = isRTP) BOOL rtp;
 @property(nonatomic) NSData *content;
 @end
 
