@@ -104,20 +104,7 @@
     error = rtc.voe_apm->SetAgcStatus(true, webrtc::kAgcDefault);
     error = rtc.voe_apm->SetNsStatus(true, webrtc::kNsHighSuppression);
     
-    
-    int videoChannel;
-    
-    error = rtc.base->CreateChannel(videoChannel);
-    if (error != 0) {
-        return NO;
-    }
-    
-    rtc.rtp_rtcp->SetRTCPStatus(videoChannel,
-                                webrtc::kRtcpCompound_RFC4585);
-    rtc.rtp_rtcp->SetKeyFrameRequestMethod(videoChannel,
-                                           webrtc::kViEKeyFrameRequestPliRtcp);
-  
-    
+
     [self startSend];
     [self startReceive];
     
