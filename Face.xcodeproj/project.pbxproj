@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		48BCCF981A0514BC00A7889D /* ReflectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 48BCCF921A0514BC00A7889D /* ReflectionView.m */; };
+		48BCCF991A0514BC00A7889D /* ANBlurredImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 48BCCF951A0514BC00A7889D /* ANBlurredImageView.m */; };
+		48BCCF9A1A0514BC00A7889D /* UIImage+BoxBlur.m in Sources */ = {isa = PBXBuildFile; fileRef = 48BCCF971A0514BC00A7889D /* UIImage+BoxBlur.m */; };
 		6DF3996819EB9AAE009B03C4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF3996719EB9AAE009B03C4 /* Foundation.framework */; };
 		6DF3996A19EB9AAE009B03C4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF3996919EB9AAE009B03C4 /* CoreGraphics.framework */; };
 		6DF3996C19EB9AAE009B03C4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF3996B19EB9AAE009B03C4 /* UIKit.framework */; };
@@ -177,6 +180,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		48BCCF911A0514BC00A7889D /* ReflectionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReflectionView.h; sourceTree = "<group>"; };
+		48BCCF921A0514BC00A7889D /* ReflectionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReflectionView.m; sourceTree = "<group>"; };
+		48BCCF941A0514BC00A7889D /* ANBlurredImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ANBlurredImageView.h; sourceTree = "<group>"; };
+		48BCCF951A0514BC00A7889D /* ANBlurredImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ANBlurredImageView.m; sourceTree = "<group>"; };
+		48BCCF961A0514BC00A7889D /* UIImage+BoxBlur.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+BoxBlur.h"; sourceTree = "<group>"; };
+		48BCCF971A0514BC00A7889D /* UIImage+BoxBlur.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+BoxBlur.m"; sourceTree = "<group>"; };
 		6DF3996419EB9AAE009B03C4 /* Face.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Face.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6DF3996719EB9AAE009B03C4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		6DF3996919EB9AAE009B03C4 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -504,6 +513,26 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		48BCCF901A0514BC00A7889D /* ReflectionView */ = {
+			isa = PBXGroup;
+			children = (
+				48BCCF911A0514BC00A7889D /* ReflectionView.h */,
+				48BCCF921A0514BC00A7889D /* ReflectionView.m */,
+			);
+			path = ReflectionView;
+			sourceTree = "<group>";
+		};
+		48BCCF931A0514BC00A7889D /* ANBlurredImageView */ = {
+			isa = PBXGroup;
+			children = (
+				48BCCF941A0514BC00A7889D /* ANBlurredImageView.h */,
+				48BCCF951A0514BC00A7889D /* ANBlurredImageView.m */,
+				48BCCF961A0514BC00A7889D /* UIImage+BoxBlur.h */,
+				48BCCF971A0514BC00A7889D /* UIImage+BoxBlur.m */,
+			);
+			path = ANBlurredImageView;
+			sourceTree = "<group>";
+		};
 		6DF3995B19EB9AAE009B03C4 = {
 			isa = PBXGroup;
 			children = (
@@ -702,6 +731,8 @@
 		6DF399F919EBA552009B03C4 /* third_party */ = {
 			isa = PBXGroup;
 			children = (
+				48BCCF901A0514BC00A7889D /* ReflectionView */,
+				48BCCF931A0514BC00A7889D /* ANBlurredImageView */,
 				6DF39BB719ED72C3009B03C4 /* FMDB */,
 				6DF39B4819EC4C62009B03C4 /* webrtc_bin */,
 				6DF39A0819EBA6CC009B03C4 /* FBShimmering */,
@@ -1102,6 +1133,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				48BCCF981A0514BC00A7889D /* ReflectionView.m in Sources */,
 				6DF39B4719EBC855009B03C4 /* VOIP.m in Sources */,
 				6DF39A6E19EBA6CC009B03C4 /* FBShimmeringView.m in Sources */,
 				6DF399FD19EBA552009B03C4 /* Reachability.m in Sources */,
@@ -1109,6 +1141,7 @@
 				6DF399F719EBA345009B03C4 /* Config.m in Sources */,
 				6DF399C419EBA30B009B03C4 /* ContactDB.m in Sources */,
 				6DF39BC719ED72C3009B03C4 /* FMResultSet.m in Sources */,
+				48BCCF991A0514BC00A7889D /* ANBlurredImageView.m in Sources */,
 				6DF39A9019EBA6CC009B03C4 /* UIImage+GIF.m in Sources */,
 				6DF39A7019EBA6CC009B03C4 /* JSMessageSoundEffect.m in Sources */,
 				6DF39A8C19EBA6CC009B03C4 /* SDWebImageDownloaderOperation.m in Sources */,
@@ -1133,6 +1166,7 @@
 				6DF39A8D19EBA6CC009B03C4 /* SDWebImageManager.m in Sources */,
 				6DF39A9B19EBA6CC009B03C4 /* UIImage+Resize.m in Sources */,
 				6DF39AA819EBA88E009B03C4 /* ContactHeaderView.m in Sources */,
+				48BCCF9A1A0514BC00A7889D /* UIImage+BoxBlur.m in Sources */,
 				6DF39BB019EC4C6D009B03C4 /* WebRTC.mm in Sources */,
 				6DF39A9719EBA6CC009B03C4 /* ESImageViewController.m in Sources */,
 				6DF39A8819EBA6CC009B03C4 /* SDImageCache.m in Sources */,
@@ -1400,6 +1434,7 @@
 				6DF3999B19EB9AAE009B03C4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		6DF3999C19EB9AAE009B03C4 /* Build configuration list for PBXNativeTarget "FaceTests" */ = {
 			isa = XCConfigurationList;
@@ -1408,6 +1443,7 @@
 				6DF3999E19EB9AAE009B03C4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

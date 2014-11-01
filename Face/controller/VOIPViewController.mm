@@ -47,6 +47,15 @@
 #import "VOIP.h"
 #import "HistoryDB.h"
 
+#import "ANBlurredImageView.h"
+#import "UIImageView+WebCache.h"
+#import "ReflectionView.h"
+#import "UIView+Toast.h"
+
+#define kBtnWidth  100
+#define kBtnHeight 50
+#define kBtnYposition  (self.view.frame.size.height - 3*kBtnHeight)
+
 @interface VOIPViewController ()
 
 @property(strong, nonatomic) AudioSendStream *sendStream;
@@ -65,6 +74,16 @@
 @property(nonatomic) UIButton *acceptButton;
 @property(nonatomic) UIButton *refuseButton;
 @property (nonatomic) UIButton *changeStateButton;
+
+@property (nonatomic) UIButton *reDialingButton;
+@property (nonatomic) UIButton *cancelButton;
+
+@property(nonatomic) ANBlurredImageView *bkview;
+@property(nonatomic) UILabel *durationLabel;
+@property   (nonatomic) ReflectionView *headView;
+@property   (nonatomic) NSTimer *refreshTimer;
+
+@property(nonatomic) UInt64  conversationDuration;
 
 @property(nonatomic) BOOL isLoudspeaker;
 
@@ -130,53 +149,149 @@
     
     [[IMService instance] pushVOIPObserver:self];
     
-    [self.view setBackgroundColor:[UIColor blackColor]];
+    self.conversationDuration = 0;
     
+    // Do any additional setup after loading the view, typically from a nib.
+    [self.view setBackgroundColor:[UIColor whiteColor]];
     
-    UIImageView *headView = [[UIImageView alloc] initWithFrame:CGRectMake((self.view.frame.size.width - 120)/2, 80, 120, 120)];
-    [headView sd_setImageWithURL:[[NSURL alloc] initWithString:self.peerUser.avatarURL] placeholderImage:[UIImage imageNamed:@"manHeader"]];
-    CALayer *imageLayer = [headView layer];   //获取ImageView的层
+    self.bkview = [[ANBlurredImageView alloc]
+                   initWithFrame:CGRectMake(0, 0, self.view.frame.size.width,
+                                            self.view.frame.size.height)];
+    [self.bkview setImage:[UIImage imageNamed:@"bk"]];
+    [self.bkview setBlurTintColor:[UIColor clearColor]];
+    [self.bkview setFramesCount:20];
+    [self.bkview setBlurAmount:1.0f];
+    
+    [self.view addSubview:self.bkview];
+    
+    UIImageView *imgView = [[UIImageView alloc]
+                            initWithFrame:CGRectMake(0,0, 120,
+                                                     120)];
+    [imgView sd_setImageWithURL:[[NSURL alloc] initWithString:@""]
+               placeholderImage:[UIImage imageNamed:@"potrait"]];
+    
+    CALayer *imageLayer = [imgView layer];  //获取ImageView的层
     [imageLayer setMasksToBounds:YES];
-    [imageLayer setCornerRadius:headView.frame.size.width/2];
-    [self.view addSubview: headView];
-
-    UIButton *moreButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    moreButton.backgroundColor = [UIColor colorWithRed:0.78f green:0.78f blue:0.8f alpha:1.0f];
-    moreButton.frame = CGRectMake(30.0f, self.view.frame.size.height - 50.0f - 50.0f , 100, 50);
-    [moreButton setTitle:@"挂断" forState:UIControlStateNormal];
-    [moreButton  setBackgroundColor:[UIColor redColor]];
-    [moreButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [moreButton addTarget:self action:@selector(hangUp:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:moreButton];
-    self.hangUpButton = moreButton;
+    [imageLayer setCornerRadius:imgView.frame.size.width / 2];
     
-    moreButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    moreButton.backgroundColor = [UIColor colorWithRed:0.78f green:0.78f blue:0.8f alpha:1.0f];
-    moreButton.frame = CGRectMake(30.0f, self.view.frame.size.height - 50.0f - 50.0f, 100, 50);
-    [moreButton setTitle:@"接听" forState:UIControlStateNormal];
-    [moreButton setBackgroundColor:[UIColor greenColor]];
-    [moreButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [moreButton addTarget:self action:@selector(acceptCall:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:moreButton];
-    self.acceptButton = moreButton;
+    self.headView = [[ReflectionView alloc] initWithFrame:CGRectMake((self.view.frame.size.width-120)/2,80, 120,120)];
+    self.headView.alpha = 0.9f;
+    self.headView.reflectionScale = 0.3f;
+    self.headView.reflectionGap = 1.0f;
+    [self.headView addSubview:imgView];
     
-    moreButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    moreButton.backgroundColor = [UIColor colorWithRed:0.78f green:0.78f blue:0.8f alpha:1.0f];
-    moreButton.frame = CGRectMake(150.0f, self.view.frame.size.height - 50.0f - 50.0f, 100, 50);
-    [moreButton setTitle:@"拒绝" forState:UIControlStateNormal];
-    [moreButton setBackgroundColor:[UIColor redColor]];
-    [moreButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [moreButton addTarget:self action:@selector(refuseCall:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:moreButton];
-    self.refuseButton = moreButton;
+    [self.view addSubview:self.headView];
     
-    CGRect frame = CGRectMake(240, self.view.frame.size.height - 50.0f - 50.0f, 60, 60);
+    
+    self.durationLabel = [[UILabel alloc] init];
+    [self.durationLabel setFont:[UIFont systemFontOfSize:23.0f]];
+    [self.durationLabel setTextAlignment:NSTextAlignmentCenter];
+    [self.durationLabel sizeToFit];
+    [self.durationLabel setTextColor:[UIColor whiteColor]];
+    [self.durationLabel setHidden:YES];
+    [self.view addSubview:self.durationLabel];
+    [self.durationLabel setCenter:CGPointMake((self.view.frame.size.width)/2, self.headView.frame.origin.y + self.headView.frame.size.height + 50)];
+    [self.durationLabel setBackgroundColor:[UIColor clearColor]];
+    
+    
+    
+    
+    self.acceptButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    self.acceptButton.backgroundColor =
+    [UIColor colorWithRed:0.78f green:0.78f blue:0.8f alpha:1.0f];
+    self.acceptButton.frame =
+    CGRectMake(30.0f, self.view.frame.size.height - kBtnHeight - kBtnHeight, kBtnWidth, kBtnHeight);
+    [self.acceptButton setTitle:@"接听" forState:UIControlStateNormal];
+    [self.acceptButton setBackgroundImage:[UIImage imageNamed:@"accept_nor"] forState:UIControlStateNormal];
+    [self.acceptButton setBackgroundImage:[UIImage imageNamed:@"accept_pre"] forState:UIControlStateHighlighted];
+    [self.acceptButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [self.acceptButton addTarget:self
+                   action:@selector(acceptCall:)
+         forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:self.acceptButton];
+    [self.acceptButton setCenter:CGPointMake(self.view.frame.size.width/4, kBtnYposition)];
+    
+    
+    self.refuseButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    self.refuseButton.backgroundColor =
+    [UIColor colorWithRed:0.78f green:0.78f blue:0.8f alpha:1.0f];
+    self.refuseButton.frame =
+    CGRectMake(150.0f, self.view.frame.size.height - kBtnHeight - kBtnHeight, kBtnWidth, kBtnHeight);
+    
+    [self.refuseButton setTitle:@"拒绝" forState:UIControlStateNormal];
+    [self.refuseButton setBackgroundImage:[UIImage imageNamed:@"refuse_nor"] forState:UIControlStateNormal];
+    [self.refuseButton setBackgroundImage:[UIImage imageNamed:@"refuse_pre"] forState:UIControlStateHighlighted];
+    [self.refuseButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [self.refuseButton addTarget:self
+                   action:@selector(refuseCall:)
+         forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:self.refuseButton];
+    [self.refuseButton setCenter:CGPointMake(self.view.frame.size.width/4 + self.view.frame.size.width/2, kBtnYposition)];
+    
+    
+    self.hangUpButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    self.hangUpButton.backgroundColor =
+    [UIColor colorWithRed:0.78f green:0.78f blue:0.8f alpha:1.0f];
+    self.hangUpButton.frame =
+    CGRectMake(30.0f, self.view.frame.size.height - kBtnHeight - kBtnHeight, kBtnWidth*2, kBtnHeight);
+    [self.hangUpButton setTitle:@"挂断" forState:UIControlStateNormal];
+    
+    [self.hangUpButton setBackgroundImage:[UIImage imageNamed:@"refuse_nor"] forState:UIControlStateNormal];
+    [self.hangUpButton setBackgroundImage:[UIImage imageNamed:@"refuse_pre"] forState:UIControlStateHighlighted];
+    [self.hangUpButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [self.hangUpButton addTarget:self
+                   action:@selector(hangUp:)
+         forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:self.hangUpButton];
+    [self.hangUpButton setCenter:CGPointMake(self.view.frame.size.width / 2, kBtnYposition)];
+    
+    CGRect frame =
+    CGRectMake(240, self.view.frame.size.height - kBtnHeight - kBtnHeight, kBtnWidth*2 , kBtnHeight);
     self.changeStateButton = [[UIButton alloc] initWithFrame:frame];
+    [self.changeStateButton addTarget:self
+                               action:@selector(changelistenState:)
+                     forControlEvents:UIControlEventTouchUpInside];
+    [self.changeStateButton setTitle:@"外放"  forState:UIControlStateNormal];
+    [self.changeStateButton setBackgroundImage:[UIImage imageNamed:@"accept_nor"] forState:UIControlStateNormal];
+    [self.changeStateButton setBackgroundImage:[UIImage imageNamed:@"accept_pre"] forState:UIControlStateHighlighted];
+    self.changeStateButton.center = CGPointMake(self.view.frame.size.width/2, kBtnYposition +kBtnHeight/2*3);
     
-    [self.changeStateButton setBackgroundImage:[UIImage imageNamed:@"loader.png"] forState:UIControlStateNormal];
-    [self.changeStateButton addTarget:self action:@selector(changelistenState:) forControlEvents:UIControlEventTouchUpInside];
-    
+    [self.changeStateButton setHidden:YES];
     [self.view addSubview:self.changeStateButton];
+    
+    
+    self.reDialingButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    self.reDialingButton.backgroundColor =
+    [UIColor colorWithRed:0.78f green:0.78f blue:0.8f alpha:1.0f];
+    self.reDialingButton.frame =
+    CGRectMake(30.0f, self.view.frame.size.height - kBtnHeight - kBtnHeight, kBtnWidth*2, kBtnHeight);
+    [self.reDialingButton setTitle:@"重拨" forState:UIControlStateNormal];
+    
+    [self.reDialingButton setBackgroundImage:[UIImage imageNamed:@"accept_nor"] forState:UIControlStateNormal];
+    [self.reDialingButton setBackgroundImage:[UIImage imageNamed:@"accept_pre"] forState:UIControlStateHighlighted];
+    [self.reDialingButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [self.reDialingButton addTarget:self
+                          action:@selector(redialing:)
+                forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:self.reDialingButton];
+    [self.reDialingButton setCenter:CGPointMake(self.view.frame.size.width / 2, kBtnYposition)];
+    [self.reDialingButton setHidden:YES];
+    
+     frame =
+    CGRectMake(240, self.view.frame.size.height - kBtnHeight - kBtnHeight, kBtnWidth*2 , kBtnHeight);
+    self.cancelButton = [[UIButton alloc] initWithFrame:frame];
+    [self.cancelButton addTarget:self
+                               action:@selector(cancelFaceTalk:)
+                     forControlEvents:UIControlEventTouchUpInside];
+    [self.cancelButton setTitle:@"取消"  forState:UIControlStateNormal];
+    [self.cancelButton setBackgroundImage:[UIImage imageNamed:@"refuse_nor"] forState:UIControlStateNormal];
+    [self.cancelButton setBackgroundImage:[UIImage imageNamed:@"refuse_pre"] forState:UIControlStateHighlighted];
+    self.cancelButton.center = CGPointMake(self.view.frame.size.width/2, kBtnYposition +kBtnHeight/2*3);
+    
+    [self.cancelButton setHidden:YES];
+    [self.view addSubview:self.cancelButton];
+    [self.reDialingButton setHidden:YES];
+    
     
     if (self.isCaller) {
         self.acceptButton.hidden = YES;
@@ -184,22 +299,13 @@
     } else {
         self.hangUpButton.hidden = YES;
     }
-
+    
     [[AVAudioSession sharedInstance] requestRecordPermission:^(BOOL granted) {
         if (granted) {
             if (self.isCaller) {
-                voip.state = VOIP_DIALING;
                 
-                self.dialBeginTimestamp = time(NULL);
-                [self sendDial];
-
-                self.dialTimer = [NSTimer scheduledTimerWithTimeInterval: 1
-                                                                  target:self
-                                                                selector:@selector(sendDial)
-                                                                userInfo:nil
-                                                                 repeats:YES];
+                [self makeDialing:voip];
                 
-
             } else {
                 voip.state = VOIP_ACCEPTING;
             }
@@ -232,6 +338,7 @@
 }
 
 -(void)acceptCall:(UIButton*)button {
+    
     VOIP *voip = [VOIP instance];
     voip.state = VOIP_ACCEPTED;
     
@@ -258,13 +365,21 @@
 
         [self dismiss];
     } else if (voip.state == VOIP_CONNECTED) {
+        
+        self.conversationDuration = 0;
+        if (self.refreshTimer && [self.refreshTimer isValid]) {
+            [self.refreshTimer invalidate];
+            self.refreshTimer = nil;
+            
+        }
+        
         [self sendHangUp];
         voip.state = VOIP_HANGED_UP;
         
         [self stopStream];
         
         [self dismiss];
-    } else {
+    }else {
         NSLog(@"invalid voip state:%d", voip.state);
     }
 }
@@ -272,12 +387,25 @@
 -(void) changelistenState:(id)sender{
     self.isLoudspeaker = !self.isLoudspeaker;
     if (self.isLoudspeaker) {
-           [self.changeStateButton setBackgroundImage:[UIImage imageNamed:@"phone.png"] forState:UIControlStateNormal];
         self.recvStream.isLoudspeaker = YES;
     }else{
-          [self.changeStateButton setBackgroundImage:[UIImage imageNamed:@"loader.png"] forState:UIControlStateNormal];
         self.recvStream.isLoudspeaker = NO;
     }
+}
+
+-(void)redialing:(id)sender{
+    VOIP *voip = [VOIP instance];
+    [self makeDialing:voip];
+    
+    [self.hangUpButton setHidden:NO];
+    [self.cancelButton setHidden:YES];
+    [self.reDialingButton setHidden:YES];
+}
+
+-(void)cancelFaceTalk:(id)sender{
+    
+   [self dismiss];
+    
 }
 
 - (void)sendDial {
@@ -298,6 +426,7 @@
     if (now - self.dialBeginTimestamp >= 60) {
         NSLog(@"dial timeout");
         [self.dialTimer invalidate];
+        self.dialTimer = nil;
         self.history.flag = self.history.flag&FLAG_UNRECEIVED;
         [self dismiss];
     }
@@ -399,11 +528,15 @@
     if (voip.state == VOIP_DIALING) {
         if (ctl.cmd == VOIP_COMMAND_ACCEPT) {
             self.history.flag = self.history.flag&FLAG_ACCEPTED;
+          
+            [self setOnTalkingUIShow];
 
             
             [self sendConnected];
             voip.state = VOIP_CONNECTED;
             [self.dialTimer invalidate];
+            self.dialTimer = nil;
+            
             NSLog(@"call voip connected");
             [self startStream];
         } else if (ctl.cmd == VOIP_COMMAND_REFUSE) {
@@ -412,11 +545,18 @@
  
             
             [self.dialTimer invalidate];
+            self.dialTimer = nil;
             
-            [self dismiss];
+            [self.view makeToast:@"对方正忙!" duration:2.0 position:@"center"];
+            [self.hangUpButton setHidden:YES];
+            [self.reDialingButton setHidden:NO];
+            [self.cancelButton setHidden:NO];
+            
         } else if (ctl.cmd == VOIP_COMMAND_DIAL) {
             //simultaneous open
             [self.dialTimer invalidate];
+            self.dialTimer = nil;
+            
             voip.state = VOIP_ACCEPTED;
             self.history.flag = self.history.flag&FLAG_ACCEPTED;
 
@@ -434,6 +574,9 @@
     } else if (voip.state == VOIP_ACCEPTED) {
         if (ctl.cmd == VOIP_COMMAND_CONNECTED) {
             NSLog(@"called voip connected");
+            
+            [self setOnTalkingUIShow];
+            
             [self.acceptTimer invalidate];
             voip.state = VOIP_CONNECTED;
             [self startStream];
@@ -537,6 +680,66 @@
         NSLog(@"send rtcp data fail");
     }
     return length;
+}
+/**
+ *  创建拨号
+ *
+ *  @param voip  VOIP
+ */
+-(void) makeDialing:(VOIP*)voip{
+    
+    voip.state = VOIP_DIALING;
+    
+    self.dialBeginTimestamp = time(NULL);
+    [self sendDial];
+   
+    self.dialTimer = [NSTimer scheduledTimerWithTimeInterval: 1
+                                                      target:self
+                                                    selector:@selector(sendDial)
+                                                    userInfo:nil
+                                                     repeats:YES];
+
+}
+
+/**
+ *  显示通话中
+ */
+-(void) setOnTalkingUIShow{
+    
+    [self.changeStateButton setHidden:NO];
+    [self.durationLabel setHidden:NO];
+    [self.durationLabel setText:[self getTimeStrFromSeconds:self.conversationDuration]];
+    [self.durationLabel sizeToFit];
+    [self.durationLabel setTextAlignment:NSTextAlignmentCenter];
+    [self.durationLabel setCenter:CGPointMake((self.view.frame.size.width)/2, self.headView.frame.origin.y + self.headView.frame.size.height + 50)];
+    
+    self.refreshTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(refreshDuration) userInfo:nil repeats:YES];
+    [self.refreshTimer fire];
+
+}
+
+/**
+ *  刷新时间显示
+ */
+-(void) refreshDuration{
+    self.conversationDuration += 1;
+    [self.durationLabel setText:[self getTimeStrFromSeconds:self.conversationDuration]];
+    [self.durationLabel sizeToFit];
+    [self.durationLabel setTextAlignment:NSTextAlignmentCenter];
+    [self.durationLabel setCenter:CGPointMake((self.view.frame.size.width)/2, self.headView.frame.origin.y + self.headView.frame.size.height + 50)];
+}
+
+/**
+ *  获取时间字符串
+ *
+ *  @param seconds 秒
+ *
+ *  @return 字符串
+ */
+-(NSString*) getTimeStrFromSeconds:(UInt64)seconds{
+    
+    return [NSString stringWithFormat:@"%02lld:%02lld:%02lld",seconds/3600,(seconds%3600)/60,seconds%60];
+    
 }
 
 @end
