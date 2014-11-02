@@ -10,6 +10,7 @@
 #import "AboutViewController.h"
 
 #import "UIView+Toast.h"
+#import "HistoryDB.h"
 
 
 #define kNetStatusSection 1
@@ -149,7 +150,7 @@
             break;
         case kClearConversationCellTag:
         {
-            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"确认" message:@"是否清除所有聊天记录?" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确认", nil];
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"确认" message:@"是否清除所有通话记录?" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确认", nil];
             alertView.tag = kClearAllContentTag;
             [alertView show];
         }
@@ -235,9 +236,8 @@
             
         }else if(buttonIndex == 1){
         //TODO
-//          BOOL result =  [[PeerMessageDB instance] clear];
-            if (1) {
-                
+          BOOL result =  [[HistoryDB instance] clearHistoryDB];
+            if (result) {
                 NSNotification* notification = [[NSNotification alloc] initWithName:CLEAR_ALL_HISTORY object: nil userInfo:nil];
                 [[NSNotificationCenter defaultCenter] postNotification:notification];
                 

@@ -19,6 +19,7 @@
 
 @property (strong,nonatomic) UITableView *tableView;
 @property (strong,nonatomic) NSMutableArray *historys;
+@property (strong ,nonatomic) UILabel  *emputyLabel;
 
 @end
 
@@ -46,7 +47,11 @@
     
     self.historys = [[NSMutableArray alloc] initWithArray: [[HistoryDB instance] loadHistoryDB]];
     
+    [self updateEmputyContentView];
+    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onNewHistory:) name:ON_NEW_CALL_HISTORY_NOTIFY object:nil];
+    
+     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onClearAllHistory:) name:CLEAR_ALL_HISTORY object:nil];
 }
 
 
@@ -88,11 +93,11 @@
         [cell.nameLabel setText:theUser.displayName];
     }
     
-    bool isOut          = history.flag|FLAG_OUT;
-    bool isCancel       = history.flag|FLAG_CANCELED;
-    bool isRefused      = history.flag|FLAG_REFUSED;
-    bool isAccepted     = history.flag|FLAG_ACCEPTED;
-    bool isUnreceived   = history.flag|FLAG_UNRECEIVED;
+    bool isOut          = history.flag&FLAG_OUT;
+    bool isCancel       = history.flag&FLAG_CANCELED;
+    bool isRefused      = history.flag&FLAG_REFUSED;
+    bool isAccepted     = history.flag&FLAG_ACCEPTED;
+    bool isUnreceived   = history.flag&FLAG_UNRECEIVED;
     
     if (isOut) {
         [cell.iconView setImage:[UIImage imageNamed:@"callOutIcon"]];
@@ -153,16 +158,20 @@
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         
         History  *history = [self.historys objectAtIndex:indexPath.row];
-        [self.historys removeObject:history];
         
-       //TODO HISTORY  删除
-        
-        /*IOS8中删除最后一个cell的时，报一个错误
-         [RemindersCell _setDeleteAnimationInProgress:]: message sent to deallocated instance
-         在重新刷新tableView的时候延迟一下*/
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [self.tableView reloadData];
-        });
+        bool result = [[HistoryDB instance] removeHistory:history.hid];
+        if (result) {
+            
+            [self.historys removeObject:history];
+            
+            /*IOS8中删除最后一个cell的时，报一个错误
+             [RemindersCell _setDeleteAnimationInProgress:]: message sent to deallocated instance
+             在重新刷新tableView的时候延迟一下*/
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [self.tableView reloadData];
+                [self updateEmputyContentView];
+            });
+        }
     }
 }
 
@@ -177,11 +186,42 @@
     
 }
 
+-(void) onClearAllHistory:(NSNotification*)notify{
+    [self.historys removeAllObjects];
+    [self.tableView reloadData];
+    [self updateEmputyContentView];
+}
+
 /**
  *  析构
  */
 -(void) dealloc{
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void) updateEmputyContentView{
+    if ([self.historys count] == 0) {
+        self.emputyLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 250, 40)];
+        [self.emputyLabel setFont:[UIFont systemFontOfSize:14.0f]];
+        [self.emputyLabel setBackgroundColor:RGBACOLOR(240, 240, 240, 1.0f)];
+        [self.emputyLabel setText:@"可以到通讯录选择一个人拨打电话"];
+        [self.emputyLabel setTextAlignment:NSTextAlignmentCenter];
+        [self.emputyLabel setTextColor:RGBACOLOR(20, 20, 20, 0.8f)];
+        [self.emputyLabel setCenter:CGPointMake(self.view.center.x, self.view.center.y - 20)];
+        CALayer *labelLayer = [self.emputyLabel layer];
+        [self.emputyLabel setHidden:NO];
+        [labelLayer setMasksToBounds:YES];
+        [labelLayer setCornerRadius: 16];
+        [self.view addSubview:self.emputyLabel];
+        [self.tableView setHidden:YES];
+    }else{
+        if (self.emputyLabel) {
+            [self.emputyLabel setHidden:YES];
+            [self.emputyLabel removeFromSuperview];
+            self.emputyLabel = nil;
+        }
+        [self.tableView setHidden:NO];
+    }
 }
 
 /*
