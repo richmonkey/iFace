@@ -708,7 +708,7 @@
     
     [self.changeStateButton setHidden:NO];
     [self.durationLabel setHidden:NO];
-    [self.durationLabel setText:[self getTimeStrFromSeconds:self.conversationDuration]];
+    [self.durationLabel setText:[PublicFunc getTimeStrFromSeconds:self.conversationDuration]];
     [self.durationLabel sizeToFit];
     [self.durationLabel setTextAlignment:NSTextAlignmentCenter];
     [self.durationLabel setCenter:CGPointMake((self.view.frame.size.width)/2, self.headView.frame.origin.y + self.headView.frame.size.height + 50)];
@@ -723,23 +723,12 @@
  */
 -(void) refreshDuration{
     self.conversationDuration += 1;
-    [self.durationLabel setText:[self getTimeStrFromSeconds:self.conversationDuration]];
+    [self.durationLabel setText:[PublicFunc getTimeStrFromSeconds:self.conversationDuration]];
     [self.durationLabel sizeToFit];
     [self.durationLabel setTextAlignment:NSTextAlignmentCenter];
     [self.durationLabel setCenter:CGPointMake((self.view.frame.size.width)/2, self.headView.frame.origin.y + self.headView.frame.size.height + 50)];
 }
 
-/**
- *  获取时间字符串
- *
- *  @param seconds 秒
- *
- *  @return 字符串
- */
--(NSString*) getTimeStrFromSeconds:(UInt64)seconds{
-    
-    return [NSString stringWithFormat:@"%02lld:%02lld:%02lld",seconds/3600,(seconds%3600)/60,seconds%60];
-    
-}
+
 
 @end
