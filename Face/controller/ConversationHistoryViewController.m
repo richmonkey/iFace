@@ -41,12 +41,18 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    UIImage *backColor = [UIImage imageNamed:@"chatBack"];
+    UIColor *color = [[UIColor alloc] initWithPatternImage:backColor];
+    [self.view setBackgroundColor:color];
+    
     CGRect frame = self.view.frame;
     self.tableView = [[UITableView alloc] initWithFrame:frame style:UITableViewStylePlain];
     [self.view addSubview:self.tableView];
     [self.tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
     self.tableView.dataSource = self;
     self.tableView.delegate  = self;
+    [self.tableView setBackgroundColor:[UIColor clearColor]];
+
     
     self.historys = [[NSMutableArray alloc] initWithArray: [[HistoryDB instance] loadHistoryDB]];
     
@@ -83,6 +89,8 @@
     if (cell == nil) {
         cell = [[[NSBundle mainBundle]loadNibNamed:@"HistoryTableViewCell" owner:self options:nil] lastObject];
     }
+    [cell setBackgroundColor:RGBCOLOR(244, 244, 244)];
+    
     History *history = [self.historys objectAtIndex:indexPath.row];
     
     NSDate *createDate = [NSDate dateWithTimeIntervalSince1970:history.beginTimestamp];

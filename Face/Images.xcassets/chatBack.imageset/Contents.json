@@ -3,12 +3,11 @@
     {
       "idiom" : "universal",
       "scale" : "1x",
-      "filename" : "ic_menu_setting_n.png"
+      "filename" : "chatBack.png"
     },
     {
       "idiom" : "universal",
-      "scale" : "2x",
-      "filename" : "ic_menu_setting_n@2x.png"
+      "scale" : "2x"
     }
   ],
   "info" : {
