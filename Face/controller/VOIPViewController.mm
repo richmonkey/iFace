@@ -604,6 +604,8 @@
         } else if (ctl.cmd == VOIP_COMMAND_ACCEPT) {
             //simultaneous open
             NSLog(@"simultaneous voip connected");
+            [self setOnTalkingUIShow];
+            
             [self.acceptTimer invalidate];
             voip.state = VOIP_CONNECTED;
             [self startStream];
