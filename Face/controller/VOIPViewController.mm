@@ -46,7 +46,6 @@
 #import "VOIP.h"
 #import "HistoryDB.h"
 
-#import "ANBlurredImageView.h"
 #import "UIImageView+WebCache.h"
 #import "ReflectionView.h"
 #import "UIView+Toast.h"
@@ -82,7 +81,7 @@
 @property (nonatomic) UIButton *reDialingButton;
 @property (nonatomic) UIButton *cancelButton;
 
-@property(nonatomic) ANBlurredImageView *bkview;
+@property(nonatomic) UIImageView *bkview;
 @property(nonatomic) UILabel *durationLabel;
 @property   (nonatomic) ReflectionView *headView;
 @property   (nonatomic) NSTimer *refreshTimer;
@@ -160,20 +159,16 @@
     // Do any additional setup after loading the view, typically from a nib.
     [self.view setBackgroundColor:[UIColor whiteColor]];
     
-    self.bkview = [[ANBlurredImageView alloc]
+    self.bkview = [[UIImageView alloc]
                    initWithFrame:CGRectMake(0, 0, self.view.frame.size.width,
                                             self.view.frame.size.height)];
     [self.bkview setImage:[UIImage imageNamed:@"Call_background2"]];
-    [self.bkview setBlurTintColor:[UIColor clearColor]];
-    [self.bkview setFramesCount:20];
-    [self.bkview setBlurAmount:1.0f];
-    
     [self.view addSubview:self.bkview];
     
     UIImageView *imgView = [[UIImageView alloc]
                             initWithFrame:CGRectMake(0,0, 120,
                                                      120)];
-    [imgView sd_setImageWithURL:[[NSURL alloc] initWithString:@""]
+    [imgView sd_setImageWithURL:[[NSURL alloc] initWithString:self.peerUser.avatarURL]
                placeholderImage:[UIImage imageNamed:@"potrait"]];
     
     CALayer *imageLayer = [imgView layer];  //获取ImageView的层
@@ -242,21 +237,6 @@
     [self.view addSubview:self.hangUpButton];
     [self.hangUpButton setCenter:CGPointMake(self.view.frame.size.width / 2, kBtnYposition)];
     
-   /*
-    CGRect frame =
-    CGRectMake(240, self.view.frame.size.height - kBtnHeight - kBtnHeight, kBtnWidth, kBtnHeight);
-    self.changeStateButton = [[UIButton alloc] initWithFrame:frame];
-    [self.changeStateButton addTarget:self
-                               action:@selector(changelistenState:)
-                     forControlEvents:UIControlEventTouchUpInside];
-    [self.changeStateButton setBackgroundImage:[UIImage imageNamed:@"Call_answer"] forState:UIControlStateNormal];
-    [self.changeStateButton setBackgroundImage:[UIImage imageNamed:@"Call_answer_p"] forState:UIControlStateHighlighted];
-    self.changeStateButton.center = CGPointMake(self.view.frame.size.width/2, kBtnYposition +kBtnHeight/2*3);
-    
-    [self.changeStateButton setHidden:YES];
-    [self.view addSubview:self.changeStateButton];
-    */
-    
     self.reDialingButton = [UIButton buttonWithType:UIButtonTypeCustom];
 
     self.reDialingButton.frame =
@@ -324,6 +304,8 @@
         voip.state = VOIP_LISTENING;
         [[IMService instance] popVOIPObserver:self];
         [[HistoryDB instance] addHistory:self.history];
+        
+         [[NSNotificationCenter defaultCenter] postNotificationName:ON_NEW_CALL_HISTORY_NOTIFY object:nil];
     }];
 }
 
@@ -387,15 +369,6 @@
         [self dismiss];
     }else {
         NSLog(@"invalid voip state:%d", voip.state);
-    }
-}
-
--(void) changelistenState:(id)sender{
-    self.isLoudspeaker = !self.isLoudspeaker;
-    if (self.isLoudspeaker) {
-        self.recvStream.isLoudspeaker = YES;
-    }else{
-        self.recvStream.isLoudspeaker = NO;
     }
 }
 

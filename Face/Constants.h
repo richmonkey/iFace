@@ -40,5 +40,7 @@ alpha:(a)]
 #define ON_NEW_MESSAGE_NOTIFY  @"on_new_message_notify"
 #define CLEAR_SINGLE_CONV_NEW_MESSAGE_NOTIFY @"clear_single_conv_new_message_notify"
 #define CLEAR_TAB_BAR_NEW_MESSAGE_NOTIFY  @"clear_tab_bar_new_message_notify"
+#define ON_NEW_CALL_HISTORY_NOTIFY  @"on_new_call_history_notify"
+#define CLEAR_ALL_HISTORY   @"clear_all_HISTORY"
 
 #endif

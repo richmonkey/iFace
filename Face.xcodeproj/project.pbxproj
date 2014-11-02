@@ -9,6 +9,11 @@
 /* Begin PBXBuildFile section */
 		4813DC821A05FCFB004598F3 /* ConversationHistoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4813DC811A05FCFB004598F3 /* ConversationHistoryViewController.m */; };
 		4813DC851A060447004598F3 /* SettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4813DC841A060447004598F3 /* SettingViewController.m */; };
+		4877C0501A067FCF00CCF1DC /* AboutViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4877C0471A067FCF00CCF1DC /* AboutViewController.m */; };
+		4877C0511A067FCF00CCF1DC /* AboutViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4877C0481A067FCF00CCF1DC /* AboutViewController.xib */; };
+		4877C0521A067FCF00CCF1DC /* CotactMeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4877C04A1A067FCF00CCF1DC /* CotactMeViewController.m */; };
+		4877C0531A067FCF00CCF1DC /* CotactMeViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4877C04B1A067FCF00CCF1DC /* CotactMeViewController.xib */; };
+		4877C0561A067FCF00CCF1DC /* SettingViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4877C04F1A067FCF00CCF1DC /* SettingViewController.xib */; };
 		48986BA41A064C74004740B6 /* DebugFrameView.m in Sources */ = {isa = PBXBuildFile; fileRef = 48986BA11A064C74004740B6 /* DebugFrameView.m */; };
 		48986BA51A064C74004740B6 /* UIView+Debug.m in Sources */ = {isa = PBXBuildFile; fileRef = 48986BA31A064C74004740B6 /* UIView+Debug.m */; };
 		48BCCF981A0514BC00A7889D /* ReflectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 48BCCF921A0514BC00A7889D /* ReflectionView.m */; };
@@ -193,6 +198,13 @@
 		4813DC811A05FCFB004598F3 /* ConversationHistoryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConversationHistoryViewController.m; sourceTree = "<group>"; };
 		4813DC831A060447004598F3 /* SettingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingViewController.h; sourceTree = "<group>"; };
 		4813DC841A060447004598F3 /* SettingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingViewController.m; sourceTree = "<group>"; };
+		4877C0461A067FCF00CCF1DC /* AboutViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AboutViewController.h; sourceTree = "<group>"; };
+		4877C0471A067FCF00CCF1DC /* AboutViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AboutViewController.m; sourceTree = "<group>"; };
+		4877C0481A067FCF00CCF1DC /* AboutViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AboutViewController.xib; sourceTree = "<group>"; };
+		4877C0491A067FCF00CCF1DC /* CotactMeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CotactMeViewController.h; sourceTree = "<group>"; };
+		4877C04A1A067FCF00CCF1DC /* CotactMeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CotactMeViewController.m; sourceTree = "<group>"; };
+		4877C04B1A067FCF00CCF1DC /* CotactMeViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CotactMeViewController.xib; sourceTree = "<group>"; };
+		4877C04F1A067FCF00CCF1DC /* SettingViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SettingViewController.xib; sourceTree = "<group>"; };
 		48986BA01A064C74004740B6 /* DebugFrameView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugFrameView.h; sourceTree = "<group>"; };
 		48986BA11A064C74004740B6 /* DebugFrameView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DebugFrameView.m; sourceTree = "<group>"; };
 		48986BA21A064C74004740B6 /* UIView+Debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Debug.h"; sourceTree = "<group>"; };
@@ -536,6 +548,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4877C0451A067FCF00CCF1DC /* setting */ = {
+			isa = PBXGroup;
+			children = (
+				4877C0461A067FCF00CCF1DC /* AboutViewController.h */,
+				4877C0471A067FCF00CCF1DC /* AboutViewController.m */,
+				4877C0481A067FCF00CCF1DC /* AboutViewController.xib */,
+				4877C0491A067FCF00CCF1DC /* CotactMeViewController.h */,
+				4877C04A1A067FCF00CCF1DC /* CotactMeViewController.m */,
+				4877C04B1A067FCF00CCF1DC /* CotactMeViewController.xib */,
+			);
+			path = setting;
+			sourceTree = "<group>";
+		};
 		48986B9F1A064C74004740B6 /* DebugView */ = {
 			isa = PBXGroup;
 			children = (
@@ -733,6 +758,8 @@
 		6DF399CD19EBA313009B03C4 /* controller */ = {
 			isa = PBXGroup;
 			children = (
+				4877C0451A067FCF00CCF1DC /* setting */,
+				4877C04F1A067FCF00CCF1DC /* SettingViewController.xib */,
 				6DF399CE19EBA313009B03C4 /* AskPhoneNumberViewController.h */,
 				6DF399CF19EBA313009B03C4 /* AskPhoneNumberViewController.m */,
 				6DF399D019EBA313009B03C4 /* AskPhoneNumberViewController.xib */,
@@ -1149,6 +1176,8 @@
 				6DF39A7819EBA6CC009B03C4 /* input-field.png in Resources */,
 				48C7A13D1A065BDA0020E7F6 /* CallConnected.mp3 in Resources */,
 				6DF39AB319EBA92E009B03C4 /* ContactPhoneTableViewCell.xib in Resources */,
+				4877C0511A067FCF00CCF1DC /* AboutViewController.xib in Resources */,
+				4877C0561A067FCF00CCF1DC /* SettingViewController.xib in Resources */,
 				6DF399DC19EBA313009B03C4 /* AskPhoneNumberViewController.xib in Resources */,
 				6DF39A7919EBA6CC009B03C4 /* input-field@2x.png in Resources */,
 				6DF399E119EBA313009B03C4 /* ContactViewController.xib in Resources */,
@@ -1171,6 +1200,7 @@
 				6DF39A7519EBA6CC009B03C4 /* input-bar-flat@2x.png in Resources */,
 				6DF399DE19EBA313009B03C4 /* CheckVerifyCodeController.xib in Resources */,
 				48C7A1441A06650D0020E7F6 /* HistoryTableViewCell.xib in Resources */,
+				4877C0531A067FCF00CCF1DC /* CotactMeViewController.xib in Resources */,
 				6DF39A7719EBA6CC009B03C4 /* input-bar@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1220,6 +1250,7 @@
 				6DF39A9119EBA6CC009B03C4 /* UIImage+MultiFormat.m in Sources */,
 				6DF39A9919EBA6CC009B03C4 /* UIView+Toast.m in Sources */,
 				6DF399C819EBA30B009B03C4 /* AsyncTCP.m in Sources */,
+				4877C0521A067FCF00CCF1DC /* CotactMeViewController.m in Sources */,
 				6DF39A8219EBA6CC009B03C4 /* UIImage+JSMessagesView.m in Sources */,
 				6DF39A9219EBA6CC009B03C4 /* UIImage+WebP.m in Sources */,
 				4813DC851A060447004598F3 /* SettingViewController.m in Sources */,
@@ -1235,6 +1266,7 @@
 				6DF39A8E19EBA6CC009B03C4 /* SDWebImagePrefetcher.m in Sources */,
 				6DF39A0119EBA624009B03C4 /* APIRequest.m in Sources */,
 				6DF3997819EB9AAE009B03C4 /* AppDelegate.m in Sources */,
+				4877C0501A067FCF00CCF1DC /* AboutViewController.m in Sources */,
 				6DF39BAF19EC4C6D009B03C4 /* AVSendStream.mm in Sources */,
 				6DF39BB319ECFD5F009B03C4 /* History.m in Sources */,
 				6DF39BAE19EC4C6D009B03C4 /* AVReceiveStream.mm in Sources */,

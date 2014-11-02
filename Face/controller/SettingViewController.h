@@ -1,13 +1,18 @@
 //
 //  SettingViewController.h
-//  Face
+//  Message
 //
-//  Created by 杨朋亮 on 2/11/14.
-//  Copyright (c) 2014年 beetle. All rights reserved.
+//  Created by daozhu on 14-6-16.
+//  Copyright (c) 2014年 daozhu. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
+#import "IMService.h"
 
-@interface SettingViewController : UIViewController <UITableViewDataSource,UITableViewDelegate>
+@interface SettingViewController : UIViewController <UITableViewDataSource,UITableViewDelegate,MessageObserver,UIAlertViewDelegate>
+
+@property (strong,nonatomic) IBOutlet UITableView *tableView;
+@property (strong,nonatomic) NSArray *cellTitleArray;
+@property (weak,nonatomic) UITableViewCell *statusCell;
 
 @end

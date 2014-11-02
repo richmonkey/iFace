@@ -13,6 +13,7 @@
 #import "User.h"
 #import "PublicFunc.h"
 #import "HistoryTableViewCell.h"
+#import "VOIPViewController.h"
 
 @interface ConversationHistoryViewController ()
 
@@ -39,22 +40,15 @@
     CGRect frame = self.view.frame;
     self.tableView = [[UITableView alloc] initWithFrame:frame style:UITableViewStylePlain];
     [self.view addSubview:self.tableView];
+    [self.tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
     self.tableView.dataSource = self;
     self.tableView.delegate  = self;
     
     self.historys = [[NSMutableArray alloc] initWithArray: [[HistoryDB instance] loadHistoryDB]];
     
-    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onNewHistory:) name:ON_NEW_CALL_HISTORY_NOTIFY object:nil];
 }
 
--(void)viewDidAppear:(BOOL)animated{
-    if (self.historys) {
-        [self.historys removeAllObjects];
-        self.historys = nil;
-    }
-    self.historys = [[NSMutableArray alloc] initWithArray: [[HistoryDB instance] loadHistoryDB]];
-
-}
 
 - (void)didReceiveMemoryWarning
 {
@@ -104,25 +98,25 @@
         [cell.iconView setImage:[UIImage imageNamed:@"callOutIcon"]];
         if(isCancel) {
             [cell.statusLabel setTextColor:[UIColor grayColor]];
-            [cell.statusLabel setText:@"取消"];
+            [cell.statusLabel setText:@"通话取消"];
         }else if(isRefused) {
             [cell.statusLabel setTextColor:[UIColor redColor]];
-            [cell.statusLabel setText:@"被拒绝"];
+            [cell.statusLabel setText:@"通话拒绝"];
         }else if(isAccepted){
             [cell.statusLabel setTextColor:[UIColor greenColor]];
             [cell.statusLabel setText:@"通话成功"];
         }else if(isUnreceived){
             [cell.statusLabel setTextColor:[UIColor blueColor]];
-            [cell.statusLabel setText:@"未接听"];
+            [cell.statusLabel setText:@"对方未接听"];
         }
     }else{
          [cell.iconView setImage:[UIImage imageNamed:@"callInIcon"]];
         if(isCancel) {
             [cell.statusLabel setTextColor:[UIColor grayColor]];
-            [cell.statusLabel setText:@"取消"];
+            [cell.statusLabel setText:@"已取消"];
         }else if(isRefused) {
             [cell.statusLabel setTextColor:[UIColor redColor]];
-            [cell.statusLabel setText:@"被拒绝"];
+            [cell.statusLabel setText:@"已拒绝"];
         }else if(isAccepted){
             [cell.statusLabel setTextColor:[UIColor greenColor]];
             [cell.statusLabel setText:@"通话成功"];
@@ -132,14 +126,63 @@
             [cell.statusLabel setText:@"未接听"];
         }
     }
-
-
-    
     return cell;
-    
 }
 #pragma mark - UITableViewDelegate
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    History *history = [self.historys objectAtIndex:indexPath.row];
+    IMUser *user = [[UserDB instance] loadUser:history.peerUID];
 
+    VOIPViewController *controller = [[VOIPViewController alloc] initWithCalledUID:user.uid];
+    [self presentViewController:controller animated:YES completion:nil];
+    
+}
+
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath{
+    if (tableView == self.tableView) {
+        return YES;
+    }
+    return NO;
+}
+
+- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath{
+    return UITableViewCellEditingStyleDelete;
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        
+        History  *history = [self.historys objectAtIndex:indexPath.row];
+        [self.historys removeObject:history];
+        
+       //TODO HISTORY  删除
+        
+        /*IOS8中删除最后一个cell的时，报一个错误
+         [RemindersCell _setDeleteAnimationInProgress:]: message sent to deallocated instance
+         在重新刷新tableView的时候延迟一下*/
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self.tableView reloadData];
+        });
+    }
+}
+
+
+
+-(void) onNewHistory:(NSNotification*)notify{
+    
+    [self.historys removeAllObjects];
+    
+    self.historys = [[NSMutableArray alloc] initWithArray: [[HistoryDB instance] loadHistoryDB]];
+    [self.tableView reloadData];
+    
+}
+
+/**
+ *  析构
+ */
+-(void) dealloc{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
 
 /*
  #pragma mark - Navigation
