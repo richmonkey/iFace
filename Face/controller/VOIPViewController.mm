@@ -484,7 +484,6 @@
     return headphonesLocated;
 }
 
-
 - (void)startStream {
     if (self.sendStream || self.recvStream) return;
     
@@ -503,6 +502,8 @@
     [self.recvStream start];
     
     self.history.beginTimestamp = time(NULL);
+
+    [[UIDevice currentDevice] setProximityMonitoringEnabled:YES];
 }
 
 
@@ -513,6 +514,8 @@
     [self.recvStream stop];
     
     self.history.endTimestamp = time(NULL);
+
+    [[UIDevice currentDevice] setProximityMonitoringEnabled:NO];
 }
 
 #pragma mark - VOIPObserver
