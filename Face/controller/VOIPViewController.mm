@@ -7,7 +7,6 @@
 //
 
 #import <AVFoundation/AVAudioSession.h>
-
 #import "VOIPViewController.h"
 #import "WebRTC.h"
 #import "AVSendStream.h"
@@ -93,6 +92,8 @@
 @property(nonatomic) BOOL isLoudspeaker;
 
 @property(nonatomic) History *history;
+
+@property(nonatomic) AVAudioPlayer *player;
 @end
 
 @implementation VOIPViewController
@@ -296,7 +297,7 @@
     } else {
         self.hangUpButton.hidden = YES;
     }
-    
+
     [[AVAudioSession sharedInstance] requestRecordPermission:^(BOOL granted) {
         if (granted) {
             if (self.isCaller) {
@@ -305,6 +306,7 @@
                 
             } else {
                 voip.state = VOIP_ACCEPTING;
+                [self playDialIn];
             }
 
         } else {
@@ -328,6 +330,8 @@
 -(void)refuseCall:(UIButton*)button {
     VOIP *voip = [VOIP instance];
     voip.state = VOIP_REFUSED;
+    [self.player stop];
+    self.player = nil;
     self.history.flag = self.history.flag&FLAG_REFUSED;
     [self sendDialRefuse];
     
@@ -338,7 +342,8 @@
     
     VOIP *voip = [VOIP instance];
     voip.state = VOIP_ACCEPTED;
-    
+    [self.player stop];
+    self.player = nil;
     self.history.flag = self.history.flag&FLAG_ACCEPTED;
 
     
@@ -355,6 +360,10 @@
     VOIP *voip = [VOIP instance];
     if (voip.state == VOIP_DIALING ) {
         [self.dialTimer invalidate];
+        self.dialTimer = nil;
+        [self.player stop];
+        self.player = nil;
+        
         [self sendHangUp];
         voip.state = VOIP_HANGED_UP;
         
@@ -424,6 +433,9 @@
         NSLog(@"dial timeout");
         [self.dialTimer invalidate];
         self.dialTimer = nil;
+        [self.player stop];
+        self.player = nil;
+        
         self.history.flag = self.history.flag&FLAG_UNRECEIVED;
         [self dismiss];
     }
@@ -530,12 +542,13 @@
             self.history.flag = self.history.flag&FLAG_ACCEPTED;
           
             [self setOnTalkingUIShow];
-
             
             [self sendConnected];
             voip.state = VOIP_CONNECTED;
             [self.dialTimer invalidate];
             self.dialTimer = nil;
+            [self.player stop];
+            self.player = nil;
             
             NSLog(@"call voip connected");
             [self startStream];
@@ -546,6 +559,8 @@
             
             [self.dialTimer invalidate];
             self.dialTimer = nil;
+            [self.player stop];
+            self.player = nil;
             
             [self.view makeToast:@"对方正忙!" duration:2.0 position:@"center"];
             [self.hangUpButton setHidden:YES];
@@ -556,6 +571,8 @@
             //simultaneous open
             [self.dialTimer invalidate];
             self.dialTimer = nil;
+            [self.player stop];
+            self.player = nil;
             
             voip.state = VOIP_ACCEPTED;
             self.history.flag = self.history.flag&FLAG_ACCEPTED;
@@ -644,6 +661,20 @@
 }
 
 
+#pragma mark - AVAudioPlayerDelegate
+- (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag {
+    NSLog(@"player finished");
+    VOIP *voip = [VOIP instance];
+    if (voip.state == VOIP_DIALING || voip.state == VOIP_ACCEPTING) {
+        [self.player play];
+    }
+}
+
+- (void)audioPlayerDecodeErrorDidOccur:(AVAudioPlayer *)player error:(NSError *)error {
+    NSLog(@"player decode error");
+}
+
+
 #pragma mark VoiceTransport
 -(int)sendRTPPacketA:(const void*)data length:(int)length {
     VOIPData *vData = [[VOIPData alloc] init];
@@ -681,6 +712,45 @@
     }
     return length;
 }
+
+-(void)playDialIn {
+    
+    NSString *path = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"start.mp3"];
+    BOOL r = [[NSFileManager defaultManager] fileExistsAtPath:path];
+    NSLog(@"exist:%d", r);
+    
+    AVAudioSession *session = [AVAudioSession sharedInstance];
+    [session setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
+    
+    //打开外放
+    UInt32 sessionCategory = kAudioSessionCategory_MediaPlayback;
+    AudioSessionSetProperty(kAudioSessionProperty_AudioCategory, sizeof(sessionCategory), &sessionCategory);
+    UInt32 audioRouteOverride = kAudioSessionOverrideAudioRoute_Speaker;
+    AudioSessionSetProperty (kAudioSessionProperty_OverrideAudioRoute,sizeof (audioRouteOverride),&audioRouteOverride);
+    
+    NSURL *u = [NSURL fileURLWithPath:path];
+    self.player = [[AVAudioPlayer alloc] initWithContentsOfURL:u error:nil];
+    [self.player setDelegate:self];
+    
+    [self.player play];
+}
+
+-(void)playDialOut {
+    
+    NSString *path = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"CallConnected.mp3"];
+    BOOL r = [[NSFileManager defaultManager] fileExistsAtPath:path];
+    NSLog(@"exist:%d", r);
+    
+    AVAudioSession *session = [AVAudioSession sharedInstance];
+    [session setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
+    
+    NSURL *u = [NSURL fileURLWithPath:path];
+    self.player = [[AVAudioPlayer alloc] initWithContentsOfURL:u error:nil];
+    [self.player setDelegate:self];
+    
+    [self.player play];
+}
+
 /**
  *  创建拨号
  *
@@ -692,7 +762,7 @@
     
     self.dialBeginTimestamp = time(NULL);
     [self sendDial];
-   
+    [self playDialOut];
     self.dialTimer = [NSTimer scheduledTimerWithTimeInterval: 1
                                                       target:self
                                                     selector:@selector(sendDial)
