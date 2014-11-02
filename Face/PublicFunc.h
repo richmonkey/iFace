@@ -169,5 +169,6 @@
 + (float)getSystemVersion;
 + (UIImage *)resizeImageWithCapInsets:(UIEdgeInsets)edgeinset fromImage:(UIImage *)image;
 + (UIImage*) maskImage:(UIImage *)image withMask:(UIImage *)maskImage;
++(NSString*) getTimeStrFromSeconds:(UInt64)seconds;
 
 @end

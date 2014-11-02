@@ -11,6 +11,7 @@
 #import "HistoryDB.h"
 #import  "UserDB.h"
 #import "User.h"
+#import "PublicFunc.h"
 
 @interface ConversationHistoryViewController ()
 
@@ -68,12 +69,17 @@
     }
     History *history = [self.historys objectAtIndex:indexPath.row];
     
+    int callDuration = history.endTimestamp - history.beginTimestamp;
+    
+    NSString *durationStr = [NSString stringWithFormat:@"通话时长:%@",[PublicFunc getTimeStrFromSeconds:callDuration]];
+    
     IMUser *theUser =  [[UserDB instance] loadUser:history.peerUID];
     
-    [cell.textLabel setText:theUser.displayName];
-    
-    
-    
+    [cell.textLabel setText:@"asdfasdf"];
+    [cell.detailTextLabel setText:durationStr];
+    [cell.textLabel setTextColor:[UIColor blackColor]];
+    [cell.detailTextLabel setTextColor:[UIColor grayColor]];
+    [cell setBackgroundColor:[UIColor darkGrayColor]];
     
     return cell;
     
