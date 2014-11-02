@@ -324,6 +324,10 @@
         VOIP *voip = [VOIP instance];
         voip.state = VOIP_LISTENING;
         [[IMService instance] popVOIPObserver:self];
+        UIApplication *application = [UIApplication sharedApplication];
+        if (application.applicationState == UIApplicationStateBackground) {
+            [[IMService instance] stop];
+        }
         [[HistoryDB instance] addHistory:self.history];
     }];
 }
