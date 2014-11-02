@@ -2,12 +2,12 @@
   "images" : [
     {
       "idiom" : "universal",
-      "scale" : "1x"
+      "scale" : "1x",
+      "filename" : "Call_answer.png"
     },
     {
       "idiom" : "universal",
-      "scale" : "2x",
-      "filename" : "Call_answer.png"
+      "scale" : "2x"
     }
   ],
   "info" : {
