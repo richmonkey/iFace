@@ -12,7 +12,6 @@
 @interface AsyncTCP()
 @property(nonatomic, strong)ConnectCB connect_cb;
 @property(nonatomic, strong)ReadCB read_cb;
-@property(nonatomic, strong)CloseCB close_cb;
 @property(nonatomic, strong)dispatch_source_t readSource;
 @property(nonatomic, strong)dispatch_source_t writeSource;
 @property(nonatomic)BOOL writeSourceActive;
@@ -39,7 +38,6 @@
     self.writeSource = nil;
     self.connect_cb = nil;
     self.read_cb = nil;
-    self.close_cb = nil;
 }
 
 -(BOOL)connect:(NSString*)host port:(int)port cb:(ConnectCB)cb {
@@ -104,16 +102,13 @@
     return;
 }
 
--(void)close:(CloseCB)cb {
-    self.close_cb = cb;
+-(void)close {
     __block int count = 0;
     
     void (^on_cancel)() = ^{
         --count;
         if (count == 0) {
-            close(self.sock);
-            self.sock = -1;
-            self.close_cb(self, 0);
+            NSLog(@"async tcp closed");
         }
     };
     
@@ -137,6 +132,14 @@
         }
         dispatch_source_set_cancel_handler(self.readSource, on_cancel);
         dispatch_source_cancel(self.readSource);
+    }
+    
+    if (self.sock != -1) {
+        NSLog(@"close socket");
+        //because event handler and close both be called on main thread
+        //here can safely close socket
+        close(self.sock);
+        self.sock = -1;
     }
 }
 

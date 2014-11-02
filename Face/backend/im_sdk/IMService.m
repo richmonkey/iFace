@@ -185,20 +185,19 @@
 -(void)closeUDP {
     if (self.readSource) {
         dispatch_source_set_cancel_handler(self.readSource, ^{
-            close(self.udpFD);
-            self.udpFD = -1;
             self.readSource = nil;
         });
         dispatch_source_cancel(self.readSource);
+        NSLog(@"close udp socket");
+        close(self.udpFD);
+        self.udpFD = -1;
     }
 }
 
 -(void)close {
     if (self.tcp) {
-        __weak IMService *wself = self;
-        [self.tcp close:^(AsyncTCP *tcp, int err) {
-            [wself onClose];
-        }];
+        [self.tcp close];
+        self.tcp = nil;
     }
 }
 
@@ -215,14 +214,6 @@
     dispatch_source_set_timer(self.connectTimer, w, DISPATCH_TIME_FOREVER, 0);
     
     NSLog(@"start connect timer:%lld", t/NSEC_PER_SEC);
-}
-
--(void)onClose {
-    NSLog(@"im service on close");
-    self.tcp = nil;
-    if (self.stopped) return;
-    
-    [self startConnectTimer];
 }
 
 -(void)handleClose {
@@ -243,6 +234,7 @@
     [self.peerMessages removeAllObjects];
     [self.groupMessages removeAllObjects];
     [self close];
+    [self startConnectTimer];
 }
 
 -(void)handleACK:(Message*)msg {
@@ -479,10 +471,11 @@
 
 -(void)connect {
     if (self.tcp) {
+        NSLog(@"tcp already connected");
         return;
     }
     if (self.stopped) {
-        NSLog(@"opps......");
+        NSLog(@"im service already stopped");
         return;
     }
     
@@ -501,33 +494,35 @@
     self.connectState = STATE_CONNECTING;
     [self publishConnectState:STATE_CONNECTING];
     self.tcp = [[AsyncTCP alloc] init];
-    __weak IMService *wself = self;
     BOOL r = [self.tcp connect:self.host port:self.port cb:^(AsyncTCP *tcp, int err) {
         if (err) {
             NSLog(@"tcp connect err");
-            wself.connectFailCount = wself.connectFailCount + 1;
-            [wself close];
+            [self close];
+            self.connectFailCount = self.connectFailCount + 1;
             self.connectState = STATE_CONNECTFAIL;
             [self publishConnectState:STATE_CONNECTFAIL];
+            
+            [self startConnectTimer];
             return;
         } else {
             NSLog(@"tcp connected");
-            wself.connectFailCount = 0;
+            self.connectFailCount = 0;
             self.connectState = STATE_CONNECTED;
             [self publishConnectState:STATE_CONNECTED];
             [self sendAuth];
-            [wself.tcp startRead:^(AsyncTCP *tcp, NSData *data, int err) {
-                [wself onRead:data error:err];
+            [self.tcp startRead:^(AsyncTCP *tcp, NSData *data, int err) {
+                [self onRead:data error:err];
             }];
         }
     }];
     if (!r) {
         NSLog(@"tcp connect err");
-        wself.connectFailCount = wself.connectFailCount + 1;
+        self.tcp = nil;
+        self.connectFailCount = self.connectFailCount + 1;
         self.connectState = STATE_CONNECTFAIL;
         [self publishConnectState:STATE_CONNECTFAIL];
         
-        [self onClose];
+        [self startConnectTimer];
     }
 }
 
