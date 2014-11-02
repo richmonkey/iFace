@@ -23,13 +23,13 @@
 -(id)init {
     self = [super init];
     if (self) {
-        self.host = @"106.185.43.85";
-        self.port = 23000;
-        self.voipPort = 23001;
+        self.host = @"voip.yufeng.me";
+        self.port = 20000;
+        self.voipPort = 20001;
     }
     return self;
 }
 -(NSString*)URL {
-    return @"http://106.186.122.158:5000";
+    return @"http://voip.yufeng.me:5000";
 }
 @end
