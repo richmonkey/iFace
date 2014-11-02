@@ -122,13 +122,13 @@
 }
 
 -(void)appDidEnterBackground {
-    [[IMService instance] stop];
-    [self stopRefreshTimer];
+//    [[IMService instance] stop];
+//    [self stopRefreshTimer];
 }
 
 -(void)appWillEnterForeground {
-    [[IMService instance] start:[UserPresent instance].uid];
-    [self startRefreshTimer];
+//    [[IMService instance] start:[UserPresent instance].uid];
+//    [self startRefreshTimer];
 }
 
 
