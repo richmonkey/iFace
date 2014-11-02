@@ -15,6 +15,9 @@
 #import "HistoryTableViewCell.h"
 #import "VOIPViewController.h"
 
+#define kGreenColor         RGBCOLOR(48,176,87)
+#define kRedColor           RGBCOLOR(207,6,6)
+
 @interface ConversationHistoryViewController ()
 
 @property (strong,nonatomic) UITableView *tableView;
@@ -82,8 +85,12 @@
     }
     History *history = [self.historys objectAtIndex:indexPath.row];
     
+    NSDate *createDate = [NSDate dateWithTimeIntervalSince1970:history.beginTimestamp];
+    NSString *creatTimeStr = [PublicFunc getConversationTimeString: createDate];
+    [cell.timeLabel setText:creatTimeStr];
+    
     int callDuration = history.endTimestamp - history.beginTimestamp;
-    NSString *durationStr = [NSString stringWithFormat:@"通话时长:%@",[PublicFunc getTimeStrFromSeconds:callDuration]];
+    NSString *durationStr = [NSString stringWithFormat:@"%@",[PublicFunc getTimeStrFromSeconds:callDuration]];
     [cell.durationLabel setText:durationStr];
     
     IMUser *theUser =  [[UserDB instance] loadUser:history.peerUID];
@@ -103,15 +110,15 @@
         [cell.iconView setImage:[UIImage imageNamed:@"callOutIcon"]];
         if(isCancel) {
             [cell.statusLabel setTextColor:[UIColor grayColor]];
-            [cell.statusLabel setText:@"通话取消"];
+            [cell.statusLabel setText:@"通话被取消"];
         }else if(isRefused) {
-            [cell.statusLabel setTextColor:[UIColor redColor]];
-            [cell.statusLabel setText:@"通话拒绝"];
+            [cell.statusLabel setTextColor:kRedColor];
+            [cell.statusLabel setText:@"通话被拒绝"];
         }else if(isAccepted){
-            [cell.statusLabel setTextColor:[UIColor greenColor]];
+            [cell.statusLabel setTextColor:kGreenColor];
             [cell.statusLabel setText:@"通话成功"];
         }else if(isUnreceived){
-            [cell.statusLabel setTextColor:[UIColor blueColor]];
+            [cell.statusLabel setTextColor:kRedColor];
             [cell.statusLabel setText:@"对方未接听"];
         }
     }else{
@@ -120,10 +127,10 @@
             [cell.statusLabel setTextColor:[UIColor grayColor]];
             [cell.statusLabel setText:@"已取消"];
         }else if(isRefused) {
-            [cell.statusLabel setTextColor:[UIColor redColor]];
+            [cell.statusLabel setTextColor:kRedColor];
             [cell.statusLabel setText:@"已拒绝"];
         }else if(isAccepted){
-            [cell.statusLabel setTextColor:[UIColor greenColor]];
+            [cell.statusLabel setTextColor:kGreenColor];
             [cell.statusLabel setText:@"通话成功"];
         }else if(isUnreceived){
             [cell.statusLabel setTextColor:[UIColor blueColor]];
@@ -169,7 +176,14 @@
              在重新刷新tableView的时候延迟一下*/
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 [self.tableView reloadData];
-                [self updateEmputyContentView];
+                
+                if ([self.historys count] == 0) {
+                    [self.tableView setHidden:YES];
+                    [self.emputyLabel setHidden:NO];
+                }else{
+                    [self.emputyLabel setHidden:YES];
+                    [self.tableView setHidden:NO];
+                }
             });
         }
     }
@@ -178,18 +192,29 @@
 
 
 -(void) onNewHistory:(NSNotification*)notify{
-    
-    [self.historys removeAllObjects];
-    
-    self.historys = [[NSMutableArray alloc] initWithArray: [[HistoryDB instance] loadHistoryDB]];
+   
+    History *newHistory = notify.object;
+    [self.historys insertObject:newHistory atIndex:0];
     [self.tableView reloadData];
-    
+    if ([self.historys count] == 0) {
+        [self.tableView setHidden:YES];
+        [self.emputyLabel setHidden:NO];
+    }else{
+        [self.emputyLabel setHidden:YES];
+        [self.tableView setHidden:NO];
+    }
 }
 
 -(void) onClearAllHistory:(NSNotification*)notify{
     [self.historys removeAllObjects];
     [self.tableView reloadData];
-    [self updateEmputyContentView];
+    if ([self.historys count] == 0) {
+        [self.tableView setHidden:YES];
+        [self.emputyLabel setHidden:NO];
+    }else{
+        [self.emputyLabel setHidden:YES];
+        [self.tableView setHidden:NO];
+    }
 }
 
 /**
@@ -200,7 +225,7 @@
 }
 
 - (void) updateEmputyContentView{
-    if ([self.historys count] == 0) {
+
         self.emputyLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 250, 40)];
         [self.emputyLabel setFont:[UIFont systemFontOfSize:14.0f]];
         [self.emputyLabel setBackgroundColor:RGBACOLOR(240, 240, 240, 1.0f)];
@@ -209,17 +234,15 @@
         [self.emputyLabel setTextColor:RGBACOLOR(20, 20, 20, 0.8f)];
         [self.emputyLabel setCenter:CGPointMake(self.view.center.x, self.view.center.y - 20)];
         CALayer *labelLayer = [self.emputyLabel layer];
-        [self.emputyLabel setHidden:NO];
         [labelLayer setMasksToBounds:YES];
         [labelLayer setCornerRadius: 16];
         [self.view addSubview:self.emputyLabel];
+    
+    if ([self.historys count] == 0) {
         [self.tableView setHidden:YES];
+        [self.emputyLabel setHidden:NO];
     }else{
-        if (self.emputyLabel) {
-            [self.emputyLabel setHidden:YES];
-            [self.emputyLabel removeFromSuperview];
-            self.emputyLabel = nil;
-        }
+        [self.emputyLabel setHidden:YES];
         [self.tableView setHidden:NO];
     }
 }

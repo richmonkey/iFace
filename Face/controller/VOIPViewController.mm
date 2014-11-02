@@ -309,8 +309,10 @@
         voip.state = VOIP_LISTENING;
         [[IMService instance] popVOIPObserver:self];
         [[HistoryDB instance] addHistory:self.history];
+       
+        NSNotification* notification = [NSNotification notificationWithName:ON_NEW_CALL_HISTORY_NOTIFY object:self.history];
+        [[NSNotificationCenter defaultCenter] postNotification:notification];
         
-         [[NSNotificationCenter defaultCenter] postNotificationName:ON_NEW_CALL_HISTORY_NOTIFY object:nil];
     }];
 }
 
