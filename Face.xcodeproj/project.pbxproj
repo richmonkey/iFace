@@ -14,6 +14,9 @@
 		48BCCF981A0514BC00A7889D /* ReflectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 48BCCF921A0514BC00A7889D /* ReflectionView.m */; };
 		48BCCF991A0514BC00A7889D /* ANBlurredImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 48BCCF951A0514BC00A7889D /* ANBlurredImageView.m */; };
 		48BCCF9A1A0514BC00A7889D /* UIImage+BoxBlur.m in Sources */ = {isa = PBXBuildFile; fileRef = 48BCCF971A0514BC00A7889D /* UIImage+BoxBlur.m */; };
+		48C7A13D1A065BDA0020E7F6 /* CallConnected.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 48C7A13A1A065BDA0020E7F6 /* CallConnected.mp3 */; };
+		48C7A13E1A065BDA0020E7F6 /* end.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 48C7A13B1A065BDA0020E7F6 /* end.mp3 */; };
+		48C7A13F1A065BDA0020E7F6 /* start.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 48C7A13C1A065BDA0020E7F6 /* start.mp3 */; };
 		6DF3996819EB9AAE009B03C4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF3996719EB9AAE009B03C4 /* Foundation.framework */; };
 		6DF3996A19EB9AAE009B03C4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF3996919EB9AAE009B03C4 /* CoreGraphics.framework */; };
 		6DF3996C19EB9AAE009B03C4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF3996B19EB9AAE009B03C4 /* UIKit.framework */; };
@@ -198,6 +201,9 @@
 		48BCCF951A0514BC00A7889D /* ANBlurredImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ANBlurredImageView.m; sourceTree = "<group>"; };
 		48BCCF961A0514BC00A7889D /* UIImage+BoxBlur.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+BoxBlur.h"; sourceTree = "<group>"; };
 		48BCCF971A0514BC00A7889D /* UIImage+BoxBlur.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+BoxBlur.m"; sourceTree = "<group>"; };
+		48C7A13A1A065BDA0020E7F6 /* CallConnected.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = CallConnected.mp3; sourceTree = "<group>"; };
+		48C7A13B1A065BDA0020E7F6 /* end.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = end.mp3; sourceTree = "<group>"; };
+		48C7A13C1A065BDA0020E7F6 /* start.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = start.mp3; sourceTree = "<group>"; };
 		6DF3996419EB9AAE009B03C4 /* Face.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Face.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6DF3996719EB9AAE009B03C4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		6DF3996919EB9AAE009B03C4 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -556,6 +562,16 @@
 			path = ANBlurredImageView;
 			sourceTree = "<group>";
 		};
+		48C7A1391A065BD90020E7F6 /* sound */ = {
+			isa = PBXGroup;
+			children = (
+				48C7A13A1A065BDA0020E7F6 /* CallConnected.mp3 */,
+				48C7A13B1A065BDA0020E7F6 /* end.mp3 */,
+				48C7A13C1A065BDA0020E7F6 /* start.mp3 */,
+			);
+			path = sound;
+			sourceTree = "<group>";
+		};
 		6DF3995B19EB9AAE009B03C4 = {
 			isa = PBXGroup;
 			children = (
@@ -593,6 +609,7 @@
 		6DF3996D19EB9AAE009B03C4 /* Face */ = {
 			isa = PBXGroup;
 			children = (
+				48C7A1391A065BD90020E7F6 /* sound */,
 				6DF39AA419EBA88E009B03C4 /* cell */,
 				6DF399F919EBA552009B03C4 /* third_party */,
 				6DF399E319EBA31D009B03C4 /* model */,
@@ -1122,6 +1139,7 @@
 				6DF39A7C19EBA6CC009B03C4 /* send-highlighted.png in Resources */,
 				6DF39A7B19EBA6CC009B03C4 /* PhotoIcon@2x.png in Resources */,
 				6DF39A7819EBA6CC009B03C4 /* input-field.png in Resources */,
+				48C7A13D1A065BDA0020E7F6 /* CallConnected.mp3 in Resources */,
 				6DF39AB319EBA92E009B03C4 /* ContactPhoneTableViewCell.xib in Resources */,
 				6DF399DC19EBA313009B03C4 /* AskPhoneNumberViewController.xib in Resources */,
 				6DF39A7919EBA6CC009B03C4 /* input-field@2x.png in Resources */,
@@ -1132,10 +1150,12 @@
 				6DF3997219EB9AAE009B03C4 /* InfoPlist.strings in Resources */,
 				6DF39AA919EBA88E009B03C4 /* ContactHeaderView.xib in Resources */,
 				6DF39A7419EBA6CC009B03C4 /* input-bar-flat.png in Resources */,
+				48C7A13E1A065BDA0020E7F6 /* end.mp3 in Resources */,
 				6DF39A8119EBA6CC009B03C4 /* messageSent.aiff in Resources */,
 				6DF39A7E19EBA6CC009B03C4 /* send.png in Resources */,
 				6DF39A7319EBA6CC009B03C4 /* bubble-typing@2x.png in Resources */,
 				6DF39A7F19EBA6CC009B03C4 /* send@2x.png in Resources */,
+				48C7A13F1A065BDA0020E7F6 /* start.mp3 in Resources */,
 				6DF39A7219EBA6CC009B03C4 /* bubble-typing.png in Resources */,
 				6DF39A8019EBA6CC009B03C4 /* messageReceived.aiff in Resources */,
 				6DF39AAE19EBA8F8009B03C4 /* ContactIMUserTableViewCell.xib in Resources */,
