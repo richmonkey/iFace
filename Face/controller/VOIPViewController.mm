@@ -168,7 +168,12 @@
     UIImageView *imgView = [[UIImageView alloc]
                             initWithFrame:CGRectMake(0,0, 120,
                                                      120)];
-    [imgView sd_setImageWithURL:[[NSURL alloc] initWithString:self.peerUser.avatarURL]
+    
+    NSURL *avatar = nil;
+    if (self.peerUser.avatarURL) {
+        avatar = [[NSURL alloc] initWithString:self.peerUser.avatarURL];
+    }
+    [imgView sd_setImageWithURL:avatar
                placeholderImage:[UIImage imageNamed:@"potrait"]];
     
     CALayer *imageLayer = [imgView layer];  //获取ImageView的层
@@ -314,7 +319,7 @@
     voip.state = VOIP_REFUSED;
     [self.player stop];
     self.player = nil;
-    self.history.flag = self.history.flag&FLAG_REFUSED;
+    self.history.flag = self.history.flag|FLAG_REFUSED;
     [self sendDialRefuse];
     
     [self dismiss];
@@ -326,7 +331,7 @@
     voip.state = VOIP_ACCEPTED;
     [self.player stop];
     self.player = nil;
-    self.history.flag = self.history.flag&FLAG_ACCEPTED;
+    self.history.flag = self.history.flag|FLAG_ACCEPTED;
 
     
     self.acceptTimestamp = time(NULL);
@@ -349,7 +354,7 @@
         [self sendHangUp];
         voip.state = VOIP_HANGED_UP;
         
-        self.history.flag = self.history.flag&FLAG_CANCELED;
+        self.history.flag = self.history.flag|FLAG_CANCELED;
 
         [self dismiss];
     } else if (voip.state == VOIP_CONNECTED) {
@@ -409,7 +414,7 @@
         [self.player stop];
         self.player = nil;
         
-        self.history.flag = self.history.flag&FLAG_UNRECEIVED;
+        self.history.flag = self.history.flag|FLAG_UNRECEIVED;
         [self dismiss];
     }
 }
@@ -512,7 +517,7 @@
     
     if (voip.state == VOIP_DIALING) {
         if (ctl.cmd == VOIP_COMMAND_ACCEPT) {
-            self.history.flag = self.history.flag&FLAG_ACCEPTED;
+            self.history.flag = self.history.flag|FLAG_ACCEPTED;
           
             [self setOnTalkingUIShow];
             
@@ -527,7 +532,7 @@
             [self startStream];
         } else if (ctl.cmd == VOIP_COMMAND_REFUSE) {
             voip.state = VOIP_REFUSED;
-            self.history.flag = self.history.flag&FLAG_REFUSED;
+            self.history.flag = self.history.flag|FLAG_REFUSED;
  
             
             [self.dialTimer invalidate];
@@ -548,7 +553,7 @@
             self.player = nil;
             
             voip.state = VOIP_ACCEPTED;
-            self.history.flag = self.history.flag&FLAG_ACCEPTED;
+            self.history.flag = self.history.flag|FLAG_ACCEPTED;
 
 
             self.acceptTimestamp = time(NULL);
