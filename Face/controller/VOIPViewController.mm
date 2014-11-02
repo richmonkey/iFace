@@ -704,8 +704,6 @@
 -(void)playDialIn {
     
     NSString *path = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"start.mp3"];
-    BOOL r = [[NSFileManager defaultManager] fileExistsAtPath:path];
-    NSLog(@"exist:%d", r);
     
     AVAudioSession *session = [AVAudioSession sharedInstance];
     [session setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
