@@ -198,8 +198,7 @@
     
     
     self.acceptButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    self.acceptButton.backgroundColor =
-    [UIColor colorWithRed:0.78f green:0.78f blue:0.8f alpha:1.0f];
+
     self.acceptButton.frame =
     CGRectMake(30.0f, self.view.frame.size.height - kBtnHeight - kBtnHeight, kBtnWidth, kBtnHeight);
 
@@ -217,8 +216,7 @@
     
     
     self.refuseButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    self.refuseButton.backgroundColor =
-    [UIColor colorWithRed:0.78f green:0.78f blue:0.8f alpha:1.0f];
+
     self.refuseButton.frame =
     CGRectMake(150.0f, self.view.frame.size.height - kBtnHeight - kBtnHeight, kBtnWidth, kBtnHeight);
     
@@ -236,17 +234,16 @@
     
     
     self.hangUpButton = [[UIButton alloc] init];
-    self.hangUpButton.backgroundColor =
-    [UIColor colorWithRed:0.78f green:0.78f blue:0.8f alpha:1.0f];
-    self.hangUpButton.frame =
+
     CGRectMake(30.0f, self.view.frame.size.height - kBtnHeight - kBtnHeight, kBtnWidth, kBtnHeight);
-    [self.hangUpButton setBackgroundImage:[UIImage imageNamed:@"Call_hangup.png"] forState:UIControlStateNormal];
-    [self.hangUpButton setBackgroundImage:[UIImage imageNamed:@"Call_hangup_p.png"] forState:UIControlStateHighlighted];
+    [self.hangUpButton setBackgroundImage:[UIImage imageNamed:@"Call_hangup"] forState:UIControlStateNormal];
+    [self.hangUpButton setBackgroundImage:[UIImage imageNamed:@"Call_hangup_p"] forState:UIControlStateHighlighted];
     [self.hangUpButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.hangUpButton addTarget:self
                    action:@selector(hangUp:)
          forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.hangUpButton];
+    [self.hangUpButton setBackgroundColor:[UIColor clearColor]];
     [self.hangUpButton setCenter:CGPointMake(self.view.frame.size.width / 2, kBtnYposition)];
     
     
@@ -265,8 +262,7 @@
     
     
     self.reDialingButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    self.reDialingButton.backgroundColor =
-    [UIColor colorWithRed:0.78f green:0.78f blue:0.8f alpha:1.0f];
+
     self.reDialingButton.frame =
     CGRectMake(30.0f, self.view.frame.size.height - kBtnHeight - kBtnHeight, kBtnWidth, kBtnHeight);
     
@@ -328,10 +324,6 @@
         VOIP *voip = [VOIP instance];
         voip.state = VOIP_LISTENING;
         [[IMService instance] popVOIPObserver:self];
-        UIApplication *application = [UIApplication sharedApplication];
-        if (application.applicationState == UIApplicationStateBackground) {
-            [[IMService instance] stop];
-        }
         [[HistoryDB instance] addHistory:self.history];
     }];
 }

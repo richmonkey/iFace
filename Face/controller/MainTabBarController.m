@@ -122,18 +122,13 @@
 }
 
 -(void)appDidEnterBackground {
-    VOIP *voip = [VOIP instance];
-    if (voip.state == VOIP_LISTENING) {
-        [[IMService instance] stop];
-    }
-    [self stopRefreshTimer];
+//    [[IMService instance] stop];
+//    [self stopRefreshTimer];
 }
 
 -(void)appWillEnterForeground {
-    if ([UserPresent instance].uid > 0 && self.reach.isReachable) {
-        [[IMService instance] start:[UserPresent instance].uid];
-    }
-    [self startRefreshTimer];
+//    [[IMService instance] start:[UserPresent instance].uid];
+//    [self startRefreshTimer];
 }
 
 

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4813DC821A05FCFB004598F3 /* ConversationHistoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4813DC811A05FCFB004598F3 /* ConversationHistoryViewController.m */; };
+		4813DC851A060447004598F3 /* SettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4813DC841A060447004598F3 /* SettingViewController.m */; };
 		48BCCF981A0514BC00A7889D /* ReflectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 48BCCF921A0514BC00A7889D /* ReflectionView.m */; };
 		48BCCF991A0514BC00A7889D /* ANBlurredImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 48BCCF951A0514BC00A7889D /* ANBlurredImageView.m */; };
 		48BCCF9A1A0514BC00A7889D /* UIImage+BoxBlur.m in Sources */ = {isa = PBXBuildFile; fileRef = 48BCCF971A0514BC00A7889D /* UIImage+BoxBlur.m */; };
@@ -180,6 +182,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4813DC801A05FCFB004598F3 /* ConversationHistoryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConversationHistoryViewController.h; sourceTree = "<group>"; };
+		4813DC811A05FCFB004598F3 /* ConversationHistoryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConversationHistoryViewController.m; sourceTree = "<group>"; };
+		4813DC831A060447004598F3 /* SettingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingViewController.h; sourceTree = "<group>"; };
+		4813DC841A060447004598F3 /* SettingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingViewController.m; sourceTree = "<group>"; };
 		48BCCF911A0514BC00A7889D /* ReflectionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReflectionView.h; sourceTree = "<group>"; };
 		48BCCF921A0514BC00A7889D /* ReflectionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReflectionView.m; sourceTree = "<group>"; };
 		48BCCF941A0514BC00A7889D /* ANBlurredImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ANBlurredImageView.h; sourceTree = "<group>"; };
@@ -703,6 +709,10 @@
 				6DF399DA19EBA313009B03C4 /* MainTabBarController.m */,
 				6DF39B4219EBBD52009B03C4 /* VOIPViewController.h */,
 				6DF39B4319EBBD52009B03C4 /* VOIPViewController.mm */,
+				4813DC801A05FCFB004598F3 /* ConversationHistoryViewController.h */,
+				4813DC811A05FCFB004598F3 /* ConversationHistoryViewController.m */,
+				4813DC831A060447004598F3 /* SettingViewController.h */,
+				4813DC841A060447004598F3 /* SettingViewController.m */,
 			);
 			path = controller;
 			sourceTree = "<group>";
@@ -1143,6 +1153,7 @@
 				6DF39BC719ED72C3009B03C4 /* FMResultSet.m in Sources */,
 				48BCCF991A0514BC00A7889D /* ANBlurredImageView.m in Sources */,
 				6DF39A9019EBA6CC009B03C4 /* UIImage+GIF.m in Sources */,
+				4813DC821A05FCFB004598F3 /* ConversationHistoryViewController.m in Sources */,
 				6DF39A7019EBA6CC009B03C4 /* JSMessageSoundEffect.m in Sources */,
 				6DF39A8C19EBA6CC009B03C4 /* SDWebImageDownloaderOperation.m in Sources */,
 				6DF399E219EBA313009B03C4 /* MainTabBarController.m in Sources */,
@@ -1163,6 +1174,7 @@
 				6DF399C819EBA30B009B03C4 /* AsyncTCP.m in Sources */,
 				6DF39A8219EBA6CC009B03C4 /* UIImage+JSMessagesView.m in Sources */,
 				6DF39A9219EBA6CC009B03C4 /* UIImage+WebP.m in Sources */,
+				4813DC851A060447004598F3 /* SettingViewController.m in Sources */,
 				6DF39A8D19EBA6CC009B03C4 /* SDWebImageManager.m in Sources */,
 				6DF39A9B19EBA6CC009B03C4 /* UIImage+Resize.m in Sources */,
 				6DF39AA819EBA88E009B03C4 /* ContactHeaderView.m in Sources */,
