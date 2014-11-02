@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		4813DC821A05FCFB004598F3 /* ConversationHistoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4813DC811A05FCFB004598F3 /* ConversationHistoryViewController.m */; };
 		4813DC851A060447004598F3 /* SettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4813DC841A060447004598F3 /* SettingViewController.m */; };
+		48986BA41A064C74004740B6 /* DebugFrameView.m in Sources */ = {isa = PBXBuildFile; fileRef = 48986BA11A064C74004740B6 /* DebugFrameView.m */; };
+		48986BA51A064C74004740B6 /* UIView+Debug.m in Sources */ = {isa = PBXBuildFile; fileRef = 48986BA31A064C74004740B6 /* UIView+Debug.m */; };
 		48BCCF981A0514BC00A7889D /* ReflectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 48BCCF921A0514BC00A7889D /* ReflectionView.m */; };
 		48BCCF991A0514BC00A7889D /* ANBlurredImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 48BCCF951A0514BC00A7889D /* ANBlurredImageView.m */; };
 		48BCCF9A1A0514BC00A7889D /* UIImage+BoxBlur.m in Sources */ = {isa = PBXBuildFile; fileRef = 48BCCF971A0514BC00A7889D /* UIImage+BoxBlur.m */; };
@@ -186,6 +188,10 @@
 		4813DC811A05FCFB004598F3 /* ConversationHistoryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConversationHistoryViewController.m; sourceTree = "<group>"; };
 		4813DC831A060447004598F3 /* SettingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingViewController.h; sourceTree = "<group>"; };
 		4813DC841A060447004598F3 /* SettingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingViewController.m; sourceTree = "<group>"; };
+		48986BA01A064C74004740B6 /* DebugFrameView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugFrameView.h; sourceTree = "<group>"; };
+		48986BA11A064C74004740B6 /* DebugFrameView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DebugFrameView.m; sourceTree = "<group>"; };
+		48986BA21A064C74004740B6 /* UIView+Debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Debug.h"; sourceTree = "<group>"; };
+		48986BA31A064C74004740B6 /* UIView+Debug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Debug.m"; sourceTree = "<group>"; };
 		48BCCF911A0514BC00A7889D /* ReflectionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReflectionView.h; sourceTree = "<group>"; };
 		48BCCF921A0514BC00A7889D /* ReflectionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReflectionView.m; sourceTree = "<group>"; };
 		48BCCF941A0514BC00A7889D /* ANBlurredImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ANBlurredImageView.h; sourceTree = "<group>"; };
@@ -519,6 +525,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		48986B9F1A064C74004740B6 /* DebugView */ = {
+			isa = PBXGroup;
+			children = (
+				48986BA01A064C74004740B6 /* DebugFrameView.h */,
+				48986BA11A064C74004740B6 /* DebugFrameView.m */,
+				48986BA21A064C74004740B6 /* UIView+Debug.h */,
+				48986BA31A064C74004740B6 /* UIView+Debug.m */,
+			);
+			path = DebugView;
+			sourceTree = "<group>";
+		};
 		48BCCF901A0514BC00A7889D /* ReflectionView */ = {
 			isa = PBXGroup;
 			children = (
@@ -741,6 +758,7 @@
 		6DF399F919EBA552009B03C4 /* third_party */ = {
 			isa = PBXGroup;
 			children = (
+				48986B9F1A064C74004740B6 /* DebugView */,
 				48BCCF901A0514BC00A7889D /* ReflectionView */,
 				48BCCF931A0514BC00A7889D /* ANBlurredImageView */,
 				6DF39BB719ED72C3009B03C4 /* FMDB */,
@@ -1163,6 +1181,7 @@
 				6DF39A0719EBA67B009B03C4 /* MBProgressHUD.m in Sources */,
 				6DF399DD19EBA313009B03C4 /* CheckVerifyCodeController.m in Sources */,
 				6DF39A9519EBA6CC009B03C4 /* UIView+WebCacheOperation.m in Sources */,
+				48986BA41A064C74004740B6 /* DebugFrameView.m in Sources */,
 				6DF399E019EBA313009B03C4 /* ContactViewController.m in Sources */,
 				6DF399F219EBA31D009B03C4 /* UserPresent.m in Sources */,
 				6DF39A6D19EBA6CC009B03C4 /* FBShimmeringLayer.m in Sources */,
@@ -1180,6 +1199,7 @@
 				6DF39AA819EBA88E009B03C4 /* ContactHeaderView.m in Sources */,
 				48BCCF9A1A0514BC00A7889D /* UIImage+BoxBlur.m in Sources */,
 				6DF39BB019EC4C6D009B03C4 /* WebRTC.mm in Sources */,
+				48986BA51A064C74004740B6 /* UIView+Debug.m in Sources */,
 				6DF39A9719EBA6CC009B03C4 /* ESImageViewController.m in Sources */,
 				6DF39A8819EBA6CC009B03C4 /* SDImageCache.m in Sources */,
 				6DF399F119EBA31D009B03C4 /* UserDB.m in Sources */,

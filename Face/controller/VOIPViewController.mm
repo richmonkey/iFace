@@ -55,7 +55,11 @@
 
 #define kBtnWidth  72
 #define kBtnHeight 72
-#define kBtnYposition  (self.view.frame.size.height - 3*kBtnHeight)
+
+#define kBtnSqureWidth  200
+#define kBtnSqureHeight 50
+
+#define kBtnYposition  (self.view.frame.size.height - 3*kBtnSqureHeight)
 
 @interface VOIPViewController ()
 
@@ -199,9 +203,7 @@
     
     self.acceptButton = [UIButton buttonWithType:UIButtonTypeCustom];
 
-    self.acceptButton.frame =
-    CGRectMake(30.0f, self.view.frame.size.height - kBtnHeight - kBtnHeight, kBtnWidth, kBtnHeight);
-
+    self.acceptButton.frame = CGRectMake(30.0f, self.view.frame.size.height - kBtnHeight - kBtnHeight, kBtnWidth, kBtnHeight);
     
     [self.acceptButton setBackgroundImage: [UIImage imageNamed:@"Call_answer"] forState:UIControlStateNormal];
     
@@ -214,13 +216,9 @@
     [self.acceptButton setCenter:CGPointMake(self.view.frame.size.width/4, kBtnYposition)];
     
     
-    
     self.refuseButton = [UIButton buttonWithType:UIButtonTypeCustom];
 
-    self.refuseButton.frame =
-    CGRectMake(150.0f, self.view.frame.size.height - kBtnHeight - kBtnHeight, kBtnWidth, kBtnHeight);
-    
-    [self.refuseButton setTitle:@"拒绝" forState:UIControlStateNormal];
+    self.refuseButton.frame = CGRectMake(0,0, kBtnWidth, kBtnHeight);
     
     [self.refuseButton setBackgroundImage:[UIImage imageNamed:@"Call_hangup"] forState:UIControlStateNormal];
     [self.refuseButton setBackgroundImage:[UIImage imageNamed:@"Call_hangup_p"] forState:UIControlStateHighlighted];
@@ -232,21 +230,18 @@
     [self.refuseButton setCenter:CGPointMake(self.view.frame.size.width/4 + self.view.frame.size.width/2, kBtnYposition)];
     
     
-    
-    self.hangUpButton = [[UIButton alloc] init];
-
-    CGRectMake(30.0f, self.view.frame.size.height - kBtnHeight - kBtnHeight, kBtnWidth, kBtnHeight);
-    [self.hangUpButton setBackgroundImage:[UIImage imageNamed:@"Call_hangup"] forState:UIControlStateNormal];
-    [self.hangUpButton setBackgroundImage:[UIImage imageNamed:@"Call_hangup_p"] forState:UIControlStateHighlighted];
+    self.hangUpButton = [[UIButton alloc] initWithFrame:CGRectMake(0,0, kBtnSqureWidth, kBtnSqureHeight)];
+    [self.hangUpButton setBackgroundImage:[UIImage imageNamed:@"refuse_nor"] forState:UIControlStateNormal];
+    [self.hangUpButton setBackgroundImage:[UIImage imageNamed:@"refuse_pre"] forState:UIControlStateHighlighted];
+    [self.hangUpButton setTitle:@"挂断" forState:UIControlStateNormal];
     [self.hangUpButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.hangUpButton addTarget:self
                    action:@selector(hangUp:)
          forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.hangUpButton];
-    [self.hangUpButton setBackgroundColor:[UIColor clearColor]];
     [self.hangUpButton setCenter:CGPointMake(self.view.frame.size.width / 2, kBtnYposition)];
     
-    
+   /*
     CGRect frame =
     CGRectMake(240, self.view.frame.size.height - kBtnHeight - kBtnHeight, kBtnWidth, kBtnHeight);
     self.changeStateButton = [[UIButton alloc] initWithFrame:frame];
@@ -259,32 +254,34 @@
     
     [self.changeStateButton setHidden:YES];
     [self.view addSubview:self.changeStateButton];
-    
+    */
     
     self.reDialingButton = [UIButton buttonWithType:UIButtonTypeCustom];
 
     self.reDialingButton.frame =
-    CGRectMake(30.0f, self.view.frame.size.height - kBtnHeight - kBtnHeight, kBtnWidth, kBtnHeight);
+    CGRectMake(0, 0, kBtnSqureWidth, kBtnSqureHeight);
     
-    [self.reDialingButton setBackgroundImage:[UIImage imageNamed:@"Call_answer"] forState:UIControlStateNormal];
-    [self.reDialingButton setBackgroundImage:[UIImage imageNamed:@"Call_answer_p"] forState:UIControlStateHighlighted];
+    [self.reDialingButton setBackgroundImage:[UIImage imageNamed:@"accept_nor"] forState:UIControlStateNormal];
+    [self.reDialingButton setBackgroundImage:[UIImage imageNamed:@"accpet_pre"] forState:UIControlStateHighlighted];
     [self.reDialingButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.reDialingButton addTarget:self
                           action:@selector(redialing:)
                 forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.reDialingButton];
+    [self.reDialingButton setTitle:@"重拨" forState:UIControlStateNormal];
     [self.reDialingButton setCenter:CGPointMake(self.view.frame.size.width / 2, kBtnYposition)];
     [self.reDialingButton setHidden:YES];
     
     
-     frame =
-    CGRectMake(240, self.view.frame.size.height - kBtnHeight - kBtnHeight, kBtnWidth, kBtnHeight);
+    CGRect frame =
+    CGRectMake(0, 0, kBtnSqureWidth, kBtnSqureHeight);
     self.cancelButton = [[UIButton alloc] initWithFrame:frame];
     [self.cancelButton addTarget:self
                                action:@selector(cancelFaceTalk:)
                      forControlEvents:UIControlEventTouchUpInside];
-    [self.cancelButton setBackgroundImage:[UIImage imageNamed:@"Call_hangup"] forState:UIControlStateNormal];
-    [self.cancelButton setBackgroundImage:[UIImage imageNamed:@"Call_hangup_p"] forState:UIControlStateHighlighted];
+    [self.cancelButton setBackgroundImage:[UIImage imageNamed:@"refuse_nor"] forState:UIControlStateNormal];
+    [self.cancelButton setBackgroundImage:[UIImage imageNamed:@"refuse_pre"] forState:UIControlStateHighlighted];
+    [self.cancelButton setTitle:@"取消" forState:UIControlStateNormal];
     self.cancelButton.center = CGPointMake(self.view.frame.size.width/2, kBtnYposition +kBtnHeight/2*3);
     
     
