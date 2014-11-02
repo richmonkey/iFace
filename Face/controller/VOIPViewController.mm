@@ -565,7 +565,13 @@
             [self sendDialAccept];
         }
     } else if (voip.state == VOIP_ACCEPTING) {
-        
+        if (ctl.cmd == VOIP_COMMAND_HANG_UP) {
+            [self.player stop];
+            self.player = nil;
+            self.history.flag = self.history.flag|FLAG_UNRECEIVED;
+            voip.state = VOIP_HANGED_UP;
+            [self dismiss];
+        }
     } else if (voip.state == VOIP_ACCEPTED) {
         if (ctl.cmd == VOIP_COMMAND_CONNECTED) {
             NSLog(@"called voip connected");
