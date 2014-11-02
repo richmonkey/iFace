@@ -88,11 +88,11 @@
         [cell.nameLabel setText:theUser.displayName];
     }
     
-    bool isOut          = history.flag|FLAG_OUT;
-    bool isCancel       = history.flag|FLAG_CANCELED;
-    bool isRefused      = history.flag|FLAG_REFUSED;
-    bool isAccepted     = history.flag|FLAG_ACCEPTED;
-    bool isUnreceived   = history.flag|FLAG_UNRECEIVED;
+    bool isOut          = history.flag&FLAG_OUT;
+    bool isCancel       = history.flag&FLAG_CANCELED;
+    bool isRefused      = history.flag&FLAG_REFUSED;
+    bool isAccepted     = history.flag&FLAG_ACCEPTED;
+    bool isUnreceived   = history.flag&FLAG_UNRECEIVED;
     
     if (isOut) {
         [cell.iconView setImage:[UIImage imageNamed:@"callOutIcon"]];
