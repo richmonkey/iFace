@@ -14,6 +14,9 @@
 
 -(BOOL)addHistory:(History*)h;
 
+-(BOOL)removeHistory:(int64_t)hid;
+-(BOOL)clearHistoryDB;
+
 -(NSArray*)loadHistoryDB;
 
 @end
