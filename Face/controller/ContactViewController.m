@@ -210,9 +210,8 @@
     NSAssert(buttonIndex < self.contact.users.count, @"");
         
     User *u = [self.contact.users objectAtIndex:buttonIndex];
-    IMUser *mu = [[UserDB instance] loadUser:u.uid];
-//    MessageViewController* msgController = [[MessageViewController alloc] initWithRemoteUser:mu];
-//    [self.navigationController pushViewController:msgController animated:YES];
+    VOIPViewController *controller = [[VOIPViewController alloc] initWithCalledUID:u.uid];
+    [self presentViewController:controller animated:YES completion:nil];
 }
 
 - (void)didReceiveMemoryWarning
