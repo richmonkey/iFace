@@ -26,8 +26,17 @@
     [super tearDown];
 }
 
+
 - (void)testHistoryDB
 {
+    NSArray *array;
+    
+    [[HistoryDB instance] clearHistoryDB];
+    
+    array = [[HistoryDB instance] loadHistoryDB];
+    XCTAssertEqual(array.count, 0, @"");
+    
+    
     History *h = [[History alloc] init];
     h.peerUID = 86013800000000;
     h.createTimestamp = 100;
@@ -36,10 +45,28 @@
     h.flag = FLAG_OUT;
     [[HistoryDB instance] addHistory:h];
     
-    NSArray *array = [[HistoryDB instance] loadHistoryDB];
+
+    array = [[HistoryDB instance] loadHistoryDB];
+     XCTAssertEqual(array.count, 1, @"");
     for (History *h in array) {
         NSLog(@"history:%lld %lld, %d %ld, %ld %ld", h.hid, h.peerUID, h.flag, h.createTimestamp, h.beginTimestamp, h.endTimestamp);
     }
+    
+    [[HistoryDB instance] removeHistory:h.hid];
+    
+    array = [[HistoryDB instance] loadHistoryDB];
+    XCTAssertEqual(array.count, 0, @"");
+
+    [[HistoryDB instance] addHistory:h];
+    
+    array = [[HistoryDB instance] loadHistoryDB];
+    XCTAssertEqual(array.count, 1, @"");
+    
+    [[HistoryDB instance] clearHistoryDB];
+    
+    array = [[HistoryDB instance] loadHistoryDB];
+    XCTAssertEqual(array.count, 0, @"");
+
 }
 
 @end

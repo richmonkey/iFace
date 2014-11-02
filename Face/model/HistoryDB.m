@@ -89,4 +89,16 @@
     return array;
 }
 
+-(BOOL)removeHistory:(int64_t)hid {
+    NSString *sql = @"DELETE FROM history WHERE hid=:hid";
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    [dict setObject:[NSNumber numberWithLongLong:hid] forKey:@"hid"];
+    return [self.db executeUpdate:sql withParameterDictionary:dict];
+}
+
+-(BOOL)clearHistoryDB {
+    NSString *sql = @"DELETE  FROM history";
+    return [self.db executeUpdate:sql];
+}
+
 @end
