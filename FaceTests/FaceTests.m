@@ -29,6 +29,7 @@
 - (void)testHistoryDB
 {
     History *h = [[History alloc] init];
+    h.peerUID = 86013800000000;
     h.createTimestamp = 100;
     h.beginTimestamp = 1;
     h.endTimestamp = 2;
@@ -37,7 +38,7 @@
     
     NSArray *array = [[HistoryDB instance] loadHistoryDB];
     for (History *h in array) {
-        NSLog(@"history:%lld %d %ld, %ld %ld", h.hid, h.flag, h.createTimestamp, h.beginTimestamp, h.endTimestamp);
+        NSLog(@"history:%lld %lld, %d %ld, %ld %ld", h.hid, h.peerUID, h.flag, h.createTimestamp, h.beginTimestamp, h.endTimestamp);
     }
 }
 

@@ -39,7 +39,7 @@
             NSLog(@"open db error:%@", [self.db lastErrorMessage]);
         }
         NSString *sql = @"CREATE TABLE IF NOT EXISTS history(hid INTEGER PRIMARY KEY AUTOINCREMENT,\
-                            flag INT, create_timestamp INT, begin_timestamp INT, end_timestamp INT)";
+                            peer_uid INT, flag INT, create_timestamp INT, begin_timestamp INT, end_timestamp INT)";
         r = [self.db executeUpdate:sql];
         if (!r) {
             NSLog(@"create table last error:%d %@", [self.db lastErrorCode], [self.db lastErrorMessage]);
@@ -49,9 +49,10 @@
 }
 
 -(BOOL)addHistory:(History*)h {
-    NSString *sql = @"INSERT INTO history(flag, create_timestamp, begin_timestamp, end_timestamp) \
-                        VALUES(:flag, :create_timestamp, :begin_timestamp, :end_timestamp)";
+    NSString *sql = @"INSERT INTO history(peer_uid, flag, create_timestamp, begin_timestamp, end_timestamp) \
+                        VALUES(:peer_uid, :flag, :create_timestamp, :begin_timestamp, :end_timestamp)";
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    [dict setObject:[NSNumber numberWithLongLong:h.peerUID] forKey:@"peer_uid"];
     [dict setObject:[NSNumber numberWithInt:h.flag] forKey:@"flag"];
     [dict setObject:[NSNumber numberWithLong:h.createTimestamp] forKey:@"create_timestamp"];
     [dict setObject:[NSNumber numberWithLong:h.beginTimestamp] forKey:@"begin_timestamp"];
@@ -68,7 +69,7 @@
 
 
 -(NSArray*)loadHistoryDB {
-    NSString *sql = @"SELECT hid, flag, create_timestamp, begin_timestamp, end_timestamp FROM history ORDER BY hid DESC";
+    NSString *sql = @"SELECT hid, peer_uid, flag, create_timestamp, begin_timestamp, end_timestamp FROM history ORDER BY hid DESC";
     FMResultSet *rs = [self.db executeQuery:sql];
     if (rs == nil) {
         NSLog(@"select table error:%@", [self.db lastErrorMessage]);
@@ -78,6 +79,7 @@
     while ([rs next]) {
         History *h = [[History alloc] init];
         h.hid = [rs longLongIntForColumn:@"hid"];
+        h.peerUID = [rs longLongIntForColumn:@"peer_uid"];
         h.flag = [rs intForColumn:@"flag"];
         h.createTimestamp = [rs longForColumn:@"create_timestamp"];
         h.beginTimestamp = [rs longForColumn:@"begin_timestamp"];
