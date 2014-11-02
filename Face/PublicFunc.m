@@ -1316,9 +1316,11 @@
  *  @return 字符串
  */
 +(NSString*) getTimeStrFromSeconds:(UInt64)seconds{
-    
-    return [NSString stringWithFormat:@"%02lld:%02lld:%02lld",seconds/3600,(seconds%3600)/60,seconds%60];
-    
+    if (seconds >= 3600) {
+        return [NSString stringWithFormat:@"%02lld:%02lld:%02lld",seconds/3600,(seconds%3600)/60,seconds%60];
+    }else{
+       return [NSString stringWithFormat:@"%02lld:%02lld",(seconds%3600)/60,seconds%60];
+    }
 }
 
 @end

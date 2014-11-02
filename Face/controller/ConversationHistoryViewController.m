@@ -93,7 +93,7 @@
     
     History *history = [self.historys objectAtIndex:indexPath.row];
     
-    NSDate *createDate = [NSDate dateWithTimeIntervalSince1970:history.beginTimestamp];
+    NSDate *createDate = [NSDate dateWithTimeIntervalSince1970:history.createTimestamp];
     NSString *creatTimeStr = [PublicFunc getConversationTimeString: createDate];
     [cell.timeLabel setText:creatTimeStr];
     
