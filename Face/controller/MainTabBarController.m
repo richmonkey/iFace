@@ -8,6 +8,8 @@
 
 #import "MainTabBarController.h"
 #import "ContactListTableViewController.h"
+#import "ConversationHistoryViewController.h"
+#import "SettingViewController.h"
 #import "Token.h"
 #import "IMService.h"
 #import "UserPresent.h"
@@ -51,13 +53,30 @@
     contactViewController.title = @"通讯录";
     
     contactViewController.tabBarItem.title = @"通讯录";
-    contactViewController.tabBarItem.selectedImage = [UIImage imageNamed:@"IconContactTemplate"];
-    contactViewController.tabBarItem.image = [UIImage imageNamed:@"IconContactTemplate"];
+    contactViewController.tabBarItem.selectedImage = [UIImage imageNamed:@"ic_menu_contact_h"];
+    contactViewController.tabBarItem.image = [UIImage imageNamed:@"ic_menu_contact_n"];
 
-    UINavigationController *nav2 = [[UINavigationController alloc] initWithRootViewController:contactViewController];
+    UINavigationController *nav1 = [[UINavigationController alloc] initWithRootViewController:contactViewController];
+    
+    ConversationHistoryViewController *callHistoryViewController = [[ConversationHistoryViewController alloc] init];
+    callHistoryViewController.title = @"通话记录";
+    
+    callHistoryViewController.tabBarItem.title = @"通话记录";
+    callHistoryViewController.tabBarItem.selectedImage = [UIImage imageNamed:@"ic_menu_history_h"];
+    callHistoryViewController.tabBarItem.image = [UIImage imageNamed:@"ic_menu_history_n"];
+       UINavigationController *nav2 = [[UINavigationController alloc] initWithRootViewController:callHistoryViewController];
     
     
-    self.viewControllers = [NSArray arrayWithObjects:nav2, nil];
+    
+    SettingViewController *settingViewController = [[SettingViewController alloc] init];
+    settingViewController.title = @"设置";
+    
+    settingViewController.tabBarItem.title = @"设置";
+    settingViewController.tabBarItem.selectedImage = [UIImage imageNamed:@"ic_menu_setting_h"];
+    settingViewController.tabBarItem.image = [UIImage imageNamed:@"ic_menu_setting_n"];
+    UINavigationController *nav3 = [[UINavigationController alloc] initWithRootViewController:settingViewController];
+    
+    self.viewControllers = [NSArray arrayWithObjects:nav1,nav2, nav3,nil];
     self.selectedIndex = 0;
     
     dispatch_queue_t queue = dispatch_get_main_queue();

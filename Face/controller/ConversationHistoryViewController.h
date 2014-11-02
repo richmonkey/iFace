@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ConversationHistoryViewController : UIViewController
+@interface ConversationHistoryViewController : UIViewController <UITableViewDataSource,UITableViewDelegate>
 
 @end
