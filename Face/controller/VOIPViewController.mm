@@ -73,6 +73,9 @@
 @property(nonatomic, assign) time_t acceptTimestamp;
 @property(nonatomic) NSTimer *acceptTimer;
 
+@property(nonatomic, assign) time_t refuseTimestamp;
+@property(nonatomic) NSTimer *refuseTimer;
+
 @property(nonatomic) UIButton *hangUpButton;
 @property(nonatomic) UIButton *acceptButton;
 @property(nonatomic) UIButton *refuseButton;
@@ -318,13 +321,22 @@
 
 -(void)refuseCall:(UIButton*)button {
     VOIP *voip = [VOIP instance];
-    voip.state = VOIP_REFUSED;
+    voip.state = VOIP_REFUSING;
     [self.player stop];
     self.player = nil;
     self.history.flag = self.history.flag|FLAG_REFUSED;
+    
+    self.refuseTimestamp = time(NULL);
+    self.refuseTimer = [NSTimer scheduledTimerWithTimeInterval: 1
+                                                        target:self
+                                                      selector:@selector(sendDialRefuse)
+                                                      userInfo:nil
+                                                       repeats:YES];
+
     [self sendDialRefuse];
     
-    [self dismiss];
+    self.refuseButton.enabled = NO;
+    self.acceptButton.enabled = NO;
 }
 
 -(void)acceptCall:(UIButton*)button {
@@ -343,6 +355,9 @@
                                                       userInfo:nil
                                                        repeats:YES];
     [self sendDialAccept];
+    
+    self.refuseButton.enabled = NO;
+    self.acceptButton.enabled = NO;
 }
 
 -(void)hangUp:(UIButton*)button {
@@ -429,6 +444,10 @@
     [[IMService instance] sendVOIPControl:ctl];
 }
 
+-(void)sendRefused {
+    [self sendControlCommand:VOIP_COMMAND_REFUSED];
+}
+
 -(void)sendConnected {
     [self sendControlCommand:VOIP_COMMAND_CONNECTED];
 }
@@ -454,6 +473,16 @@
 
 -(void)sendDialRefuse {
     [self sendControlCommand:VOIP_COMMAND_REFUSE];
+    
+    time_t now = time(NULL);
+    if (now - self.refuseTimestamp > 10) {
+        NSLog(@"refuse timeout");
+        [self.refuseTimer invalidate];
+        
+        VOIP *voip = [VOIP instance];
+        voip.state = VOIP_REFUSED;
+        [self dismiss];
+    }
 }
 
 -(void)sendHangUp {
@@ -536,6 +565,7 @@
             voip.state = VOIP_REFUSED;
             self.history.flag = self.history.flag|FLAG_REFUSED;
  
+            [self sendRefused];
             
             [self.dialTimer invalidate];
             self.dialTimer = nil;
@@ -613,6 +643,14 @@
 
         } else if (ctl.cmd == VOIP_COMMAND_ACCEPT) {
             [self sendConnected];
+        }
+    } else if (voip.state == VOIP_REFUSING) {
+        if (ctl.cmd == VOIP_COMMAND_REFUSED) {
+            NSLog(@"refuse finished");
+            voip.state = VOIP_REFUSED;
+            [self.refuseTimer invalidate];
+            
+            [self dismiss];
         }
     }
 }

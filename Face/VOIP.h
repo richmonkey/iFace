@@ -15,7 +15,8 @@ enum VOIPState {
     VOIP_CONNECTED,//通话连接成功
     VOIP_ACCEPTING,//询问用户是否接听来电
     VOIP_ACCEPTED,//用户接听来电
-    VOIP_REFUSED,//(来/去)电被拒
+    VOIP_REFUSING,//来电被拒
+    VOIP_REFUSED,//(来/去)电已被拒
     VOIP_HANGED_UP,//通话被挂断
     VOIP_RESETED,//通话连接被重置
 };

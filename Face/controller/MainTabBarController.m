@@ -200,10 +200,8 @@
     NSLog(@"voip state:%d command:%d", voip.state, ctl.cmd);
     if (voip.state == VOIP_LISTENING) {
         if (ctl.cmd == VOIP_COMMAND_DIAL) {
-            if (ctl.dialCount < 5) {
-                VOIPViewController *controller = [[VOIPViewController alloc] initWithCallerUID:ctl.sender];
-                [self presentViewController:controller animated:YES completion:nil];
-            }
+            VOIPViewController *controller = [[VOIPViewController alloc] initWithCallerUID:ctl.sender];
+            [self presentViewController:controller animated:YES completion:nil];
         }
     }
 }
