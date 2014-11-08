@@ -89,7 +89,7 @@
     if (cell == nil) {
         cell = [[[NSBundle mainBundle]loadNibNamed:@"HistoryTableViewCell" owner:self options:nil] lastObject];
     }
-    [cell setBackgroundColor:RGBCOLOR(244, 244, 244)];
+    [cell setBackgroundColor:RGBCOLOR(253, 253, 253)];
     
     History *history = [self.historys objectAtIndex:indexPath.row];
     

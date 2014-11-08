@@ -16,6 +16,7 @@
 		4877C0561A067FCF00CCF1DC /* SettingViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4877C04F1A067FCF00CCF1DC /* SettingViewController.xib */; };
 		48986BA41A064C74004740B6 /* DebugFrameView.m in Sources */ = {isa = PBXBuildFile; fileRef = 48986BA11A064C74004740B6 /* DebugFrameView.m */; };
 		48986BA51A064C74004740B6 /* UIView+Debug.m in Sources */ = {isa = PBXBuildFile; fileRef = 48986BA31A064C74004740B6 /* UIView+Debug.m */; };
+		489A8CBD1A0E14E900753BB8 /* VWWWaterView.m in Sources */ = {isa = PBXBuildFile; fileRef = 489A8CBC1A0E14E900753BB8 /* VWWWaterView.m */; };
 		48BCCF981A0514BC00A7889D /* ReflectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 48BCCF921A0514BC00A7889D /* ReflectionView.m */; };
 		48BCCF991A0514BC00A7889D /* ANBlurredImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 48BCCF951A0514BC00A7889D /* ANBlurredImageView.m */; };
 		48BCCF9A1A0514BC00A7889D /* UIImage+BoxBlur.m in Sources */ = {isa = PBXBuildFile; fileRef = 48BCCF971A0514BC00A7889D /* UIImage+BoxBlur.m */; };
@@ -209,6 +210,8 @@
 		48986BA11A064C74004740B6 /* DebugFrameView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DebugFrameView.m; sourceTree = "<group>"; };
 		48986BA21A064C74004740B6 /* UIView+Debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Debug.h"; sourceTree = "<group>"; };
 		48986BA31A064C74004740B6 /* UIView+Debug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Debug.m"; sourceTree = "<group>"; };
+		489A8CBB1A0E14E900753BB8 /* VWWWaterView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VWWWaterView.h; sourceTree = "<group>"; };
+		489A8CBC1A0E14E900753BB8 /* VWWWaterView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VWWWaterView.m; sourceTree = "<group>"; };
 		48BCCF911A0514BC00A7889D /* ReflectionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReflectionView.h; sourceTree = "<group>"; };
 		48BCCF921A0514BC00A7889D /* ReflectionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReflectionView.m; sourceTree = "<group>"; };
 		48BCCF941A0514BC00A7889D /* ANBlurredImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ANBlurredImageView.h; sourceTree = "<group>"; };
@@ -574,6 +577,15 @@
 			path = DebugView;
 			sourceTree = "<group>";
 		};
+		489A8CBA1A0E14E900753BB8 /* water_wave */ = {
+			isa = PBXGroup;
+			children = (
+				489A8CBB1A0E14E900753BB8 /* VWWWaterView.h */,
+				489A8CBC1A0E14E900753BB8 /* VWWWaterView.m */,
+			);
+			path = water_wave;
+			sourceTree = "<group>";
+		};
 		48BCCF901A0514BC00A7889D /* ReflectionView */ = {
 			isa = PBXGroup;
 			children = (
@@ -809,6 +821,7 @@
 		6DF399F919EBA552009B03C4 /* third_party */ = {
 			isa = PBXGroup;
 			children = (
+				489A8CBA1A0E14E900753BB8 /* water_wave */,
 				48986B9F1A064C74004740B6 /* DebugView */,
 				48BCCF901A0514BC00A7889D /* ReflectionView */,
 				48BCCF931A0514BC00A7889D /* ANBlurredImageView */,
@@ -1290,6 +1303,7 @@
 				6DF39A8F19EBA6CC009B03C4 /* UIButton+WebCache.m in Sources */,
 				6DF399EE19EBA31D009B03C4 /* LevelDB.mm in Sources */,
 				6DF39BC319ED72C3009B03C4 /* FMDatabase.m in Sources */,
+				489A8CBD1A0E14E900753BB8 /* VWWWaterView.m in Sources */,
 				6DF39BC419ED72C3009B03C4 /* FMDatabaseAdditions.m in Sources */,
 				6DF39A9419EBA6CC009B03C4 /* UIImageView+WebCache.m in Sources */,
 				6DF39A9A19EBA6CC009B03C4 /* UIApplication+Util.m in Sources */,

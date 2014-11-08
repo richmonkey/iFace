@@ -50,6 +50,8 @@
 #import "ReflectionView.h"
 #import "UIView+Toast.h"
 #import "PublicFunc.h"
+#import "VWWWaterView.h"
+
 
 #define kBtnWidth  72
 #define kBtnHeight 72
@@ -57,7 +59,9 @@
 #define kBtnSqureWidth  200
 #define kBtnSqureHeight 50
 
-#define kBtnYposition  (self.view.frame.size.height - 3*kBtnSqureHeight)
+#define KheaderViewWH  100
+
+#define kBtnYposition  (self.view.frame.size.height - 2.5*kBtnSqureHeight)
 
 @interface VOIPViewController ()
 
@@ -84,7 +88,7 @@
 @property (nonatomic) UIButton *reDialingButton;
 @property (nonatomic) UIButton *cancelButton;
 
-@property(nonatomic) UIImageView *bkview;
+@property(nonatomic) VWWWaterView *bkview;
 @property(nonatomic) UILabel *durationLabel;
 @property   (nonatomic) ReflectionView *headView;
 @property   (nonatomic) NSTimer *refreshTimer;
@@ -162,15 +166,14 @@
     // Do any additional setup after loading the view, typically from a nib.
     [self.view setBackgroundColor:[UIColor whiteColor]];
     
-    self.bkview = [[UIImageView alloc]
+    self.bkview = [[VWWWaterView alloc]
                    initWithFrame:CGRectMake(0, 0, self.view.frame.size.width,
                                             self.view.frame.size.height)];
-    [self.bkview setImage:[UIImage imageNamed:@"Call_background2"]];
     [self.view addSubview:self.bkview];
     
     UIImageView *imgView = [[UIImageView alloc]
-                            initWithFrame:CGRectMake(0,0, 120,
-                                                     120)];
+                            initWithFrame:CGRectMake(0,0, KheaderViewWH,
+                                                     KheaderViewWH)];
     
     NSURL *avatar = nil;
     if (self.peerUser.avatarURL) {
@@ -183,7 +186,7 @@
     [imageLayer setMasksToBounds:YES];
     [imageLayer setCornerRadius:imgView.frame.size.width / 2];
     
-    self.headView = [[ReflectionView alloc] initWithFrame:CGRectMake((self.view.frame.size.width-120)/2,80, 120,120)];
+    self.headView = [[ReflectionView alloc] initWithFrame:CGRectMake((self.view.frame.size.width-KheaderViewWH)/2,80, KheaderViewWH,KheaderViewWH)];
     self.headView.alpha = 0.9f;
     self.headView.reflectionScale = 0.3f;
     self.headView.reflectionGap = 1.0f;
@@ -238,6 +241,7 @@
     [self.hangUpButton setBackgroundImage:[UIImage imageNamed:@"refuse_nor"] forState:UIControlStateNormal];
     [self.hangUpButton setBackgroundImage:[UIImage imageNamed:@"refuse_pre"] forState:UIControlStateHighlighted];
     [self.hangUpButton setTitle:@"挂断" forState:UIControlStateNormal];
+    [self.hangUpButton.titleLabel setFont:[UIFont systemFontOfSize:20.0f]];
     [self.hangUpButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.hangUpButton addTarget:self
                    action:@selector(hangUp:)
