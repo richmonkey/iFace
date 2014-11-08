@@ -19,6 +19,7 @@
 #import "Constants.h"
 #import "VOIP.h"
 #import "VOIPViewController.h"
+#import "UIView+Toast.h"
 
 @interface MainTabBarController ()
 @property(atomic) Reachability *reach;
@@ -94,10 +95,11 @@
             [[IMService instance] start:[UserPresent instance].uid];
         });
     };
-    
+    __weak UIView *view = self.view;
     self.reach.unreachableBlock = ^(Reachability*reach) {
         dispatch_async(dispatch_get_main_queue(), ^{
             [[IMService instance] stop];
+            [view makeToast:@"手机网络错误,请检查" duration:3.0 position:@"center"];
         });
     };
     
