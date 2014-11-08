@@ -288,6 +288,8 @@
 
     [[AVAudioSession sharedInstance] requestRecordPermission:^(BOOL granted) {
         if (granted) {
+            [[UIDevice currentDevice] setProximityMonitoringEnabled:YES];
+
             if (self.isCaller) {
                 
                 [self makeDialing:voip];
@@ -307,6 +309,8 @@
 }
 
 -(void)dismiss {
+    [[UIDevice currentDevice] setProximityMonitoringEnabled:NO];
+
     [self dismissViewControllerAnimated:YES completion:^{
         VOIP *voip = [VOIP instance];
         voip.state = VOIP_LISTENING;
@@ -343,6 +347,13 @@
     
     VOIP *voip = [VOIP instance];
     voip.state = VOIP_ACCEPTED;
+    
+    //关闭外方
+    UInt32 sessionCategory = kAudioSessionCategory_PlayAndRecord;
+    AudioSessionSetProperty(kAudioSessionProperty_AudioCategory, sizeof(sessionCategory), &sessionCategory);
+    UInt32 audioRouteOverride = kAudioSessionOverrideAudioRoute_None;
+    AudioSessionSetProperty (kAudioSessionProperty_OverrideAudioRoute,sizeof (audioRouteOverride),&audioRouteOverride);
+    
     [self.player stop];
     self.player = nil;
     self.history.flag = self.history.flag|FLAG_ACCEPTED;
@@ -521,7 +532,6 @@
     
     self.history.beginTimestamp = time(NULL);
 
-    [[UIDevice currentDevice] setProximityMonitoringEnabled:YES];
 }
 
 
@@ -533,7 +543,6 @@
     
     self.history.endTimestamp = time(NULL);
 
-    [[UIDevice currentDevice] setProximityMonitoringEnabled:NO];
 }
 
 #pragma mark - VOIPObserver
@@ -740,7 +749,7 @@
 }
 
 -(void)playDialIn {
-    
+
     NSString *path = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"start.mp3"];
     
     AVAudioSession *session = [AVAudioSession sharedInstance];
