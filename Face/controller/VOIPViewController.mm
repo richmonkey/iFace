@@ -199,7 +199,7 @@
     [self.durationLabel setFont:[UIFont systemFontOfSize:23.0f]];
     [self.durationLabel setTextAlignment:NSTextAlignmentCenter];
     [self.durationLabel sizeToFit];
-    [self.durationLabel setTextColor:[UIColor whiteColor]];
+    [self.durationLabel setTextColor: RGBCOLOR(11, 178, 39)];
     [self.durationLabel setHidden:YES];
     [self.view addSubview:self.durationLabel];
     [self.durationLabel setCenter:CGPointMake((self.view.frame.size.width)/2, self.headView.frame.origin.y + self.headView.frame.size.height + 50)];
@@ -212,9 +212,9 @@
 
     self.acceptButton.frame = CGRectMake(30.0f, self.view.frame.size.height - kBtnHeight - kBtnHeight, kBtnWidth, kBtnHeight);
     
-    [self.acceptButton setBackgroundImage: [UIImage imageNamed:@"Call_answer"] forState:UIControlStateNormal];
+    [self.acceptButton setBackgroundImage: [UIImage imageNamed:@"Call_Ans"] forState:UIControlStateNormal];
     
-    [self.acceptButton setBackgroundImage:[UIImage imageNamed:@"Call_answer_p"] forState:UIControlStateHighlighted];
+    [self.acceptButton setBackgroundImage:[UIImage imageNamed:@"Call_Ans_p"] forState:UIControlStateHighlighted];
     [self.acceptButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.acceptButton addTarget:self
                    action:@selector(acceptCall:)
