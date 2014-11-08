@@ -36,7 +36,8 @@
         b = 0;
         jia = NO;
         
-        _currentWaterColor = [UIColor colorWithRed:86/255.0f green:202/255.0f blue:139/255.0f alpha:1];
+        _currentWaterColor = [UIColor colorWithRed:17/255.0f green:134/255.0f blue:212/255.0f alpha:1];
+//        _currentWaterColor = [UIColor colorWithRed:86/255.0f green:202/255.0f blue:139/255.0f alpha:1];
         _currentLinePointY = 250;
         
         [NSTimer scheduledTimerWithTimeInterval:0.02 target:self selector:@selector(animateWave) userInfo:nil repeats:YES];

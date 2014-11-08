@@ -17,6 +17,7 @@
 #import "ContactIMUserTableViewCell.h"
 #import "ContactPhoneTableViewCell.h"
 #import "VOIPViewController.h"
+#import "UIView+Toast.h"
 
 /*
  ----------
@@ -90,7 +91,7 @@
         self.sendIMBtn = [[UIButton  alloc] initWithFrame: rect];
         [self.sendIMBtn setBackgroundColor:RGBACOLOR(47, 174, 136, 0.9f)];
         [self.sendIMBtn.titleLabel setFont:[UIFont systemFontOfSize:15]];
-        [self.sendIMBtn setTitle:@"发送信息" forState:UIControlStateNormal];
+        [self.sendIMBtn setTitle:@"呼叫" forState:UIControlStateNormal];
         [self.sendIMBtn setTitleColor:RGBACOLOR(239, 239, 239, 1.0f) forState:UIControlStateNormal];
         
         [self.sendIMBtn addTarget:self action:@selector(onSendMessage) forControlEvents:UIControlEventTouchUpInside];
@@ -156,10 +157,10 @@
 -(void)onSendMessage {
     
     if ([self.contact.users count] == 1) {
+        
         NSLog(@"send message");
         User *u = [self.contact.users objectAtIndex:0];
-        VOIPViewController *controller = [[VOIPViewController alloc] initWithCalledUID:u.uid];
-        [self presentViewController:controller animated:YES completion:nil];
+        [self phoneingByUser:u];
         
     } else if ([self.contact.users count] > 1) {
         if (self.contact.users.count == 2) {
@@ -208,10 +209,8 @@
     }
     
     NSAssert(buttonIndex < self.contact.users.count, @"");
-        
-    User *u = [self.contact.users objectAtIndex:buttonIndex];
-    VOIPViewController *controller = [[VOIPViewController alloc] initWithCalledUID:u.uid];
-    [self presentViewController:controller animated:YES completion:nil];
+   User *u = [self.contact.users objectAtIndex:buttonIndex];
+    [self phoneingByUser:u];
 }
 
 - (void)didReceiveMemoryWarning
@@ -237,6 +236,21 @@
             }
             [headerView.headView setImageWithString:nameChars];
         }
+    }
+}
+/**
+ *  拨打电话
+ *
+ *  @param user User
+ */
+-(void)phoneingByUser:(User*)user{
+    if ([[IMService instance] connectState] == STATE_CONNECTED) {
+        VOIPViewController *controller = [[VOIPViewController alloc] initWithCalledUID:user.uid];
+        [self presentViewController:controller animated:YES completion:nil];
+    }else if([[IMService instance] connectState] == STATE_CONNECTING){
+        [self.tabBarController.view makeToast:@"正在连接,请稍等" duration:2.0f position:@"bottom"];
+    }else if([[IMService instance] connectState] == STATE_UNCONNECTED){
+        [self.tabBarController.view makeToast:@"连接出错,请检查" duration:2.0f position:@"bottom"];
     }
 }
 

@@ -86,7 +86,7 @@
             IMLog(@"获取验证码失败");
             [hud hide:NO];
             [backView removeFromSuperview];
-            [self.view makeToast:@"获取验证码失败" duration:1.0f position:@"center"];
+            [self.view makeToast:@"获取验证码失败" duration:1.0f position:@"bottom"];
         }];
     }
     

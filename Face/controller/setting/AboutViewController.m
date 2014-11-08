@@ -70,9 +70,9 @@
     MFMailComposeViewController *mc = [[MFMailComposeViewController alloc] init];
     mc.mailComposeDelegate = self;
     self.reciver = @[@"daibou007@163.com"];
-    [mc setSubject:@"Message,建议及意见!"];
+    [mc setSubject:@"电话虫,建议及意见!"];
     [mc setToRecipients:self.reciver];
-    [mc setMessageBody:@"Message!!!\n\n!" isHTML:NO];
+    [mc setMessageBody:@"电话虫!!!\n\n!" isHTML:NO];
     [self presentViewController:mc animated:YES completion:nil];
     
 }

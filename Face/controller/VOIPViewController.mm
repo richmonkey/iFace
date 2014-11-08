@@ -88,7 +88,7 @@
 @property (nonatomic) UIButton *reDialingButton;
 @property (nonatomic) UIButton *cancelButton;
 
-@property(nonatomic) VWWWaterView *bkview;
+@property(nonatomic) UIView *bkview;
 @property(nonatomic) UILabel *durationLabel;
 @property   (nonatomic) ReflectionView *headView;
 @property   (nonatomic) NSTimer *refreshTimer;
@@ -262,6 +262,7 @@
                 forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.reDialingButton];
     [self.reDialingButton setTitle:@"重拨" forState:UIControlStateNormal];
+    [self.reDialingButton.titleLabel setFont:[UIFont systemFontOfSize:20.0f]];
     [self.reDialingButton setCenter:CGPointMake(self.view.frame.size.width / 2, kBtnYposition)];
     [self.reDialingButton setHidden:YES];
     
@@ -275,7 +276,8 @@
     [self.cancelButton setBackgroundImage:[UIImage imageNamed:@"refuse_nor"] forState:UIControlStateNormal];
     [self.cancelButton setBackgroundImage:[UIImage imageNamed:@"refuse_pre"] forState:UIControlStateHighlighted];
     [self.cancelButton setTitle:@"取消" forState:UIControlStateNormal];
-    self.cancelButton.center = CGPointMake(self.view.frame.size.width/2, kBtnYposition +kBtnHeight/2*3);
+    [self.cancelButton.titleLabel setFont:[UIFont systemFontOfSize:20.0f]];
+    self.cancelButton.center = CGPointMake(self.view.frame.size.width/2, kBtnYposition +kBtnHeight);
     
     
     [self.cancelButton setHidden:YES];
