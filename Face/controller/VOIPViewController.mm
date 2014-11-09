@@ -8,11 +8,11 @@
 
 #import <AVFoundation/AVAudioSession.h>
 #import "VOIPViewController.h"
-#import "WebRTC.h"
-#import "AVSendStream.h"
-#import "AVReceiveStream.h"
-#import "WebRTC.h"
-#include "webrtc/voice_engine/include/voe_network.h"
+//#import "WebRTC.h"
+//#import "AVSendStream.h"
+//#import "AVReceiveStream.h"
+//#import "WebRTC.h"
+//#include "webrtc/voice_engine/include/voe_network.h"
 
 #import "User.h"
 #import "UserDB.h"
@@ -39,8 +39,8 @@
 
 @interface VOIPViewController ()
 
-@property(strong, nonatomic) AudioSendStream *sendStream;
-@property(strong, nonatomic) AudioReceiveStream *recvStream;
+//@property(strong, nonatomic) AudioSendStream *sendStream;
+//@property(strong, nonatomic) AudioReceiveStream *recvStream;
 @property(nonatomic, assign) BOOL isCaller;
 @property(nonatomic) User* peerUser;
 
@@ -494,21 +494,9 @@
 }
 
 - (void)startStream {
-    if (self.sendStream || self.recvStream) return;
     
     NSLog(@"start stream");
-    BOOL isHeadphone = [self isHeadsetPluggedIn];
-    
-    self.sendStream = [[AudioSendStream alloc] init];
-    self.sendStream.voiceTransport = self;
-    [self.sendStream start];
 
-    self.recvStream = [[AudioReceiveStream alloc] init];
-    self.recvStream.voiceTransport = self;
-    self.recvStream.isHeadphone = isHeadphone;
-    self.recvStream.isLoudspeaker = NO;
-    
-    [self.recvStream start];
     
     self.history.beginTimestamp = time(NULL);
 
@@ -516,10 +504,7 @@
 
 
 -(void)stopStream {
-    if (!self.sendStream && !self.recvStream) return;
     NSLog(@"stop stream");
-    [self.sendStream stop];
-    [self.recvStream stop];
     
     self.history.endTimestamp = time(NULL);
 
@@ -648,30 +633,6 @@
     if (data.sender != self.peerUser.uid) {
         [self sendReset];
         return;
-    }
-    VOIP *voip = [VOIP instance];
-    if (voip.state == VOIP_CONNECTED) {
-        int channel = self.recvStream.voiceChannel;
-        
-        const void *packet = [data.content bytes];
-        int packet_length = [data.content length];
-        
-        WebRTC *rtc = [WebRTC sharedWebRTC];
-        
-        if (data.isRTP) {
-            if (data.type == VOIP_AUDIO) {
-                NSLog(@"audio data:%d content:%d", packet_length, data.content.length);
-                rtc.voe_network->ReceivedRTPPacket(channel, packet, packet_length);
-            }
-        } else {
-            if (data.type == VOIP_AUDIO) {
-                NSLog(@"audio rtcp data:%d", packet_length);
-                rtc.voe_network->ReceivedRTCPPacket(channel, packet, packet_length);
-            }
-        }
-
-    } else {
-        NSLog(@"skip data...");
     }
 }
 
