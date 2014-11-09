@@ -1441,6 +1441,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libstdc++";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Zhifeng Zhou (PV548P44SL)";
 				GCC_C_LANGUAGE_STANDARD = "compiler-default";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Face/Face-Prefix.pch";
@@ -1450,13 +1451,15 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = "Face/Face-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Face/backend/leveldb",
 					"$(PROJECT_DIR)/Face/third_party/webrtc_bin",
 				);
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "9c427468-87c0-4286-abb0-526951222de4";
 				USER_HEADER_SEARCH_PATHS = "Face/backend/ Face/third_party/webrtc/trunk";
 				VALID_ARCHS = armv7;
 				WRAPPER_EXTENSION = app;
@@ -1470,18 +1473,21 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libstdc++";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Zhifeng Zhou (HB5A8TLKYL)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Zhifeng Zhou (HB5A8TLKYL)";
 				GCC_C_LANGUAGE_STANDARD = "compiler-default";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Face/Face-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = WEBRTC_IOS;
 				INFOPLIST_FILE = "Face/Face-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Face/backend/leveldb",
 					"$(PROJECT_DIR)/Face/third_party/webrtc_bin",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "d81a365e-83e4-4acd-a81d-179ac65fa617";
 				USER_HEADER_SEARCH_PATHS = "Face/backend/ Face/third_party/webrtc/trunk";
 				VALID_ARCHS = armv7;
 				WRAPPER_EXTENSION = app;
