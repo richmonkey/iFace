@@ -329,10 +329,13 @@
     voip.state = VOIP_ACCEPTED;
     
     //关闭外方
-    UInt32 sessionCategory = kAudioSessionCategory_PlayAndRecord;
-    AudioSessionSetProperty(kAudioSessionProperty_AudioCategory, sizeof(sessionCategory), &sessionCategory);
-    UInt32 audioRouteOverride = kAudioSessionOverrideAudioRoute_None;
-    AudioSessionSetProperty (kAudioSessionProperty_OverrideAudioRoute,sizeof (audioRouteOverride),&audioRouteOverride);
+    AVAudioSession *session = [AVAudioSession sharedInstance];
+    
+    [session setCategory:AVAudioSessionCategoryPlayAndRecord
+                   error:nil];
+    
+    [session overrideOutputAudioPort:AVAudioSessionPortOverrideNone
+                               error:nil];
     
     [self.player stop];
     self.player = nil;
@@ -736,10 +739,9 @@
     [session setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
     
     //打开外放
-    UInt32 sessionCategory = kAudioSessionCategory_MediaPlayback;
-    AudioSessionSetProperty(kAudioSessionProperty_AudioCategory, sizeof(sessionCategory), &sessionCategory);
-    UInt32 audioRouteOverride = kAudioSessionOverrideAudioRoute_Speaker;
-    AudioSessionSetProperty (kAudioSessionProperty_OverrideAudioRoute,sizeof (audioRouteOverride),&audioRouteOverride);
+    [session overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker
+                               error:nil];
+    
     
     NSURL *u = [NSURL fileURLWithPath:path];
     self.player = [[AVAudioPlayer alloc] initWithContentsOfURL:u error:nil];
