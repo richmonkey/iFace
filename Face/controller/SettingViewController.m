@@ -40,7 +40,7 @@
     if (self) {
         self.cellTitleArray = @[ @"关于",
                                  @"网络状态",
-                                 @"清除所有对话记录"
+                                 @"清除所有通话记录"
                                 ];
         [[IMService instance] addMessageObserver:self];
     }
