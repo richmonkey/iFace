@@ -20,6 +20,8 @@
 #define kGreenColor         RGBCOLOR(48,176,87)
 #define kRedColor           RGBCOLOR(207,6,6)
 
+static NSString *HISTORYSTR = @"historyCell";
+
 @interface ConversationHistoryViewController ()
 
 @property (strong,nonatomic) UITableView *tableView;
@@ -54,7 +56,9 @@
     self.tableView.dataSource = self;
     self.tableView.delegate  = self;
     [self.tableView setBackgroundColor:[UIColor clearColor]];
-
+    
+    UINib *nib = [UINib nibWithNibName:@"HistoryTableViewCell" bundle:nil];
+    [self.tableView registerNib:nib forCellReuseIdentifier: HISTORYSTR];
     
     self.historys = [[NSMutableArray alloc] initWithArray: [[HistoryDB instance] loadHistoryDB]];
     
@@ -85,12 +89,9 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-   // HistoryTableViewCell
-    static NSString *historyStr = @"historyCell";
-    HistoryTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:historyStr];
-    if (cell == nil) {
-        cell = [[[NSBundle mainBundle]loadNibNamed:@"HistoryTableViewCell" owner:self options:nil] lastObject];
-    }
+
+    HistoryTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:HISTORYSTR];
+    
     [cell setBackgroundColor:RGBCOLOR(253, 253, 253)];
     
     History *history = [self.historys objectAtIndex:indexPath.row];
