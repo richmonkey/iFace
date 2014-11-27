@@ -281,9 +281,11 @@
 
         } else {
             NSLog(@"can't grant record permission");
-            [self dismissViewControllerAnimated:NO completion:^{
-                [[IMService instance] popVOIPObserver:self];
-            }];
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [self dismissViewControllerAnimated:NO completion:^{
+                    [[IMService instance] popVOIPObserver:self];
+                }];
+            });
         }
     }];
 }

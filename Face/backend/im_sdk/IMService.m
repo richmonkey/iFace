@@ -85,7 +85,9 @@
     socklen_t len;
     int n = recvfrom(self.udpFD, buf, 64*1024, 0, (struct sockaddr*)&addr, &len);
     if (n <= 0) {
-        NSLog(@"recv udp error");
+        NSLog(@"recv udp error:%d, %s", errno, strerror(errno));
+        [self closeUDP];
+        [self listenVOIP];
         return;
     }
 
@@ -185,12 +187,13 @@
 -(void)closeUDP {
     if (self.readSource) {
         dispatch_source_set_cancel_handler(self.readSource, ^{
-            self.readSource = nil;
+            NSLog(@"udp read source canceled");
         });
         dispatch_source_cancel(self.readSource);
         NSLog(@"close udp socket");
         close(self.udpFD);
         self.udpFD = -1;
+        self.readSource = nil;
     }
 }
 
@@ -689,7 +692,10 @@
     addr.sin_addr.s_addr=inet_addr([self.hostIP UTF8String]);
     addr.sin_port=htons(self.voipPort);
     
-    sendto(self.udpFD, buff, len + 18, 0, (struct sockaddr*)&addr, sizeof(addr));
+    int r = sendto(self.udpFD, buff, len + 18, 0, (struct sockaddr*)&addr, sizeof(addr));
+    if (r == -1) {
+        NSLog(@"send voip data error:%s", strerror(errno));
+    }
     return YES;
 }
 

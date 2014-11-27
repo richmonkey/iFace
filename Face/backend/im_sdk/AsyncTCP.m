@@ -165,10 +165,12 @@
             if (errno == EAGAIN || errno == EWOULDBLOCK) {
                 return;
             } else {
+                NSLog(@"read error:%d %s", errno, strerror(errno));
                 self.read_cb(self, nil, errno);
                 return;
             }
         } else if (nread == 0) {
+            NSLog(@"read 0...");
             self.read_cb(self, nil, 0);
             return;
         } else {

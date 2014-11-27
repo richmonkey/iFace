@@ -87,17 +87,23 @@
     });
     
     [self startRefreshTimer];
-    [[IMService instance] start:[UserPresent instance].uid];
+    self.reach = [Reachability reachabilityForInternetConnection];
     
-    self.reach = [Reachability reachabilityWithHostname:@"www.message.im"];
+    if ([self.reach isReachable]) {
+        [[IMService instance] start:[UserPresent instance].uid];
+    }
+    
     self.reach.reachableBlock = ^(Reachability*reach) {
         dispatch_async(dispatch_get_main_queue(), ^{
+            NSLog(@"reachable");
+            [[IMService instance] stop];
             [[IMService instance] start:[UserPresent instance].uid];
         });
     };
     __weak UIView *view = self.view;
     self.reach.unreachableBlock = ^(Reachability*reach) {
         dispatch_async(dispatch_get_main_queue(), ^{
+            NSLog(@"unreachable");
             [[IMService instance] stop];
             [view makeToast:@"手机网络错误,请检查" duration:3.0 position:@"center"];
         });
@@ -124,13 +130,16 @@
 }
 
 -(void)appDidEnterBackground {
-//    [[IMService instance] stop];
-//    [self stopRefreshTimer];
+    VOIP *voip = [VOIP instance];
+    if (voip.state == VOIP_LISTENING) {
+        [[IMService instance] stop];
+    }
 }
 
 -(void)appWillEnterForeground {
-//    [[IMService instance] start:[UserPresent instance].uid];
-//    [self startRefreshTimer];
+    if ([self.reach isReachable]) {
+        [[IMService instance] start:[UserPresent instance].uid];
+    }
 }
 
 
