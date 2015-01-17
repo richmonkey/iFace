@@ -627,12 +627,19 @@
     } else if (voip.state == VOIP_CONNECTED) {
         if (ctl.cmd == VOIP_COMMAND_HANG_UP) {
             voip.state = VOIP_HANGED_UP;
+            if (self.refreshTimer && [self.refreshTimer isValid]) {
+                [self.refreshTimer invalidate];
+                self.refreshTimer = nil;
+            }
             [self stopStream];
             [self dismiss];
         } else if (ctl.cmd == VOIP_COMMAND_RESET) {
             voip.state = VOIP_RESETED;
             [self stopStream];
-            
+            if (self.refreshTimer && [self.refreshTimer isValid]) {
+                [self.refreshTimer invalidate];
+                self.refreshTimer = nil;
+            }
             [self dismiss];
 
         } else if (ctl.cmd == VOIP_COMMAND_ACCEPT) {
