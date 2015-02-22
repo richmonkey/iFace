@@ -25,6 +25,9 @@
 #import "UIView+Toast.h"
 #import "PublicFunc.h"
 #import "VWWWaterView.h"
+#import "stun.h"
+#import "Config.h"
+#include <arpa/inet.h>
 
 
 #define kBtnWidth  72
@@ -74,6 +77,13 @@
 @property(nonatomic) History *history;
 
 @property(nonatomic) AVAudioPlayer *player;
+
+@property(nonatomic) NatPortMap *peerNatMap;
+@property(nonatomic) NatPortMap *localNatMap;
+
+@property(atomic, assign) StunAddress4 mappedAddr;
+@property(atomic, assign) NatType natType;
+@property(nonatomic) BOOL hairpin;
 @end
 
 @implementation VOIPViewController
@@ -116,6 +126,17 @@
 
 -(void)dealloc {
     NSLog(@"voip view controller dealloc");
+}
+
+-(BOOL)isP2P {
+    if (self.localNatMap.ip > 0 && self.peerNatMap.ip > 0 ) {
+        if (self.localNatMap.ip != self.peerNatMap.ip) {
+            return YES;
+        } else if (self.localNatMap.hairpin && self.peerNatMap.hairpin){
+            return YES;
+        }
+    }
+    return NO;
 }
 
 - (void)didReceiveMemoryWarning
@@ -283,12 +304,93 @@
             NSLog(@"can't grant record permission");
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 [self dismissViewControllerAnimated:NO completion:^{
+                    [[IMService instance] closeUDP];
                     [[IMService instance] popVOIPObserver:self];
                 }];
             });
         }
     }];
+
+    self.natType = StunTypeUnknown;
+    self.hairpin = NO;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        StunAddress4 addr;
+        BOOL hairpin = NO;
+        NatType stype = [self mapNatAddress:&addr hairpin:&hairpin];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.natType = stype;
+            self.mappedAddr = addr;
+            self.hairpin = hairpin;
+            
+            [[IMService instance] listenVOIP];
+        });
+    });
 }
+
+#define VERBOSE false
+-(NatType)mapNatAddress:(StunAddress4*)eaddr hairpin:(BOOL*)ph{
+    int fd = -1;
+    StunAddress4 mappedAddr;
+    StunAddress4 stunServerAddr;
+    Config *config = [Config instance];
+    NSString *stunServer = [Config instance].stunServer;
+    stunParseServerName( (char*)[stunServer UTF8String], stunServerAddr);
+    
+    NSLog(@"nat mapping...");
+    bool presPort = false, hairpin = false;
+    NatType stype = stunNatType( stunServerAddr, VERBOSE, &presPort, &hairpin,
+                                0, NULL);
+    
+    NSLog(@"nat type:%d", stype);
+    *ph = hairpin;
+    
+    BOOL isOpen = NO;
+    switch (stype)
+    {
+        case StunTypeFailure:
+            break;
+        case StunTypeUnknown:
+            break;
+        case StunTypeBlocked:
+            break;
+            
+        case StunTypeOpen:
+        case StunTypeFirewall:
+            //todo get local address
+        case StunTypeIndependentFilter:
+        case StunTypeDependentFilter:
+        case StunTypePortDependedFilter:
+            isOpen = YES;
+            break;
+        case StunTypeDependentMapping:
+            break;
+        default:
+            break;
+    }
+    
+    
+    if (!isOpen) {
+        return stype;
+    }
+    for (int i = 0; i < 8; i++) {
+        fd = stunOpenSocket(stunServerAddr, &mappedAddr, config.voipPort, NULL, VERBOSE);
+        if (fd == -1) {
+            continue;
+        }
+        break;
+    }
+    if (fd != -1) {
+        close(fd);
+        struct in_addr addr;
+        addr.s_addr = htonl(mappedAddr.addr);
+        NSLog(@"mapped address:%s:%d", inet_ntoa(addr), mappedAddr.port);
+        *eaddr = mappedAddr;
+    } else {
+        NSLog(@"map nat address fail");
+    }
+    return stype;
+}
+
 
 -(void)dismiss {
     [[UIDevice currentDevice] setProximityMonitoringEnabled:NO];
@@ -296,6 +398,7 @@
     [self dismissViewControllerAnimated:YES completion:^{
         VOIP *voip = [VOIP instance];
         voip.state = VOIP_LISTENING;
+        [[IMService instance] closeUDP];
         [[IMService instance] popVOIPObserver:self];
         [[HistoryDB instance] addHistory:self.history];
        
@@ -343,6 +446,11 @@
     self.player = nil;
     self.history.flag = self.history.flag|FLAG_ACCEPTED;
 
+    
+    self.localNatMap = [[NatPortMap alloc] init];
+    self.localNatMap.ip = self.mappedAddr.addr;
+    self.localNatMap.port = self.mappedAddr.port;
+    self.localNatMap.hairpin = self.hairpin;
     
     self.acceptTimestamp = time(NULL);
     self.acceptTimer = [NSTimer scheduledTimerWithTimeInterval: 1
@@ -444,10 +552,6 @@
     [self sendControlCommand:VOIP_COMMAND_REFUSED];
 }
 
--(void)sendConnected {
-    [self sendControlCommand:VOIP_COMMAND_CONNECTED];
-}
-
 -(void)sendTalking {
     [self sendControlCommand:VOIP_COMMAND_TALKING];
 }
@@ -456,8 +560,23 @@
     [self sendControlCommand:VOIP_COMMAND_RESET];
 }
 
+-(void)sendConnected {
+    VOIPControl *ctl = [[VOIPControl alloc] init];
+    ctl.sender = [UserPresent instance].uid;
+    ctl.receiver = self.peerUser.uid;
+    ctl.cmd = VOIP_COMMAND_CONNECTED;
+    ctl.natMap = self.localNatMap;
+    
+    [[IMService instance] sendVOIPControl:ctl];
+}
 -(void)sendDialAccept {
-    [self sendControlCommand:VOIP_COMMAND_ACCEPT];
+    VOIPControl *ctl = [[VOIPControl alloc] init];
+    ctl.sender = [UserPresent instance].uid;
+    ctl.receiver = self.peerUser.uid;
+    ctl.cmd = VOIP_COMMAND_ACCEPT;
+    ctl.natMap = self.localNatMap;
+    
+    [[IMService instance] sendVOIPControl:ctl];
     
     time_t now = time(NULL);
     if (now - self.acceptTimestamp >= 10) {
@@ -500,8 +619,12 @@
 
 - (void)startStream {
     if (self.sendStream || self.recvStream) return;
-    
-    NSLog(@"start stream");
+    if (self.isP2P) {
+        NSLog(@"start p2p stream");
+    } else {
+        NSLog(@"start stream");
+    }
+
     BOOL isHeadphone = [self isHeadsetPluggedIn];
     
     self.sendStream = [[AudioSendStream alloc] init];
@@ -546,6 +669,13 @@
           
             [self setOnTalkingUIShow];
             
+            self.peerNatMap = ctl.natMap;
+            
+            self.localNatMap = [[NatPortMap alloc] init];
+            self.localNatMap.ip = self.mappedAddr.addr;
+            self.localNatMap.port = self.mappedAddr.port;
+            self.localNatMap.hairpin = self.hairpin;
+            
             [self sendConnected];
             voip.state = VOIP_CONNECTED;
             [self.dialTimer invalidate];
@@ -581,6 +711,10 @@
             voip.state = VOIP_ACCEPTED;
             self.history.flag = self.history.flag|FLAG_ACCEPTED;
 
+            self.localNatMap = [[NatPortMap alloc] init];
+            self.localNatMap.ip = self.mappedAddr.addr;
+            self.localNatMap.port = self.mappedAddr.port;
+            self.localNatMap.hairpin = self.hairpin;
 
             self.acceptTimestamp = time(NULL);
             self.acceptTimer = [NSTimer scheduledTimerWithTimeInterval: 1
@@ -604,6 +738,8 @@
             
             [self setOnTalkingUIShow];
             
+            self.peerNatMap = ctl.natMap;
+            
             [self.acceptTimer invalidate];
             voip.state = VOIP_CONNECTED;
             [self startStream];
@@ -615,6 +751,8 @@
             //simultaneous open
             NSLog(@"simultaneous voip connected");
             [self setOnTalkingUIShow];
+            
+            self.peerNatMap = ctl.natMap;
             
             [self.acceptTimer invalidate];
             voip.state = VOIP_CONNECTED;
@@ -712,9 +850,17 @@
     vData.rtp = YES;
     vData.content = [NSData dataWithBytes:data length:length];
     NSLog(@"send rtp package:%d", length);
-    BOOL r = [[IMService instance] sendVOIPData:vData];
-    if (!r) {
-        NSLog(@"send rtp data fail");
+    
+    if (self.isP2P) {
+        BOOL r = [[IMService instance] sendVOIPData:vData ip:self.peerNatMap.ip port:self.peerNatMap.port];
+        if (!r) {
+            NSLog(@"send rtp data fail");
+        }
+    } else {
+        BOOL r = [[IMService instance] sendVOIPData:vData];
+        if (!r) {
+            NSLog(@"send rtp data fail");
+        }
     }
     
     return length;
@@ -733,9 +879,17 @@
     vData.rtp = NO;
     vData.type = VOIP_AUDIO;
     vData.content = [NSData dataWithBytes:data length:length];
-    BOOL r = [[IMService instance] sendVOIPData:vData];
-    if (!r) {
-        NSLog(@"send rtcp data fail");
+    
+    if (self.isP2P) {
+        BOOL r = [[IMService instance] sendVOIPData:vData ip:self.peerNatMap.ip port:self.peerNatMap.port];
+        if (!r) {
+            NSLog(@"send rtcp data fail");
+        }
+    } else {
+        BOOL r = [[IMService instance] sendVOIPData:vData];
+        if (!r) {
+            NSLog(@"send rtcp data fail");
+        }
     }
     return length;
 }

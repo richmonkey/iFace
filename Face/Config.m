@@ -32,4 +32,8 @@
 -(NSString*)URL {
     return @"http://voip.yufeng.me:5000";
 }
+-(NSString*)stunServer {
+    return @"stun.counterpath.net";
+}
+
 @end

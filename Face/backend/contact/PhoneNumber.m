@@ -60,7 +60,7 @@
         self.zone = @"86";
         return YES;
     } else {
-        IMLog(@"invalid telephone number");
+        IMLog(@"invalid telephone number:%@", phone);
         return NO;
     }
 }

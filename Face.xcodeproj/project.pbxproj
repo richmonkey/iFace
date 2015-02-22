@@ -25,6 +25,8 @@
 		48C7A13F1A065BDA0020E7F6 /* start.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 48C7A13C1A065BDA0020E7F6 /* start.mp3 */; };
 		48C7A1431A06650D0020E7F6 /* HistoryTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 48C7A1411A06650D0020E7F6 /* HistoryTableViewCell.m */; };
 		48C7A1441A06650D0020E7F6 /* HistoryTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 48C7A1421A06650D0020E7F6 /* HistoryTableViewCell.xib */; };
+		6D343AB81A9893360095FCB8 /* stun.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 6D343AB61A9893360095FCB8 /* stun.cxx */; };
+		6D343AB91A9893360095FCB8 /* udp.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 6D343AB71A9893360095FCB8 /* udp.cxx */; };
 		6DF3996819EB9AAE009B03C4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF3996719EB9AAE009B03C4 /* Foundation.framework */; };
 		6DF3996A19EB9AAE009B03C4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF3996919EB9AAE009B03C4 /* CoreGraphics.framework */; };
 		6DF3996C19EB9AAE009B03C4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF3996B19EB9AAE009B03C4 /* UIKit.framework */; };
@@ -226,6 +228,10 @@
 		48C7A1421A06650D0020E7F6 /* HistoryTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HistoryTableViewCell.xib; sourceTree = "<group>"; };
 		48DC1A111A0686F6004EC222 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		48DC1A121A0686F6004EC222 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		6D343AB61A9893360095FCB8 /* stun.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = stun.cxx; path = stund/stun.cxx; sourceTree = "<group>"; };
+		6D343AB71A9893360095FCB8 /* udp.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = udp.cxx; path = stund/udp.cxx; sourceTree = "<group>"; };
+		6D343ABA1A9894DE0095FCB8 /* udp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = udp.h; path = stund/udp.h; sourceTree = "<group>"; };
+		6D343ABB1A9894F20095FCB8 /* stun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stun.h; path = stund/stun.h; sourceTree = "<group>"; };
 		6DF3996419EB9AAE009B03C4 /* Face.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Face.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6DF3996719EB9AAE009B03C4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		6DF3996919EB9AAE009B03C4 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -616,6 +622,17 @@
 			path = sound;
 			sourceTree = "<group>";
 		};
+		6D343AB51A9893130095FCB8 /* stund */ = {
+			isa = PBXGroup;
+			children = (
+				6D343ABB1A9894F20095FCB8 /* stun.h */,
+				6D343ABA1A9894DE0095FCB8 /* udp.h */,
+				6D343AB61A9893360095FCB8 /* stun.cxx */,
+				6D343AB71A9893360095FCB8 /* udp.cxx */,
+			);
+			name = stund;
+			sourceTree = "<group>";
+		};
 		6DF3995B19EB9AAE009B03C4 = {
 			isa = PBXGroup;
 			children = (
@@ -821,6 +838,7 @@
 		6DF399F919EBA552009B03C4 /* third_party */ = {
 			isa = PBXGroup;
 			children = (
+				6D343AB51A9893130095FCB8 /* stund */,
 				489A8CBA1A0E14E900753BB8 /* water_wave */,
 				48986B9F1A064C74004740B6 /* DebugView */,
 				48BCCF901A0514BC00A7889D /* ReflectionView */,
@@ -1307,10 +1325,12 @@
 				6DF39BC419ED72C3009B03C4 /* FMDatabaseAdditions.m in Sources */,
 				6DF39A9419EBA6CC009B03C4 /* UIImageView+WebCache.m in Sources */,
 				6DF39A9A19EBA6CC009B03C4 /* UIApplication+Util.m in Sources */,
+				6D343AB81A9893360095FCB8 /* stun.cxx in Sources */,
 				6DF399C519EBA30B009B03C4 /* IMContact.m in Sources */,
 				6DF39A8B19EBA6CC009B03C4 /* SDWebImageDownloader.m in Sources */,
 				48C7A1431A06650D0020E7F6 /* HistoryTableViewCell.m in Sources */,
 				6DF399C919EBA30B009B03C4 /* IMService.m in Sources */,
+				6D343AB91A9893360095FCB8 /* udp.cxx in Sources */,
 				6DF399C719EBA30B009B03C4 /* pinyin.c in Sources */,
 				6DF399F819EBA345009B03C4 /* PublicFunc.m in Sources */,
 				6DF39A9D19EBA6CC009B03C4 /* UIImageView+Letters.m in Sources */,

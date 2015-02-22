@@ -15,6 +15,10 @@
 
 @end
 
+@implementation NatPortMap
+
+@end
+
 @implementation VOIPControl
 
 @end
@@ -99,6 +103,13 @@
             writeInt32(ctl.dialCount, p);
             p += 4;
             return [NSData dataWithBytes:buf length:HEAD_SIZE+24];
+        } else if (ctl.cmd == VOIP_COMMAND_ACCEPT || ctl.cmd == VOIP_COMMAND_CONNECTED) {
+            writeInt32(ctl.natMap.ip, p);
+            p += 4;
+            writeInt16(ctl.natMap.port, p);
+            p += 2;
+            *p++ = ctl.natMap.hairpin;
+            return [NSData dataWithBytes:buf length:HEAD_SIZE+27];
         } else {
             return [NSData dataWithBytes:buf length:HEAD_SIZE+20];
         }
@@ -168,6 +179,15 @@
         p += 4;
         if (ctl.cmd == VOIP_COMMAND_DIAL) {
             ctl.dialCount = readInt32(p);
+        } else if (ctl.cmd == VOIP_COMMAND_ACCEPT || ctl.cmd == VOIP_COMMAND_CONNECTED) {
+            if (data.length >= HEAD_SIZE + 27) {
+                ctl.natMap = [[NatPortMap alloc] init];
+                ctl.natMap.ip = readInt32(p);
+                p += 4;
+                ctl.natMap.port = readInt16(p);
+                p += 2;
+                ctl.natMap.hairpin = *p++;
+            }
         }
         self.body = ctl;
         return YES;

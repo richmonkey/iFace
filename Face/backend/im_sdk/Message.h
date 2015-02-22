@@ -52,11 +52,18 @@ enum VOIPCommand {
 @property(nonatomic, copy)NSString *content;
 @end
 
+@interface NatPortMap : NSObject
+@property(nonatomic) int32_t ip;
+@property(nonatomic) int16_t port;
+@property(nonatomic) BOOL hairpin;
+@end
+
 @interface VOIPControl : NSObject
 @property(nonatomic, assign)int64_t sender;
 @property(nonatomic, assign)int64_t receiver;
 @property(nonatomic, assign) int32_t cmd;
 @property(nonatomic, assign) int32_t dialCount;//只对VOIP_COMMAND_DIAL有意义
+@property(nonatomic) NatPortMap *natMap;//VOIP_COMMAND_ACCEPT，VOIP_COMMAND_CONNECTED
 @end
 
 @interface VOIPData : NSObject

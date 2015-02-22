@@ -76,6 +76,9 @@
 -(void)start:(int64_t)uid;
 -(void)stop;
 
+-(void)listenVOIP;
+-(void)closeUDP;
+
 -(void)sendPeerMessage:(IMMessage*)msg;
 
 //正在输入
@@ -92,6 +95,7 @@
 -(void)popVOIPObserver:(id<VOIPObserver>)ob;
 
 -(BOOL)sendVOIPControl:(VOIPControl*)ctl;
+-(BOOL)sendVOIPData:(VOIPData*)data ip:(int)ip port:(short)port;
 -(BOOL)sendVOIPData:(VOIPData*)data;
 @end
 

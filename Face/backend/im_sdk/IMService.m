@@ -162,8 +162,7 @@
     w = dispatch_walltime(NULL, HEARTBEAT);
     dispatch_source_set_timer(self.heartbeatTimer, w, HEARTBEAT, HEARTBEAT/2);
     dispatch_resume(self.heartbeatTimer);
-    
-    [self listenVOIP];
+
     [self refreshHostIP];
 }
 
@@ -180,8 +179,6 @@
     self.connectState = STATE_UNCONNECTED;
     [self publishConnectState:STATE_UNCONNECTED];
     [self close];
-    
-    [self closeUDP];
 }
 
 -(void)closeUDP {
@@ -657,11 +654,7 @@
     return [self sendMessage:m];
 }
 
--(BOOL)sendVOIPData:(VOIPData*)data {
-    if (self.hostIP.length == 0) {
-        [self refreshHostIP];
-        return NO;
-    }
+-(BOOL)sendVOIPData:(VOIPData*)data ip:(int)ip port:(short)port {
     if (data.content.length > 60*1024) {
         return NO;
     }
@@ -679,24 +672,33 @@
     } else {
         *p++ = VOIP_RTCP;
     }
-
+    
     const void *src = [data.content bytes];
     int len = [data.content length];
     
     memcpy(p, src, len);
-
+    
     struct sockaddr_in addr;
     bzero(&addr, sizeof(addr));
     
     addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr=inet_addr([self.hostIP UTF8String]);
-    addr.sin_port=htons(self.voipPort);
+    addr.sin_addr.s_addr=htonl(ip);
+    addr.sin_port=htons(port);
     
     int r = sendto(self.udpFD, buff, len + 18, 0, (struct sockaddr*)&addr, sizeof(addr));
     if (r == -1) {
         NSLog(@"send voip data error:%s", strerror(errno));
     }
     return YES;
+}
+
+-(BOOL)sendVOIPData:(VOIPData*)data {
+    if (self.hostIP.length == 0) {
+        return NO;
+    }
+    int ip = inet_addr([self.hostIP UTF8String]);
+    ip = ntohl(ip);
+    return [self sendVOIPData:data ip:ip port:self.voipPort];
 }
 
 @end
