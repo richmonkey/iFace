@@ -29,9 +29,6 @@
 @property(nonatomic)NSMutableArray *observers;
 @property(nonatomic)NSMutableData *data;
 @property(nonatomic)int64_t uid;
-@property(nonatomic)NSMutableDictionary *peerMessages;
-@property(nonatomic)NSMutableDictionary *groupMessages;
-@property(nonatomic)NSMutableDictionary *subs;
 
 @property(nonatomic)NSMutableArray *voipObservers;
 
@@ -66,10 +63,7 @@
         });
         self.voipObservers = [NSMutableArray array];
         self.observers = [NSMutableArray array];
-        self.subs = [NSMutableDictionary dictionary];
         self.data = [NSMutableData data];
-        self.peerMessages = [NSMutableDictionary dictionary];
-        self.groupMessages = [NSMutableDictionary dictionary];
         self.connectState = STATE_UNCONNECTED;
         self.stopped = YES;
         
@@ -220,100 +214,14 @@
     self.connectState = STATE_UNCONNECTED;
     [self publishConnectState:STATE_UNCONNECTED];
     
-    for (NSNumber *seq in self.peerMessages) {
-        IMMessage *msg = [self.peerMessages objectForKey:seq];
-        [self.peerMessageHandler handleMessageFailure:msg.msgLocalID uid:msg.receiver];
-        [self publishPeerMessageFailure:msg];
-    }
-    
-    for (NSNumber *seq in self.groupMessages) {
-        IMMessage *msg = [self.peerMessages objectForKey:seq];
-        [self.groupMessageHandler handleMessageFailure:msg.msgLocalID uid:msg.receiver];
-        [self publishGroupMessageFailure:msg];
-    }
-    [self.peerMessages removeAllObjects];
-    [self.groupMessages removeAllObjects];
     [self close];
     [self startConnectTimer];
 }
 
--(void)handleACK:(Message*)msg {
-    NSNumber *seq = (NSNumber*)msg.body;
-    IMMessage *m = (IMMessage*)[self.peerMessages objectForKey:seq];
-    IMMessage *m2 = (IMMessage*)[self.groupMessages objectForKey:seq];
-    if (!m && !m2) {
-        return;
-    }
-    if (m) {
-        [self.peerMessageHandler handleMessageACK:m.msgLocalID uid:m.receiver];
-        [self.peerMessages removeObjectForKey:seq];
-        [self publishPeerMessageACK:m.msgLocalID uid:m.receiver];
-    } else if (m2) {
-        [self.groupMessageHandler handleMessageACK:m2.msgLocalID uid:m2.receiver];
-        [self.groupMessages removeObjectForKey:seq];
-        [self publishGroupMessageACK:m2.msgLocalID gid:m2.receiver];
-    }
-}
-
--(void)handleIMMessage:(Message*)msg {
-    IMMessage *im = (IMMessage*)msg.body;
-    [self.peerMessageHandler handleMessage:im];
-    NSLog(@"sender:%lld receiver:%lld content:%s", im.sender, im.receiver, [im.content UTF8String]);
-    
-    Message *ack = [[Message alloc] init];
-    ack.cmd = MSG_ACK;
-    ack.body = [NSNumber numberWithInt:msg.seq];
-    [self sendMessage:ack];
-    [self publishPeerMessage:im];
-}
-
--(void)handleGroupIMMessage:(Message*)msg {
-    IMMessage *im = (IMMessage*)msg.body;
-    [self.groupMessageHandler handleMessage:im];
-    NSLog(@"sender:%lld receiver:%lld content:%s", im.sender, im.receiver, [im.content UTF8String]);
-    Message *ack = [[Message alloc] init];
-    ack.cmd = MSG_ACK;
-    ack.body = [NSNumber numberWithInt:msg.seq];
-    [self sendMessage:ack];
-    [self publishGroupMessage:im];
-}
 
 -(void)handleAuthStatus:(Message*)msg {
     int status = [(NSNumber*)msg.body intValue];
     NSLog(@"auth status:%d", status);
-    if (status == 0 && [self.subs count]) {
-        MessageSubsribe *sub = [[MessageSubsribe alloc] init];
-        sub.uids = [self.subs allKeys];
-        [self sendSubscribe:sub];
-    }
-}
-
--(void)handleInputing:(Message*)msg {
-    MessageInputing *inputing = (MessageInputing*)msg.body;
-    for (id<MessageObserver> ob in self.observers) {
-        [ob onPeerInputing:inputing.sender];
-    }
-}
-
--(void)handlePeerACK:(Message*)msg {
-    MessagePeerACK *ack = (MessagePeerACK*)msg.body;
-    [self.peerMessageHandler handleMessageRemoteACK:ack.msgLocalID uid:ack.sender];
-    
-    for (id<MessageObserver> ob in self.observers) {
-        [ob onPeerMessageRemoteACK:ack.msgLocalID uid:ack.sender];
-    }
-}
-
--(void)handleOnlineState:(Message*)msg {
-    MessageOnlineState *state = (MessageOnlineState*)msg.body;
-    NSNumber *key = [NSNumber numberWithLongLong:state.sender];
-    if ([self.subs objectForKey:key]) {
-        NSNumber *on = [NSNumber numberWithBool:state.online];
-        [self.subs setObject:on forKey:key];
-    }
-    for (id<MessageObserver> ob in self.observers) {
-        [ob onOnlineState:state.sender state:state.online];
-    }
 }
 
 -(void)handleVOIPControl:(Message*)msg {
@@ -324,41 +232,7 @@
     }
 }
 
--(void)publishPeerMessage:(IMMessage*)msg {
-    for (id<MessageObserver> ob in self.observers) {
-        [ob onPeerMessage:msg];
-    }
-}
 
--(void)publishPeerMessageACK:(int)msgLocalID uid:(int64_t)uid {
-    for (id<MessageObserver> ob in self.observers) {
-        [ob onPeerMessageACK:msgLocalID uid:uid];
-    }
-}
-
--(void)publishPeerMessageFailure:(IMMessage*)msg {
-    for (id<MessageObserver> ob in self.observers) {
-        [ob onPeerMessageFailure:msg.msgLocalID uid:msg.receiver];
-    }
-}
-
--(void)publishGroupMessage:(IMMessage*)msg {
-    for (id<MessageObserver> ob in self.observers) {
-        [ob onGroupMessage:msg];
-    }
-}
-
--(void)publishGroupMessageACK:(int)msgLocalID gid:(int64_t)gid {
-    for (id<MessageObserver> ob in self.observers) {
-        [ob onGroupMessageACK:msgLocalID gid:gid];
-    }
-}
-
--(void)publishGroupMessageFailure:(IMMessage*)msg {
-    for (id<MessageObserver> ob in self.observers) {
-        [ob onGroupMessageFailure:msg.msgLocalID gid:msg.receiver];
-    }
-}
 
 -(void)publishConnectState:(int)state {
     for (id<MessageObserver> ob in self.observers) {
@@ -369,18 +243,6 @@
 -(void)handleMessage:(Message*)msg {
     if (msg.cmd == MSG_AUTH_STATUS) {
         [self handleAuthStatus:msg];
-    } else if (msg.cmd == MSG_ACK) {
-        [self handleACK:msg];
-    } else if (msg.cmd == MSG_IM) {
-        [self handleIMMessage:msg];
-    } else if (msg.cmd == MSG_GROUP_IM) {
-        [self handleGroupIMMessage:msg];
-    } else if (msg.cmd == MSG_INPUTING) {
-        [self handleInputing:msg];
-    } else if (msg.cmd == MSG_PEER_ACK) {
-        [self handlePeerACK:msg];
-    } else if (msg.cmd == MSG_ONLINE_STATE) {
-        [self handleOnlineState:msg];
     } else if (msg.cmd == MSG_VOIP_CONTROL) {
         [self handleVOIPControl:msg];
     }
@@ -526,40 +388,6 @@
     }
 }
 
--(void)addMessageObserver:(id<MessageObserver>)ob {
-    [self.observers addObject:ob];
-}
--(void)removeMessageObserver:(id<MessageObserver>)ob {
-    [self.observers removeObject:ob];
-}
-
--(void)sendPeerMessage:(IMMessage *)im {
-    Message *m = [[Message alloc] init];
-    m.cmd = MSG_IM;
-    m.body = im;
-    BOOL r = [self sendMessage:m];
-
-    if (!r) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.peerMessageHandler handleMessageFailure:im.msgLocalID uid:im.receiver];
-            [self publishPeerMessageFailure:im];
-        });
-    } else {
-        [self.peerMessages setObject:im forKey:[NSNumber numberWithInt:m.seq]];
-    }
-}
-
--(BOOL)sendGroupMessage:(IMMessage *)im {
-    Message *m = [[Message alloc] init];
-    m.cmd = MSG_GROUP_IM;
-    m.body = im;
-    BOOL r = [self sendMessage:m];
-    
-    if (!r) return r;
-    [self.groupMessages setObject:im forKey:[NSNumber numberWithInt:m.seq]];
-    return r;
-}
-
 -(BOOL)sendMessage:(Message *)msg {
     if (!self.tcp || self.connectState != STATE_CONNECTED) return NO;
     self.seq = self.seq + 1;
@@ -594,42 +422,12 @@
     [self sendMessage:msg];
 }
 
-//正在输入
--(void)sendInputing:(MessageInputing*)inputing {
-    Message *msg = [[Message alloc] init];
-    msg.cmd = MSG_INPUTING;
-    msg.body = inputing;
-    [self sendMessage:msg];
+-(void)addMessageObserver:(id<MessageObserver>)ob {
+    [self.observers addObject:ob];
 }
 
--(void)sendSubscribe:(MessageSubsribe*)sub {
-    Message *msg = [[Message alloc] init];
-    msg.cmd = MSG_SUBSCRIBE_ONLINE_STATE;
-    msg.body = sub;
-    [self sendMessage:msg];
-}
-
-//订阅用户在线状态通知消息
--(void)subscribeState:(int64_t)uid {
-    NSNumber *n = [NSNumber numberWithLongLong:uid];
-    if (![self.subs objectForKey:n]) {
-        [self.subs setObject:[NSNumber numberWithBool:NO] forKey:n];
-        MessageSubsribe *sub = [[MessageSubsribe alloc] init];
-        sub.uids = [NSArray arrayWithObject:n];
-        [self sendSubscribe:sub];
-    } else {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            BOOL online = [[self.subs objectForKey:n] boolValue];
-            for (id<MessageObserver> ob in self.observers) {
-                [ob onOnlineState:uid state:online];
-            }
-        });
-    }
-}
-
--(void)unsubscribeState:(int64_t)uid {
-    NSNumber *n = [NSNumber numberWithLongLong:uid];
-    [self.subs removeObjectForKey:n];
+-(void)removeMessageObserver:(id<MessageObserver>)ob {
+    [self.observers removeObject:ob];
 }
 
 -(void)pushVOIPObserver:(id<VOIPObserver>)ob {

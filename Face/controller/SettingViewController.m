@@ -163,32 +163,7 @@
 }
 
 #pragma mark - MessageObserver
--(void)onPeerMessage:(IMMessage*)msg{
 
-}
-
-//服务器ack
--(void)onPeerMessageACK:(int)msgLocalID uid:(int64_t)uid{
-    
-}
-//接受方ack
--(void)onPeerMessageRemoteACK:(int)msgLocalID uid:(int64_t)uid{
-    
-}
-
--(void)onPeerMessageFailure:(int)msgLocalID uid:(int64_t)uid{
-    
-}
-
-//用户连线状态
--(void)onOnlineState:(int64_t)uid state:(BOOL)on{
-    
-}
-
-//对方正在输入
--(void)onPeerInputing:(int64_t)uid{
-    
-}
 
 -(void) onConnectState:(int)state {
    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:kNetStatusRow inSection:kNetStatusSection];

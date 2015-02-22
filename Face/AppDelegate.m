@@ -13,74 +13,6 @@
 #import "MainTabBarController.h"
 #import "AskPhoneNumberViewController.h"
 
-@interface PeerMessageHandler : NSObject<IMPeerMessageHandler>
-+(PeerMessageHandler*)instance;
-@end
-
-
-@interface GroupMessageHandler : NSObject<IMGroupMessageHandler>
-+(GroupMessageHandler*)instance;
-@end
-
-
-
-@implementation PeerMessageHandler
-+(PeerMessageHandler*)instance {
-    static PeerMessageHandler *m;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        if (!m) {
-            m = [[PeerMessageHandler alloc] init];
-        }
-    });
-    return m;
-}
-
--(BOOL)handleMessage:(IMMessage*)msg {
-    return NO;
-}
-
--(BOOL)handleMessageACK:(int)msgLocalID uid:(int64_t)uid {
-    return NO;
-}
-
--(BOOL)handleMessageRemoteACK:(int)msgLocalID uid:(int64_t)uid {
-    return NO;
-}
-
--(BOOL)handleMessageFailure:(int)msgLocalID uid:(int64_t)uid {
-    return NO;
-}
-
-@end
-
-
-
-@implementation GroupMessageHandler
-+(GroupMessageHandler*)instance {
-    static GroupMessageHandler *m;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        if (!m) {
-            m = [[GroupMessageHandler alloc] init];
-        }
-    });
-    return m;
-}
-
--(BOOL)handleMessage:(IMMessage*)im {
-    return NO;
-}
-
--(BOOL)handleMessageACK:(int)msgLocalID uid:(int64_t)uid {
-    return NO;
-}
--(BOOL)handleMessageFailure:(int)msgLocalID uid:(int64_t)uid {
-    return NO;
-}
-@end
-
-
 
 @implementation AppDelegate
 
@@ -92,9 +24,6 @@
     [IMService instance].host = [Config instance].host;
     [IMService instance].port = [Config instance].port;
     [IMService instance].voipPort = [Config instance].voipPort;
-    [IMService instance].peerMessageHandler = [PeerMessageHandler instance];
-    [IMService instance].groupMessageHandler = [GroupMessageHandler instance];
-    
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     application.statusBarHidden = NO;

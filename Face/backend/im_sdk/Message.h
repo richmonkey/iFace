@@ -45,13 +45,6 @@ enum VOIPCommand {
 #define VOIP_RTP 1
 #define VOIP_RTCP 2
 
-@interface IMMessage : NSObject
-@property(nonatomic, assign)int64_t sender;
-@property(nonatomic, assign)int64_t receiver;
-@property(nonatomic, assign)int32_t msgLocalID;
-@property(nonatomic, copy)NSString *content;
-@end
-
 @interface NatPortMap : NSObject
 @property(nonatomic) int32_t ip;
 @property(nonatomic) int16_t port;
@@ -72,26 +65,6 @@ enum VOIPCommand {
 @property(nonatomic, assign) int type;
 @property(nonatomic, getter = isRTP) BOOL rtp;
 @property(nonatomic) NSData *content;
-@end
-
-@interface MessageInputing : NSObject
-@property(nonatomic, assign)int64_t sender;
-@property(nonatomic, assign)int64_t receiver;
-@end
-
-@interface MessageOnlineState : NSObject
-@property(nonatomic, assign)int64_t sender;
-@property(nonatomic, assign)int32_t online;
-@end
-
-@interface MessagePeerACK : NSObject
-@property(nonatomic, assign)int64_t sender;
-@property(nonatomic, assign)int64_t receiver;
-@property(nonatomic, assign)int32_t msgLocalID;
-@end
-
-@interface MessageSubsribe : NSObject
-@property(nonatomic)NSArray *uids;
 @end
 
 @interface Message : NSObject
