@@ -21,7 +21,9 @@
 @protocol VOIPObserver <NSObject>
 
 -(void)onVOIPControl:(VOIPControl*)ctl;
--(void)onVOIPData:(VOIPData*)data;
+
+@optional
+-(void)onVOIPData:(VOIPData*)data ip:(int)ip port:(int)port;
 
 @end
 

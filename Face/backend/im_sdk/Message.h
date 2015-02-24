@@ -48,7 +48,8 @@ enum VOIPCommand {
 @interface NatPortMap : NSObject
 @property(nonatomic) int32_t ip;
 @property(nonatomic) int16_t port;
-@property(nonatomic) BOOL hairpin;
+@property(nonatomic) int32_t localIP;
+@property(nonatomic) int16_t localPort;
 @end
 
 @interface VOIPControl : NSObject

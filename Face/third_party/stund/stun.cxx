@@ -1915,7 +1915,7 @@ stunNatType( StunAddress4& dest,
    StunAddress4 testIchangedAddr;
    StunAddress4 testImappedAddr;
    bool respTestI2=false; 
-   bool mappedIpSame = true;
+   bool mappedIpSame = false;
    StunAddress4 testI2mappedAddr;
    StunAddress4 testI2dest=dest;
    bool respTestII=false;

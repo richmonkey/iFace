@@ -64,6 +64,9 @@ openPort( unsigned short port, unsigned int interfaceIp, bool verbose )
       }
    }
 	
+   int one = 1;
+   setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));
+
    if ( bind( fd,(struct sockaddr*)&addr, sizeof(addr)) != 0 )
    {
       int e = getErrno();
@@ -129,6 +132,17 @@ getMessage( Socket fd, char* buf, int* len,
    struct sockaddr_in from;
    int fromLen = sizeof(from);
 	
+    struct timeval timeout;
+    timeout.tv_sec = 1;
+    timeout.tv_usec = 0;
+    
+    if (setsockopt (fd, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout,
+                    sizeof(timeout)) < 0) {
+        cerr << "setsockopt failed\n" << endl;
+        return false;
+    }
+    
+    
    *len = recvfrom(fd,
                    buf,
                    originalSize,

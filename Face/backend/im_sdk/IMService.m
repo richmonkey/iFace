@@ -76,7 +76,7 @@
 -(void)handleRead {
     char buf[64*1024];
     struct sockaddr_in addr;
-    socklen_t len;
+    socklen_t len = sizeof(addr);
     int n = recvfrom(self.udpFD, buf, 64*1024, 0, (struct sockaddr*)&addr, &len);
     if (n <= 0) {
         NSLog(@"recv udp error:%d, %s", errno, strerror(errno));
@@ -108,7 +108,9 @@
     vdata.content = [NSData dataWithBytes:p length:n-18];
     id<VOIPObserver> ob = [self.voipObservers lastObject];
     if (ob) {
-        [ob onVOIPData:vdata];
+        int ip = ntohl(addr.sin_addr.s_addr);
+        int port = ntohs(addr.sin_port);
+        [ob onVOIPData:vdata ip:ip port:port];
     }
 }
 
@@ -123,6 +125,10 @@
     addr.sin_family = AF_INET;
     addr.sin_addr.s_addr=htonl(INADDR_ANY);
     addr.sin_port=htons(self.voipPort);
+    
+    int one = 1;
+    setsockopt(self.udpFD, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));
+    
     bind(self.udpFD, (struct sockaddr *)&addr,sizeof(addr));
     
     sock_nonblock(self.udpFD, 1);
@@ -453,6 +459,9 @@
 }
 
 -(BOOL)sendVOIPData:(VOIPData*)data ip:(int)ip port:(short)port {
+    if (self.udpFD == -1) {
+        return NO;
+    }
     if (data.content.length > 60*1024) {
         return NO;
     }

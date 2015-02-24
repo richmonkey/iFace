@@ -81,6 +81,9 @@
 @property(nonatomic) NatPortMap *peerNatMap;
 @property(nonatomic) NatPortMap *localNatMap;
 
+@property(nonatomic) NSDate *beginDate;
+@property(atomic) BOOL isPeerConnected;
+
 @property(atomic, assign) StunAddress4 mappedAddr;
 @property(atomic, assign) NatType natType;
 @property(nonatomic) BOOL hairpin;
@@ -129,13 +132,10 @@
 }
 
 -(BOOL)isP2P {
-    if (self.localNatMap.ip > 0 && self.peerNatMap.ip > 0 ) {
-        if (self.localNatMap.ip != self.peerNatMap.ip) {
-            return YES;
-        } else if (self.localNatMap.hairpin && self.peerNatMap.hairpin){
-            return YES;
-        }
+    if (self.localNatMap.ip != 0 && self.peerNatMap.ip != 0 ) {
+        return YES;
     }
+
     return NO;
 }
 
@@ -304,7 +304,6 @@
             NSLog(@"can't grant record permission");
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 [self dismissViewControllerAnimated:NO completion:^{
-                    [[IMService instance] closeUDP];
                     [[IMService instance] popVOIPObserver:self];
                 }];
             });
@@ -320,11 +319,51 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             self.natType = stype;
             self.mappedAddr = addr;
-            self.hairpin = hairpin;
             
-            [[IMService instance] listenVOIP];
+
+            if (self.localNatMap == nil) {
+                self.localNatMap = [[NatPortMap alloc] init];
+                self.localNatMap.ip = self.mappedAddr.addr;
+                self.localNatMap.port = self.mappedAddr.port;
+
+                self.localNatMap.localIP = [self getPrimaryIP];
+                self.localNatMap.localPort = [Config instance].voipPort;
+            }
+
         });
     });
+}
+
+-(int32_t)getPrimaryIP {
+    int sock = socket(AF_INET, SOCK_DGRAM, 0);
+    assert(sock != -1);
+    
+    const char* kGoogleDnsIp = "8.8.8.8";
+    uint16_t kDnsPort = 53;
+    struct sockaddr_in serv;
+    memset(&serv, 0, sizeof(serv));
+    serv.sin_family = AF_INET;
+    serv.sin_addr.s_addr = inet_addr(kGoogleDnsIp);
+    serv.sin_port = htons(kDnsPort);
+    
+    int err = connect(sock, (const sockaddr*) &serv, sizeof(serv));
+    if (err == -1) {
+        return 0;
+    }
+    
+    sockaddr_in name;
+    socklen_t namelen = sizeof(name);
+    bzero(&name, namelen);
+    
+    err = getsockname(sock, (sockaddr*) &name, &namelen);
+    if (err == -1) {
+        perror("get sock name");
+        return 0;
+    }
+    
+    close(sock);
+    
+    return ntohl(name.sin_addr.s_addr);
 }
 
 #define VERBOSE false
@@ -398,7 +437,6 @@
     [self dismissViewControllerAnimated:YES completion:^{
         VOIP *voip = [VOIP instance];
         voip.state = VOIP_LISTENING;
-        [[IMService instance] closeUDP];
         [[IMService instance] popVOIPObserver:self];
         [[HistoryDB instance] addHistory:self.history];
        
@@ -446,11 +484,9 @@
     self.player = nil;
     self.history.flag = self.history.flag|FLAG_ACCEPTED;
 
-    
-    self.localNatMap = [[NatPortMap alloc] init];
-    self.localNatMap.ip = self.mappedAddr.addr;
-    self.localNatMap.port = self.mappedAddr.port;
-    self.localNatMap.hairpin = self.hairpin;
+    if (self.localNatMap == nil) {
+        self.localNatMap = [[NatPortMap alloc] init];
+    }
     
     self.acceptTimestamp = time(NULL);
     self.acceptTimer = [NSTimer scheduledTimerWithTimeInterval: 1
@@ -619,7 +655,30 @@
 
 - (void)startStream {
     if (self.sendStream || self.recvStream) return;
+    
+    if (self.localNatMap != nil) {
+        struct in_addr addr;
+        addr.s_addr = htonl(self.localNatMap.ip);
+        NSLog(@"local nat map:%s:%d", inet_ntoa(addr), self.localNatMap.port);
+        
+
+        addr.s_addr = htonl(self.localNatMap.localIP);
+        NSLog(@"local host:%s:%d", inet_ntoa(addr), self.localNatMap.localPort);
+        
+    }
+    if (self.peerNatMap != nil) {
+        struct in_addr addr;
+        addr.s_addr = htonl(self.peerNatMap.ip);
+        NSLog(@"peer nat map:%s:%d", inet_ntoa(addr), self.peerNatMap.port);
+        
+        addr.s_addr = htonl(self.peerNatMap.localIP);
+        NSLog(@"peer local host:%s:%d", inet_ntoa(addr), self.peerNatMap.localPort);
+    }
+    
     if (self.isP2P) {
+        struct in_addr addr;
+        addr.s_addr = htonl(self.peerNatMap.ip);
+        NSLog(@"peer address:%s:%d", inet_ntoa(addr), self.peerNatMap.port);
         NSLog(@"start p2p stream");
     } else {
         NSLog(@"start stream");
@@ -638,8 +697,10 @@
     
     [self.recvStream start];
     
+    [[IMService instance] listenVOIP];
+    
     self.history.beginTimestamp = time(NULL);
-
+    self.beginDate = [NSDate date];
 }
 
 
@@ -649,8 +710,9 @@
     [self.sendStream stop];
     [self.recvStream stop];
     
+    [[IMService instance] closeUDP];
+    
     self.history.endTimestamp = time(NULL);
-
 }
 
 #pragma mark - VOIPObserver
@@ -671,10 +733,9 @@
             
             self.peerNatMap = ctl.natMap;
             
-            self.localNatMap = [[NatPortMap alloc] init];
-            self.localNatMap.ip = self.mappedAddr.addr;
-            self.localNatMap.port = self.mappedAddr.port;
-            self.localNatMap.hairpin = self.hairpin;
+            if (self.localNatMap == nil) {
+                self.localNatMap = [[NatPortMap alloc] init];
+            }
             
             [self sendConnected];
             voip.state = VOIP_CONNECTED;
@@ -711,10 +772,9 @@
             voip.state = VOIP_ACCEPTED;
             self.history.flag = self.history.flag|FLAG_ACCEPTED;
 
-            self.localNatMap = [[NatPortMap alloc] init];
-            self.localNatMap.ip = self.mappedAddr.addr;
-            self.localNatMap.port = self.mappedAddr.port;
-            self.localNatMap.hairpin = self.hairpin;
+            if (self.localNatMap == nil) {
+                self.localNatMap = [[NatPortMap alloc] init];
+            }
 
             self.acceptTimestamp = time(NULL);
             self.acceptTimer = [NSTimer scheduledTimerWithTimeInterval: 1
@@ -794,7 +854,7 @@
     }
 }
 
--(void)onVOIPData:(VOIPData*)data {
+-(void)onVOIPData:(VOIPData*)data ip:(int)ip port:(int)port {
     if (data.sender != self.peerUser.uid) {
         [self sendReset];
         return;
@@ -807,6 +867,11 @@
         int packet_length = [data.content length];
         
         WebRTC *rtc = [WebRTC sharedWebRTC];
+        
+        if (!self.isPeerConnected && self.peerNatMap.ip == ip && self.peerNatMap.port == port) {
+            self.isPeerConnected = YES;
+            NSLog(@"peer connected");
+        }
         
         if (data.isRTP) {
             if (data.type == VOIP_AUDIO) {
@@ -841,6 +906,25 @@
 
 
 #pragma mark VoiceTransport
+-(void)sendVOIPData:(VOIPData*)vData {
+    
+    BOOL isP2P = self.isP2P;
+    //2s内还未接受到对端的数据，转而使用服务器中转
+    if (isP2P && !self.isPeerConnected && [self.beginDate timeIntervalSinceNow]*1000 < -2000) {
+        isP2P = NO;
+    }
+    
+    BOOL r = NO;
+    if (isP2P) {
+        r = [[IMService instance] sendVOIPData:vData ip:self.peerNatMap.ip port:self.peerNatMap.port];
+    } else {
+        r = [[IMService instance] sendVOIPData:vData];
+    }
+    if (!r) {
+        NSLog(@"send rtp data fail");
+    }
+}
+
 -(int)sendRTPPacketA:(const void*)data length:(int)length {
     VOIPData *vData = [[VOIPData alloc] init];
     
@@ -849,20 +933,9 @@
     vData.type = VOIP_AUDIO;
     vData.rtp = YES;
     vData.content = [NSData dataWithBytes:data length:length];
-    NSLog(@"send rtp package:%d", length);
+    //NSLog(@"send rtp package:%d", length);
     
-    if (self.isP2P) {
-        BOOL r = [[IMService instance] sendVOIPData:vData ip:self.peerNatMap.ip port:self.peerNatMap.port];
-        if (!r) {
-            NSLog(@"send rtp data fail");
-        }
-    } else {
-        BOOL r = [[IMService instance] sendVOIPData:vData];
-        if (!r) {
-            NSLog(@"send rtp data fail");
-        }
-    }
-    
+    [self sendVOIPData:vData];
     return length;
 }
 
@@ -871,7 +944,7 @@
         return 0;
     }
 
-    NSLog(@"send rtcp package:%d", length);
+    //NSLog(@"send rtcp package:%d", length);
     VOIPData *vData = [[VOIPData alloc] init];
     
     vData.sender = [UserPresent instance].uid;
@@ -880,17 +953,7 @@
     vData.type = VOIP_AUDIO;
     vData.content = [NSData dataWithBytes:data length:length];
     
-    if (self.isP2P) {
-        BOOL r = [[IMService instance] sendVOIPData:vData ip:self.peerNatMap.ip port:self.peerNatMap.port];
-        if (!r) {
-            NSLog(@"send rtcp data fail");
-        }
-    } else {
-        BOOL r = [[IMService instance] sendVOIPData:vData];
-        if (!r) {
-            NSLog(@"send rtcp data fail");
-        }
-    }
+    [self sendVOIPData:vData];
     return length;
 }
 

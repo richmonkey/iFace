@@ -217,14 +217,6 @@
     }
 }
 
--(void)onVOIPData:(VOIPData*)data {
-    VOIP *voip = [VOIP instance];
-    
-    if (voip.state != VOIP_CONNECTED) {
-        [self sendReset:data.sender];
-        NSLog(@"reset voip");
-    }
-}
 
 -(void)sendReset:(int64_t)uid {
     VOIPControl *ctl = [[VOIPControl alloc] init];

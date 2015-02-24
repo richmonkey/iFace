@@ -53,12 +53,16 @@
             p += 4;
             return [NSData dataWithBytes:buf length:HEAD_SIZE+24];
         } else if (ctl.cmd == VOIP_COMMAND_ACCEPT || ctl.cmd == VOIP_COMMAND_CONNECTED) {
+            NSLog(@"nat map ip:%x", ctl.natMap.ip);
             writeInt32(ctl.natMap.ip, p);
             p += 4;
             writeInt16(ctl.natMap.port, p);
             p += 2;
-            *p++ = ctl.natMap.hairpin;
-            return [NSData dataWithBytes:buf length:HEAD_SIZE+27];
+            writeInt32(ctl.natMap.localIP, p);
+            p += 4;
+            writeInt16(ctl.natMap.localPort, p);
+            p += 2;
+            return [NSData dataWithBytes:buf length:HEAD_SIZE+32];
         } else {
             return [NSData dataWithBytes:buf length:HEAD_SIZE+20];
         }
@@ -90,13 +94,16 @@
         if (ctl.cmd == VOIP_COMMAND_DIAL) {
             ctl.dialCount = readInt32(p);
         } else if (ctl.cmd == VOIP_COMMAND_ACCEPT || ctl.cmd == VOIP_COMMAND_CONNECTED) {
-            if (data.length >= HEAD_SIZE + 27) {
+            if (data.length >= HEAD_SIZE + 32) {
                 ctl.natMap = [[NatPortMap alloc] init];
                 ctl.natMap.ip = readInt32(p);
                 p += 4;
                 ctl.natMap.port = readInt16(p);
                 p += 2;
-                ctl.natMap.hairpin = *p++;
+                ctl.natMap.localIP = readInt32(p);
+                p += 4;
+                ctl.natMap.localPort = readInt16(p);
+                p += 2;
             }
         }
         self.body = ctl;
