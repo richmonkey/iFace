@@ -20,11 +20,11 @@ public:
     }
     
 public:
-    virtual int SendPacket(int channel, const void *data, int len) {
-        return [transport_ sendRTPPacketA:data length:len];
+    virtual int SendPacket(int channel, const void *data, size_t len) {
+        return [transport_ sendRTPPacketA:data length:(int)len];
     }
-    virtual int SendRTCPPacket(int channel, const void *data, int len){
-        return [transport_ sendRTCPPacketA:data length:len STOR:STOR_];
+    virtual int SendRTCPPacket(int channel, const void *data, size_t len){
+        return [transport_ sendRTCPPacketA:data length:(int)len STOR:STOR_];
     }
 
 private:
@@ -54,14 +54,12 @@ public:
     }
     
 public:
-    virtual int SendPacket(int channel, const void *data, int len){
-        return [transport_ sendRTPPacketV:data length:len];
+    virtual int SendPacket(int channel, const void *data, size_t len) {
+        return [transport_ sendRTPPacketV:data length:(int)len];
     }
-
-    virtual int SendRTCPPacket(int channel, const void *data, int len){
-        return [transport_ sendRTCPPacketV:data length:len STOR:STOR_];
+    virtual int SendRTCPPacket(int channel, const void *data, size_t len) {
+        return [transport_ sendRTCPPacketV:data length:(int)len STOR:STOR_];
     }
-
 private:
     int channel_;
     webrtc::ViENetwork* vie_network_;

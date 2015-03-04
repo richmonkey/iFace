@@ -1,11 +1,9 @@
 #import "AVSendStream.h"
 #include "webrtc/voice_engine/include/voe_base.h"
 #include "webrtc/common_types.h"
-#include "webrtc/system_wrappers/interface/constructor_magic.h"
 #include "webrtc/video_engine/include/vie_base.h"
 #include "webrtc/video_engine/include/vie_capture.h"
 #include "webrtc/video_engine/include/vie_codec.h"
-//#include "webrtc/video_engine/include/vie_encryption.h"
 #include "webrtc/video_engine/include/vie_image_process.h"
 #include "webrtc/video_engine/include/vie_network.h"
 #include "webrtc/video_engine/include/vie_render.h"
@@ -95,6 +93,7 @@
     self.voiceChannelTransport = new VoiceChannelTransport(rtc.voe_network,
                                                            self.voiceChannel,
                                                            self.voiceTransport, YES);
+    NSLog(@"transport:0x%x", self.voiceChannelTransport);
     
     int error = 0;
     int audio_capture_device_index = 0;

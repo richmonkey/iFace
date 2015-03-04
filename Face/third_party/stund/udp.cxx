@@ -67,7 +67,7 @@ openPort( unsigned short port, unsigned int interfaceIp, bool verbose )
    int one = 1;
    setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));
 
-   if ( bind( fd,(struct sockaddr*)&addr, sizeof(addr)) != 0 )
+   if ( ::bind( fd,(struct sockaddr*)&addr, sizeof(addr)) != 0 )
    {
       int e = getErrno();
         
