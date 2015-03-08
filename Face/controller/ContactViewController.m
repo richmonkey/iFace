@@ -18,6 +18,7 @@
 #import "ContactPhoneTableViewCell.h"
 #import "VOIPViewController.h"
 #import "UIView+Toast.h"
+#import "IMService.h"
 
 /*
  ----------

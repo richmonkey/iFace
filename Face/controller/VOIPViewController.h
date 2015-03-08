@@ -8,9 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
-#import "IMService.h"
 
-@interface VOIPViewController : UIViewController<VOIPObserver, AVAudioPlayerDelegate>
+@interface VOIPViewController : UIViewController<AVAudioPlayerDelegate>
 - (id)initWithCalledUID:(int64_t)uid;
 -(id)initWithCallerUID:(int64_t)uid;
 @end

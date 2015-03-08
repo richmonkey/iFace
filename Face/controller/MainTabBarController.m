@@ -130,10 +130,8 @@
 }
 
 -(void)appDidEnterBackground {
-    VOIP *voip = [VOIP instance];
-    if (voip.state == VOIP_LISTENING) {
-        [[IMService instance] stop];
-    }
+    //todo check voip state
+    [[IMService instance] stop];
 }
 
 -(void)appWillEnterForeground {
@@ -206,14 +204,11 @@
 
 #pragma mark - VOIPObserver
 -(void)onVOIPControl:(VOIPControl*)ctl {
-    VOIP *voip = [VOIP instance];
+    NSLog(@"voip command:%d", ctl.cmd);
 
-    NSLog(@"voip state:%d command:%d", voip.state, ctl.cmd);
-    if (voip.state == VOIP_LISTENING) {
-        if (ctl.cmd == VOIP_COMMAND_DIAL) {
-            VOIPViewController *controller = [[VOIPViewController alloc] initWithCallerUID:ctl.sender];
-            [self presentViewController:controller animated:YES completion:nil];
-        }
+    if (ctl.cmd == VOIP_COMMAND_DIAL) {
+        VOIPViewController *controller = [[VOIPViewController alloc] initWithCallerUID:ctl.sender];
+        [self presentViewController:controller animated:YES completion:nil];
     }
 }
 

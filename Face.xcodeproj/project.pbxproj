@@ -124,8 +124,8 @@
 		6DF39B2919EBB607009B03C4 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF39B2819EBB607009B03C4 /* CoreMedia.framework */; };
 		6DF39B2B19EBB617009B03C4 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF39B2A19EBB617009B03C4 /* AudioToolbox.framework */; };
 		6DF39B2D19EBB649009B03C4 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF39B2C19EBB649009B03C4 /* AVFoundation.framework */; };
-		6DF39B4419EBBD52009B03C4 /* VOIPViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6DF39B4319EBBD52009B03C4 /* VOIPViewController.mm */; };
-		6DF39B4719EBC855009B03C4 /* VOIP.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DF39B4619EBC855009B03C4 /* VOIP.m */; };
+		6DF39B4419EBBD52009B03C4 /* VOIPViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DF39B4319EBBD52009B03C4 /* VOIPViewController.m */; };
+		6DF39B4719EBC855009B03C4 /* VOIP.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6DF39B4619EBC855009B03C4 /* VOIP.mm */; };
 		6DF39BB319ECFD5F009B03C4 /* History.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DF39BB219ECFD5F009B03C4 /* History.m */; };
 		6DF39BB619ED01E3009B03C4 /* HistoryDB.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DF39BB519ED01E3009B03C4 /* HistoryDB.m */; };
 		6DF39BC319ED72C3009B03C4 /* FMDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DF39BB919ED72C3009B03C4 /* FMDatabase.m */; };
@@ -363,9 +363,9 @@
 		6DF39B2A19EBB617009B03C4 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		6DF39B2C19EBB649009B03C4 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		6DF39B4219EBBD52009B03C4 /* VOIPViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VOIPViewController.h; sourceTree = "<group>"; };
-		6DF39B4319EBBD52009B03C4 /* VOIPViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VOIPViewController.mm; sourceTree = "<group>"; };
+		6DF39B4319EBBD52009B03C4 /* VOIPViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VOIPViewController.m; sourceTree = "<group>"; };
 		6DF39B4519EBC855009B03C4 /* VOIP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VOIP.h; sourceTree = "<group>"; };
-		6DF39B4619EBC855009B03C4 /* VOIP.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VOIP.m; sourceTree = "<group>"; };
+		6DF39B4619EBC855009B03C4 /* VOIP.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VOIP.mm; sourceTree = "<group>"; };
 		6DF39BB119ECFD5F009B03C4 /* History.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = History.h; sourceTree = "<group>"; };
 		6DF39BB219ECFD5F009B03C4 /* History.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = History.m; sourceTree = "<group>"; };
 		6DF39BB419ED01E3009B03C4 /* HistoryDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HistoryDB.h; sourceTree = "<group>"; };
@@ -576,7 +576,7 @@
 				6DF399F319EBA345009B03C4 /* Config.h */,
 				6DF399F419EBA345009B03C4 /* Config.m */,
 				6DF39B4519EBC855009B03C4 /* VOIP.h */,
-				6DF39B4619EBC855009B03C4 /* VOIP.m */,
+				6DF39B4619EBC855009B03C4 /* VOIP.mm */,
 				6DF399FE19EBA5CF009B03C4 /* Constants.h */,
 				6DF399F519EBA345009B03C4 /* PublicFunc.h */,
 				6DF399F619EBA345009B03C4 /* PublicFunc.m */,
@@ -677,7 +677,7 @@
 				6DF399D919EBA313009B03C4 /* MainTabBarController.h */,
 				6DF399DA19EBA313009B03C4 /* MainTabBarController.m */,
 				6DF39B4219EBBD52009B03C4 /* VOIPViewController.h */,
-				6DF39B4319EBBD52009B03C4 /* VOIPViewController.mm */,
+				6DF39B4319EBBD52009B03C4 /* VOIPViewController.m */,
 				4813DC801A05FCFB004598F3 /* ConversationHistoryViewController.h */,
 				4813DC811A05FCFB004598F3 /* ConversationHistoryViewController.m */,
 				4813DC831A060447004598F3 /* SettingViewController.h */,
@@ -1058,7 +1058,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				48BCCF981A0514BC00A7889D /* ReflectionView.m in Sources */,
-				6DF39B4719EBC855009B03C4 /* VOIP.m in Sources */,
+				6DF39B4719EBC855009B03C4 /* VOIP.mm in Sources */,
 				6DF39A6E19EBA6CC009B03C4 /* FBShimmeringView.m in Sources */,
 				6DF399FD19EBA552009B03C4 /* Reachability.m in Sources */,
 				6DF399CB19EBA30B009B03C4 /* util.c in Sources */,
@@ -1112,7 +1112,7 @@
 				6DF399EF19EBA31D009B03C4 /* Token.m in Sources */,
 				6DF39A9319EBA6CC009B03C4 /* UIImageView+HighlightedWebCache.m in Sources */,
 				6DF39A9C19EBA6CC009B03C4 /* UIImage+UKImage.m in Sources */,
-				6DF39B4419EBBD52009B03C4 /* VOIPViewController.mm in Sources */,
+				6DF39B4419EBBD52009B03C4 /* VOIPViewController.m in Sources */,
 				6DF39BC619ED72C3009B03C4 /* FMDatabaseQueue.m in Sources */,
 				6DF39AAD19EBA8F8009B03C4 /* ContactIMUserTableViewCell.m in Sources */,
 				6DF399C619EBA30B009B03C4 /* PhoneNumber.m in Sources */,

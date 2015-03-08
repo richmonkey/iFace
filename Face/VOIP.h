@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "IMService.h"
 
 //todo 状态变迁图
 enum VOIPState {
@@ -21,9 +22,35 @@ enum VOIPState {
     VOIP_RESETED,//通话连接被重置
 };
 
+@protocol VOIPStateDelegate <NSObject>
+-(void)onRefuse;
+-(void)onHangUp;
+-(void)onReset;
 
-@interface VOIP : NSObject
-+(VOIP*)instance;
+-(void)onDialTimeout;
+-(void)onAcceptTimeout;
+-(void)onConnected;
+-(void)onRefuseFinished;
+@end
 
-@property(nonatomic, assign)enum VOIPState state;
+@interface VOIP : NSObject<VOIPObserver>
+
+
+@property(nonatomic, weak) NSObject<VOIPStateDelegate> *delegate;
+
+@property(nonatomic, assign) enum VOIPState state;
+
+@property(nonatomic, assign) int voipPort;
+@property(nonatomic, copy) NSString *stunServer;
+@property(nonatomic, assign) int64_t currentUID;
+@property(nonatomic, assign) int64_t peerUID;
+
+@property(nonatomic) NatPortMap *peerNatMap;
+@property(nonatomic) NatPortMap *localNatMap;
+
+-(void)holePunch;
+-(void)dial;
+-(void)accept;
+-(void)refuse;
+-(void)hangUp;
 @end

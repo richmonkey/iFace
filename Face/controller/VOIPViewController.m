@@ -22,9 +22,7 @@
 #import "UIView+Toast.h"
 #import "PublicFunc.h"
 #import "VWWWaterView.h"
-#import "stun.h"
 #import "Config.h"
-
 
 
 #define kBtnWidth  72
@@ -37,20 +35,10 @@
 
 #define kBtnYposition  (self.view.frame.size.height - 2.5*kBtnSqureHeight)
 
-@interface VOIPViewController ()
-@property(nonatomic) VOIPEngine *engine;
+@interface VOIPViewController ()<VOIPStateDelegate>
+
 @property(nonatomic, assign) BOOL isCaller;
 @property(nonatomic) User* peerUser;
-
-@property(nonatomic, assign) int dialCount;
-@property(nonatomic, assign) time_t dialBeginTimestamp;
-@property(nonatomic) NSTimer *dialTimer;
-
-@property(nonatomic, assign) time_t acceptTimestamp;
-@property(nonatomic) NSTimer *acceptTimer;
-
-@property(nonatomic, assign) time_t refuseTimestamp;
-@property(nonatomic) NSTimer *refuseTimer;
 
 @property(nonatomic) UIButton *hangUpButton;
 @property(nonatomic) UIButton *acceptButton;
@@ -67,18 +55,14 @@
 
 @property(nonatomic) UInt64  conversationDuration;
 
-@property(nonatomic) BOOL isLoudspeaker;
-
 @property(nonatomic) History *history;
 
 @property(nonatomic) AVAudioPlayer *player;
 
-@property(nonatomic) NatPortMap *peerNatMap;
-@property(nonatomic) NatPortMap *localNatMap;
+@property(nonatomic) VOIPEngine *engine;
+@property(nonatomic) VOIP *voip;
+@property(nonatomic) BOOL isConnected;
 
-@property(atomic, assign) StunAddress4 mappedAddr;
-@property(atomic, assign) NatType natType;
-@property(nonatomic) BOOL hairpin;
 @end
 
 @implementation VOIPViewController
@@ -124,7 +108,7 @@
 }
 
 -(BOOL)isP2P {
-    if (self.localNatMap.ip != 0 && self.peerNatMap.ip != 0 ) {
+    if (self.voip.localNatMap.ip != 0 && self.voip.peerNatMap.ip != 0 ) {
         return YES;
     }
 
@@ -140,13 +124,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    VOIP *voip = [VOIP instance];
-    if (voip.state != VOIP_LISTENING) {
-        NSLog(@"invalid voip state:%d", voip.state);
-        return;
-    }
-    
-    [[IMService instance] pushVOIPObserver:self];
+
     
     self.conversationDuration = 0;
     
@@ -191,8 +169,6 @@
     [self.view addSubview:self.durationLabel];
     [self.durationLabel setCenter:CGPointMake((self.view.frame.size.width)/2, self.headView.frame.origin.y + self.headView.frame.size.height + 50)];
     [self.durationLabel setBackgroundColor:[UIColor clearColor]];
-    
-    
     
     
     self.acceptButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -253,9 +229,7 @@
     [self.reDialingButton setCenter:CGPointMake(self.view.frame.size.width / 2, kBtnYposition)];
     [self.reDialingButton setHidden:YES];
     
-    
-    CGRect frame =
-    CGRectMake(0, 0, kBtnSqureWidth, kBtnSqureHeight);
+    CGRect frame = CGRectMake(0, 0, kBtnSqureWidth, kBtnSqureHeight);
     self.cancelButton = [[UIButton alloc] initWithFrame:frame];
     [self.cancelButton addTarget:self
                                action:@selector(cancelFaceTalk:)
@@ -279,157 +253,45 @@
         self.hangUpButton.hidden = YES;
     }
 
+    self.voip = [[VOIP alloc] init];
+    self.voip.voipPort = [Config instance].voipPort;
+    self.voip.stunServer = [Config instance].stunServer;
+    self.voip.currentUID = [UserPresent instance].uid;
+    self.voip.peerUID = self.peerUser.uid;
+    self.voip.delegate = self;
+    [self.voip holePunch];
+    [[IMService instance] pushVOIPObserver:self.voip];
+    
     [[AVAudioSession sharedInstance] requestRecordPermission:^(BOOL granted) {
         if (granted) {
             [[UIDevice currentDevice] setProximityMonitoringEnabled:YES];
-
+            
             if (self.isCaller) {
                 
-                [self makeDialing:voip];
+                [self makeDialing:self.voip];
                 
             } else {
-                voip.state = VOIP_ACCEPTING;
                 [self playDialIn];
             }
-
+            
         } else {
             NSLog(@"can't grant record permission");
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 [self dismissViewControllerAnimated:NO completion:^{
-                    [[IMService instance] popVOIPObserver:self];
+                    [[IMService instance] popVOIPObserver:self.voip];
                 }];
             });
         }
     }];
-
-    self.natType = StunTypeUnknown;
-    self.hairpin = NO;
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        StunAddress4 addr;
-        BOOL hairpin = NO;
-        NatType stype = [self mapNatAddress:&addr hairpin:&hairpin];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.natType = stype;
-            self.mappedAddr = addr;
-            
-
-            if (self.localNatMap == nil) {
-                self.localNatMap = [[NatPortMap alloc] init];
-                self.localNatMap.ip = self.mappedAddr.addr;
-                self.localNatMap.port = self.mappedAddr.port;
-
-                self.localNatMap.localIP = [self getPrimaryIP];
-                self.localNatMap.localPort = [Config instance].voipPort;
-            }
-
-        });
-    });
+    
 }
-
--(int32_t)getPrimaryIP {
-    int sock = socket(AF_INET, SOCK_DGRAM, 0);
-    assert(sock != -1);
-    
-    const char* kGoogleDnsIp = "8.8.8.8";
-    uint16_t kDnsPort = 53;
-    struct sockaddr_in serv;
-    memset(&serv, 0, sizeof(serv));
-    serv.sin_family = AF_INET;
-    serv.sin_addr.s_addr = inet_addr(kGoogleDnsIp);
-    serv.sin_port = htons(kDnsPort);
-    
-    int err = connect(sock, (const sockaddr*) &serv, sizeof(serv));
-    if (err == -1) {
-        return 0;
-    }
-    
-    sockaddr_in name;
-    socklen_t namelen = sizeof(name);
-    bzero(&name, namelen);
-    
-    err = getsockname(sock, (sockaddr*) &name, &namelen);
-    if (err == -1) {
-        perror("get sock name");
-        return 0;
-    }
-    
-    close(sock);
-    
-    return ntohl(name.sin_addr.s_addr);
-}
-
-#define VERBOSE false
--(NatType)mapNatAddress:(StunAddress4*)eaddr hairpin:(BOOL*)ph{
-    int fd = -1;
-    StunAddress4 mappedAddr;
-    StunAddress4 stunServerAddr;
-    Config *config = [Config instance];
-    NSString *stunServer = [Config instance].stunServer;
-    stunParseServerName( (char*)[stunServer UTF8String], stunServerAddr);
-    
-    NSLog(@"nat mapping...");
-    bool presPort = false, hairpin = false;
-    NatType stype = stunNatType( stunServerAddr, VERBOSE, &presPort, &hairpin,
-                                0, NULL);
-    
-    NSLog(@"nat type:%d", stype);
-    *ph = hairpin;
-    
-    BOOL isOpen = NO;
-    switch (stype)
-    {
-        case StunTypeFailure:
-            break;
-        case StunTypeUnknown:
-            break;
-        case StunTypeBlocked:
-            break;
-            
-        case StunTypeOpen:
-        case StunTypeFirewall:
-            //todo get local address
-        case StunTypeIndependentFilter:
-        case StunTypeDependentFilter:
-        case StunTypePortDependedFilter:
-            isOpen = YES;
-            break;
-        case StunTypeDependentMapping:
-            break;
-        default:
-            break;
-    }
-    
-    
-    if (!isOpen) {
-        return stype;
-    }
-    for (int i = 0; i < 8; i++) {
-        fd = stunOpenSocket(stunServerAddr, &mappedAddr, config.voipPort, NULL, VERBOSE);
-        if (fd == -1) {
-            continue;
-        }
-        break;
-    }
-    if (fd != -1) {
-        close(fd);
-        struct in_addr addr;
-        addr.s_addr = htonl(mappedAddr.addr);
-        NSLog(@"mapped address:%s:%d", inet_ntoa(addr), mappedAddr.port);
-        *eaddr = mappedAddr;
-    } else {
-        NSLog(@"map nat address fail");
-    }
-    return stype;
-}
-
 
 -(void)dismiss {
     [[UIDevice currentDevice] setProximityMonitoringEnabled:NO];
 
     [self dismissViewControllerAnimated:YES completion:^{
-        VOIP *voip = [VOIP instance];
-        voip.state = VOIP_LISTENING;
-        [[IMService instance] popVOIPObserver:self];
+
+        [[IMService instance] popVOIPObserver:self.voip];
         [[HistoryDB instance] addHistory:self.history];
        
         NSNotification* notification = [NSNotification notificationWithName:ON_NEW_CALL_HISTORY_NOTIFY object:self.history];
@@ -439,30 +301,16 @@
 }
 
 -(void)refuseCall:(UIButton*)button {
-    VOIP *voip = [VOIP instance];
-    voip.state = VOIP_REFUSING;
+    [self.voip refuse];
     [self.player stop];
     self.player = nil;
     self.history.flag = self.history.flag|FLAG_REFUSED;
-    
-    self.refuseTimestamp = time(NULL);
-    self.refuseTimer = [NSTimer scheduledTimerWithTimeInterval: 1
-                                                        target:self
-                                                      selector:@selector(sendDialRefuse)
-                                                      userInfo:nil
-                                                       repeats:YES];
-
-    [self sendDialRefuse];
     
     self.refuseButton.enabled = NO;
     self.acceptButton.enabled = NO;
 }
 
 -(void)acceptCall:(UIButton*)button {
-    
-    VOIP *voip = [VOIP instance];
-    voip.state = VOIP_ACCEPTED;
-    
     //关闭外方
     AVAudioSession *session = [AVAudioSession sharedInstance];
     
@@ -475,60 +323,37 @@
     [self.player stop];
     self.player = nil;
     self.history.flag = self.history.flag|FLAG_ACCEPTED;
-
-    if (self.localNatMap == nil) {
-        self.localNatMap = [[NatPortMap alloc] init];
-    }
     
-    self.acceptTimestamp = time(NULL);
-    self.acceptTimer = [NSTimer scheduledTimerWithTimeInterval: 1
-                                                        target:self
-                                                      selector:@selector(sendDialAccept)
-                                                      userInfo:nil
-                                                       repeats:YES];
-    [self sendDialAccept];
+    [self.voip accept];
     
     self.refuseButton.enabled = NO;
     self.acceptButton.enabled = NO;
 }
 
 -(void)hangUp:(UIButton*)button {
-    VOIP *voip = [VOIP instance];
-    if (voip.state == VOIP_DIALING ) {
-        [self.dialTimer invalidate];
-        self.dialTimer = nil;
-        [self.player stop];
-        self.player = nil;
-        
-        [self sendHangUp];
-        voip.state = VOIP_HANGED_UP;
-        
-        self.history.flag = self.history.flag|FLAG_CANCELED;
-
-        [self dismiss];
-    } else if (voip.state == VOIP_CONNECTED) {
-        
+    [self.voip hangUp];
+    if (self.isConnected) {
         self.conversationDuration = 0;
         if (self.refreshTimer && [self.refreshTimer isValid]) {
             [self.refreshTimer invalidate];
             self.refreshTimer = nil;
             
         }
-        
-        [self sendHangUp];
-        voip.state = VOIP_HANGED_UP;
-        
         [self stopStream];
         
         [self dismiss];
-    }else {
-        NSLog(@"invalid voip state:%d", voip.state);
+    } else {
+        [self.player stop];
+        self.player = nil;
+
+        self.history.flag = self.history.flag|FLAG_CANCELED;
+        
+        [self dismiss];
     }
 }
 
 -(void)redialing:(id)sender{
-    VOIP *voip = [VOIP instance];
-    [self makeDialing:voip];
+    [self makeDialing:self.voip];
     
     [self.hangUpButton setHidden:NO];
     [self.cancelButton setHidden:YES];
@@ -536,102 +361,9 @@
 }
 
 -(void)cancelFaceTalk:(id)sender{
-    
    [self dismiss];
-    
 }
 
-- (void)sendDial {
-    NSLog(@"dial...");
-    VOIPControl *ctl = [[VOIPControl alloc] init];
-    ctl.sender = [UserPresent instance].uid;
-    ctl.receiver = self.peerUser.uid;
-    ctl.cmd = VOIP_COMMAND_DIAL;
-    ctl.dialCount = self.dialCount + 1;
-    BOOL r = [[IMService instance] sendVOIPControl:ctl];
-    if (r) {
-        self.dialCount = self.dialCount + 1;
-    } else {
-        NSLog(@"dial fail");
-    }
-    
-    time_t now = time(NULL);
-    if (now - self.dialBeginTimestamp >= 60) {
-        NSLog(@"dial timeout");
-        [self.dialTimer invalidate];
-        self.dialTimer = nil;
-        [self.player stop];
-        self.player = nil;
-        
-        self.history.flag = self.history.flag|FLAG_UNRECEIVED;
-        [self dismiss];
-    }
-}
-
--(void)sendControlCommand:(enum VOIPCommand)cmd {
-    VOIPControl *ctl = [[VOIPControl alloc] init];
-    ctl.sender = [UserPresent instance].uid;
-    ctl.receiver = self.peerUser.uid;
-    ctl.cmd = cmd;
-    [[IMService instance] sendVOIPControl:ctl];
-}
-
--(void)sendRefused {
-    [self sendControlCommand:VOIP_COMMAND_REFUSED];
-}
-
--(void)sendTalking {
-    [self sendControlCommand:VOIP_COMMAND_TALKING];
-}
-
--(void)sendReset {
-    [self sendControlCommand:VOIP_COMMAND_RESET];
-}
-
--(void)sendConnected {
-    VOIPControl *ctl = [[VOIPControl alloc] init];
-    ctl.sender = [UserPresent instance].uid;
-    ctl.receiver = self.peerUser.uid;
-    ctl.cmd = VOIP_COMMAND_CONNECTED;
-    ctl.natMap = self.localNatMap;
-    
-    [[IMService instance] sendVOIPControl:ctl];
-}
--(void)sendDialAccept {
-    VOIPControl *ctl = [[VOIPControl alloc] init];
-    ctl.sender = [UserPresent instance].uid;
-    ctl.receiver = self.peerUser.uid;
-    ctl.cmd = VOIP_COMMAND_ACCEPT;
-    ctl.natMap = self.localNatMap;
-    
-    [[IMService instance] sendVOIPControl:ctl];
-    
-    time_t now = time(NULL);
-    if (now - self.acceptTimestamp >= 10) {
-        NSLog(@"accept timeout");
-        [self.acceptTimer invalidate];
-        [self dismiss];
-    }
-}
-
--(void)sendDialRefuse {
-    [self sendControlCommand:VOIP_COMMAND_REFUSE];
-    
-    time_t now = time(NULL);
-    if (now - self.refuseTimestamp > 10) {
-        NSLog(@"refuse timeout");
-        [self.refuseTimer invalidate];
-        
-        VOIP *voip = [VOIP instance];
-        voip.state = VOIP_REFUSED;
-        [self dismiss];
-    }
-}
-
--(void)sendHangUp {
-    NSLog(@"send hang up");
-    [self sendControlCommand:VOIP_COMMAND_HANG_UP];
-}
 
 - (BOOL)isHeadsetPluggedIn
 {
@@ -646,29 +378,29 @@
 }
 
 - (void)startStream {
-    if (self.localNatMap != nil) {
+    if (self.voip.localNatMap != nil) {
         struct in_addr addr;
-        addr.s_addr = htonl(self.localNatMap.ip);
-        NSLog(@"local nat map:%s:%d", inet_ntoa(addr), self.localNatMap.port);
+        addr.s_addr = htonl(self.voip.localNatMap.ip);
+        NSLog(@"local nat map:%s:%d", inet_ntoa(addr), self.voip.localNatMap.port);
         
 
-        addr.s_addr = htonl(self.localNatMap.localIP);
-        NSLog(@"local host:%s:%d", inet_ntoa(addr), self.localNatMap.localPort);
+        addr.s_addr = htonl(self.voip.localNatMap.localIP);
+        NSLog(@"local host:%s:%d", inet_ntoa(addr), self.voip.localNatMap.localPort);
         
     }
-    if (self.peerNatMap != nil) {
+    if (self.voip.peerNatMap != nil) {
         struct in_addr addr;
-        addr.s_addr = htonl(self.peerNatMap.ip);
-        NSLog(@"peer nat map:%s:%d", inet_ntoa(addr), self.peerNatMap.port);
+        addr.s_addr = htonl(self.voip.peerNatMap.ip);
+        NSLog(@"peer nat map:%s:%d", inet_ntoa(addr), self.voip.peerNatMap.port);
         
-        addr.s_addr = htonl(self.peerNatMap.localIP);
-        NSLog(@"peer local host:%s:%d", inet_ntoa(addr), self.peerNatMap.localPort);
+        addr.s_addr = htonl(self.voip.peerNatMap.localIP);
+        NSLog(@"peer local host:%s:%d", inet_ntoa(addr), self.voip.peerNatMap.localPort);
     }
     
     if (self.isP2P) {
         struct in_addr addr;
-        addr.s_addr = htonl(self.peerNatMap.ip);
-        NSLog(@"peer address:%s:%d", inet_ntoa(addr), self.peerNatMap.port);
+        addr.s_addr = htonl(self.voip.peerNatMap.ip);
+        NSLog(@"peer address:%s:%d", inet_ntoa(addr), self.voip.peerNatMap.port);
         NSLog(@"start p2p stream");
     } else {
         NSLog(@"start stream");
@@ -686,8 +418,8 @@
     self.engine.caller = [UserPresent instance].uid;
     self.engine.callee = self.peerUser.uid;
     if (self.isP2P) {
-        self.engine.calleeIP = self.peerNatMap.ip;
-        self.engine.calleePort = self.peerNatMap.port;
+        self.engine.calleeIP = self.voip.peerNatMap.ip;
+        self.engine.calleePort = self.voip.peerNatMap.port;
     }
     
     [self.engine startStream:isHeadphone];
@@ -705,152 +437,12 @@
     self.history.endTimestamp = time(NULL);
 }
 
-#pragma mark - VOIPObserver
--(void)onVOIPControl:(VOIPControl*)ctl {
-    VOIP *voip = [VOIP instance];
-    
-    if (ctl.sender != self.peerUser.uid) {
-        [self sendTalking];
-        return;
-    }
-    NSLog(@"voip state:%d command:%d", voip.state, ctl.cmd);
-    
-    if (voip.state == VOIP_DIALING) {
-        if (ctl.cmd == VOIP_COMMAND_ACCEPT) {
-            self.history.flag = self.history.flag|FLAG_ACCEPTED;
-          
-            [self setOnTalkingUIShow];
-            
-            self.peerNatMap = ctl.natMap;
-            
-            if (self.localNatMap == nil) {
-                self.localNatMap = [[NatPortMap alloc] init];
-            }
-            
-            [self sendConnected];
-            voip.state = VOIP_CONNECTED;
-            [self.dialTimer invalidate];
-            self.dialTimer = nil;
-            [self.player stop];
-            self.player = nil;
-            
-            NSLog(@"call voip connected");
-            [self startStream];
-        } else if (ctl.cmd == VOIP_COMMAND_REFUSE) {
-            voip.state = VOIP_REFUSED;
-            self.history.flag = self.history.flag|FLAG_REFUSED;
- 
-            [self sendRefused];
-            
-            [self.dialTimer invalidate];
-            self.dialTimer = nil;
-            [self.player stop];
-            self.player = nil;
-            
-            [self.view makeToast:@"对方正忙!" duration:2.0 position:@"center"];
-            [self.hangUpButton setHidden:YES];
-            [self.reDialingButton setHidden:NO];
-            [self.cancelButton setHidden:NO];
-            
-        } else if (ctl.cmd == VOIP_COMMAND_DIAL) {
-            //simultaneous open
-            [self.dialTimer invalidate];
-            self.dialTimer = nil;
-            [self.player stop];
-            self.player = nil;
-            
-            voip.state = VOIP_ACCEPTED;
-            self.history.flag = self.history.flag|FLAG_ACCEPTED;
-
-            if (self.localNatMap == nil) {
-                self.localNatMap = [[NatPortMap alloc] init];
-            }
-
-            self.acceptTimestamp = time(NULL);
-            self.acceptTimer = [NSTimer scheduledTimerWithTimeInterval: 1
-                                                                target:self
-                                                              selector:@selector(sendDialAccept)
-                                                              userInfo:nil
-                                                               repeats:YES];
-            [self sendDialAccept];
-        }
-    } else if (voip.state == VOIP_ACCEPTING) {
-        if (ctl.cmd == VOIP_COMMAND_HANG_UP) {
-            [self.player stop];
-            self.player = nil;
-            self.history.flag = self.history.flag|FLAG_UNRECEIVED;
-            voip.state = VOIP_HANGED_UP;
-            [self dismiss];
-        }
-    } else if (voip.state == VOIP_ACCEPTED) {
-        if (ctl.cmd == VOIP_COMMAND_CONNECTED) {
-            NSLog(@"called voip connected");
-            
-            [self setOnTalkingUIShow];
-            
-            self.peerNatMap = ctl.natMap;
-            
-            [self.acceptTimer invalidate];
-            voip.state = VOIP_CONNECTED;
-            [self startStream];
-            
-            self.hangUpButton.hidden = NO;
-            self.acceptButton.hidden = YES;
-            self.refuseButton.hidden = YES;
-        } else if (ctl.cmd == VOIP_COMMAND_ACCEPT) {
-            //simultaneous open
-            NSLog(@"simultaneous voip connected");
-            [self setOnTalkingUIShow];
-            
-            self.peerNatMap = ctl.natMap;
-            
-            [self.acceptTimer invalidate];
-            voip.state = VOIP_CONNECTED;
-            [self startStream];
-            
-            self.hangUpButton.hidden = NO;
-            self.acceptButton.hidden = YES;
-            self.refuseButton.hidden = YES;
-        }
-    } else if (voip.state == VOIP_CONNECTED) {
-        if (ctl.cmd == VOIP_COMMAND_HANG_UP) {
-            voip.state = VOIP_HANGED_UP;
-            if (self.refreshTimer && [self.refreshTimer isValid]) {
-                [self.refreshTimer invalidate];
-                self.refreshTimer = nil;
-            }
-            [self stopStream];
-            [self dismiss];
-        } else if (ctl.cmd == VOIP_COMMAND_RESET) {
-            voip.state = VOIP_RESETED;
-            [self stopStream];
-            if (self.refreshTimer && [self.refreshTimer isValid]) {
-                [self.refreshTimer invalidate];
-                self.refreshTimer = nil;
-            }
-            [self dismiss];
-
-        } else if (ctl.cmd == VOIP_COMMAND_ACCEPT) {
-            [self sendConnected];
-        }
-    } else if (voip.state == VOIP_REFUSING) {
-        if (ctl.cmd == VOIP_COMMAND_REFUSED) {
-            NSLog(@"refuse finished");
-            voip.state = VOIP_REFUSED;
-            [self.refuseTimer invalidate];
-            
-            [self dismiss];
-        }
-    }
-}
-
 
 
 #pragma mark - AVAudioPlayerDelegate
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag {
     NSLog(@"player finished");
-    VOIP *voip = [VOIP instance];
-    if (voip.state == VOIP_DIALING || voip.state == VOIP_ACCEPTING) {
+    if (!self.isConnected) {
         [self.player play];
     }
 }
@@ -901,18 +493,8 @@
  *  @param voip  VOIP
  */
 -(void) makeDialing:(VOIP*)voip{
-    
-    voip.state = VOIP_DIALING;
-    
-    self.dialBeginTimestamp = time(NULL);
-    [self sendDial];
+    [voip dial];
     [self playDialOut];
-    self.dialTimer = [NSTimer scheduledTimerWithTimeInterval: 1
-                                                      target:self
-                                                    selector:@selector(sendDial)
-                                                    userInfo:nil
-                                                     repeats:YES];
-
 }
 
 /**
@@ -943,6 +525,76 @@
     [self.durationLabel setCenter:CGPointMake((self.view.frame.size.width)/2, self.headView.frame.origin.y + self.headView.frame.size.height + 50)];
 }
 
+#pragma mark - VOIPStateDelegate
+-(void)onRefuse {
+    self.history.flag = self.history.flag|FLAG_REFUSED;
+    [self.player stop];
+    self.player = nil;
+    
+    [self.view makeToast:@"对方正忙!" duration:2.0 position:@"center"];
+    [self.hangUpButton setHidden:YES];
+    [self.reDialingButton setHidden:NO];
+    [self.cancelButton setHidden:NO];
+}
 
+-(void)onHangUp {
+    if (self.isConnected) {
+        if (self.refreshTimer && [self.refreshTimer isValid]) {
+            [self.refreshTimer invalidate];
+            self.refreshTimer = nil;
+        }
+        [self stopStream];
+        [self dismiss];
+    } else {
+        [self.player stop];
+        self.player = nil;
+        self.history.flag = self.history.flag|FLAG_UNRECEIVED;
+        [self dismiss];
+    }
+}
+
+-(void)onReset {
+    if (self.isConnected) {
+        if (self.refreshTimer && [self.refreshTimer isValid]) {
+            [self.refreshTimer invalidate];
+            self.refreshTimer = nil;
+        }
+        [self dismiss];
+    }
+}
+
+-(void)onDialTimeout {
+    [self.player stop];
+    self.player = nil;
+    
+    self.history.flag = self.history.flag|FLAG_UNRECEIVED;
+    [self dismiss];
+
+}
+
+-(void)onAcceptTimeout {
+    [self dismiss];
+}
+
+-(void)onConnected {
+    self.isConnected = YES;
+    self.history.flag = self.history.flag|FLAG_ACCEPTED;
+    
+    [self setOnTalkingUIShow];
+    [self.player stop];
+    self.player = nil;
+    
+    NSLog(@"call voip connected");
+    [self startStream];
+    
+    
+    self.hangUpButton.hidden = NO;
+    self.acceptButton.hidden = YES;
+    self.refuseButton.hidden = YES;
+}
+
+-(void)onRefuseFinished {
+    [self dismiss];
+}
 
 @end
