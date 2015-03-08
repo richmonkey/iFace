@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "IMService.h"
+#import <voipsession/IMService.h>
 @interface MainTabBarController : UITabBarController<VOIPObserver>
 
 @end

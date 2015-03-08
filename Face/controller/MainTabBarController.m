@@ -11,13 +11,12 @@
 #import "ConversationHistoryViewController.h"
 #import "SettingViewController.h"
 #import "Token.h"
-#import "IMService.h"
+#import <voipsession/IMService.h>
 #import "UserPresent.h"
 #import "Reachability.h"
 #import "APIRequest.h"
 #import "JSBadgeView.h"
 #import "Constants.h"
-#import "VOIP.h"
 #import "VOIPViewController.h"
 #import "UIView+Toast.h"
 

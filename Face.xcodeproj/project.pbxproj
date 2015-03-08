@@ -25,10 +25,9 @@
 		48C7A13F1A065BDA0020E7F6 /* start.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 48C7A13C1A065BDA0020E7F6 /* start.mp3 */; };
 		48C7A1431A06650D0020E7F6 /* HistoryTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 48C7A1411A06650D0020E7F6 /* HistoryTableViewCell.m */; };
 		48C7A1441A06650D0020E7F6 /* HistoryTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 48C7A1421A06650D0020E7F6 /* HistoryTableViewCell.xib */; };
-		6D343AB81A9893360095FCB8 /* stun.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 6D343AB61A9893360095FCB8 /* stun.cxx */; };
-		6D343AB91A9893360095FCB8 /* udp.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 6D343AB71A9893360095FCB8 /* udp.cxx */; };
 		6D401BC61AAC31F90041ABC6 /* libvoipsdk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D401BC51AAC31F90041ABC6 /* libvoipsdk.a */; };
 		6D401BCB1AAC7BAB0041ABC6 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D401BCA1AAC7BAB0041ABC6 /* GLKit.framework */; };
+		6D401C101AAC7E420041ABC6 /* libvoipsession.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D401BF51AAC7D300041ABC6 /* libvoipsession.a */; };
 		6DBE5F5F1AA6BBEE00D03195 /* libleveldb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DBE5F581AA6BBEE00D03195 /* libleveldb.a */; };
 		6DF3996819EB9AAE009B03C4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF3996719EB9AAE009B03C4 /* Foundation.framework */; };
 		6DF3996A19EB9AAE009B03C4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF3996919EB9AAE009B03C4 /* CoreGraphics.framework */; };
@@ -47,10 +46,6 @@
 		6DF399C519EBA30B009B03C4 /* IMContact.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DF399A619EBA30B009B03C4 /* IMContact.m */; };
 		6DF399C619EBA30B009B03C4 /* PhoneNumber.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DF399A819EBA30B009B03C4 /* PhoneNumber.m */; };
 		6DF399C719EBA30B009B03C4 /* pinyin.c in Sources */ = {isa = PBXBuildFile; fileRef = 6DF399A919EBA30B009B03C4 /* pinyin.c */; };
-		6DF399C819EBA30B009B03C4 /* AsyncTCP.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DF399AD19EBA30B009B03C4 /* AsyncTCP.m */; };
-		6DF399C919EBA30B009B03C4 /* IMService.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DF399AF19EBA30B009B03C4 /* IMService.m */; };
-		6DF399CA19EBA30B009B03C4 /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DF399B119EBA30B009B03C4 /* Message.m */; };
-		6DF399CB19EBA30B009B03C4 /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = 6DF399B219EBA30B009B03C4 /* util.c */; };
 		6DF399DB19EBA313009B03C4 /* AskPhoneNumberViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DF399CF19EBA313009B03C4 /* AskPhoneNumberViewController.m */; };
 		6DF399DC19EBA313009B03C4 /* AskPhoneNumberViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6DF399D019EBA313009B03C4 /* AskPhoneNumberViewController.xib */; };
 		6DF399DD19EBA313009B03C4 /* CheckVerifyCodeController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DF399D219EBA313009B03C4 /* CheckVerifyCodeController.m */; };
@@ -126,7 +121,6 @@
 		6DF39B2B19EBB617009B03C4 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF39B2A19EBB617009B03C4 /* AudioToolbox.framework */; };
 		6DF39B2D19EBB649009B03C4 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF39B2C19EBB649009B03C4 /* AVFoundation.framework */; };
 		6DF39B4419EBBD52009B03C4 /* VOIPViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DF39B4319EBBD52009B03C4 /* VOIPViewController.m */; };
-		6DF39B4719EBC855009B03C4 /* VOIP.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6DF39B4619EBC855009B03C4 /* VOIP.mm */; };
 		6DF39BB319ECFD5F009B03C4 /* History.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DF39BB219ECFD5F009B03C4 /* History.m */; };
 		6DF39BB619ED01E3009B03C4 /* HistoryDB.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DF39BB519ED01E3009B03C4 /* HistoryDB.m */; };
 		6DF39BC319ED72C3009B03C4 /* FMDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DF39BB919ED72C3009B03C4 /* FMDatabase.m */; };
@@ -140,6 +134,27 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		6D401BF41AAC7D300041ABC6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6D401BEF1AAC7D2F0041ABC6 /* voipsession.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6D401BD51AAC7D2F0041ABC6;
+			remoteInfo = voipsession;
+		};
+		6D401BF61AAC7D300041ABC6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6D401BEF1AAC7D2F0041ABC6 /* voipsession.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6D401BE01AAC7D2F0041ABC6;
+			remoteInfo = voipsessionTests;
+		};
+		6D401C0E1AAC7E360041ABC6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6D401BEF1AAC7D2F0041ABC6 /* voipsession.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 6D401BD41AAC7D2F0041ABC6;
+			remoteInfo = voipsession;
+		};
 		6DF3998D19EB9AAE009B03C4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6DF3995C19EB9AAE009B03C4 /* Project object */;
@@ -181,13 +196,10 @@
 		48C7A1421A06650D0020E7F6 /* HistoryTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HistoryTableViewCell.xib; sourceTree = "<group>"; };
 		48DC1A111A0686F6004EC222 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		48DC1A121A0686F6004EC222 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
-		6D343AB61A9893360095FCB8 /* stun.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = stun.cxx; path = stund/stun.cxx; sourceTree = "<group>"; };
-		6D343AB71A9893360095FCB8 /* udp.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = udp.cxx; path = stund/udp.cxx; sourceTree = "<group>"; };
-		6D343ABA1A9894DE0095FCB8 /* udp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = udp.h; path = stund/udp.h; sourceTree = "<group>"; };
-		6D343ABB1A9894F20095FCB8 /* stun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stun.h; path = stund/stun.h; sourceTree = "<group>"; };
 		6D401BC41AAC31CE0041ABC6 /* VOIPEngine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VOIPEngine.h; path = voip_bin/VOIPEngine.h; sourceTree = "<group>"; };
 		6D401BC51AAC31F90041ABC6 /* libvoipsdk.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvoipsdk.a; path = voip_bin/libvoipsdk.a; sourceTree = "<group>"; };
 		6D401BCA1AAC7BAB0041ABC6 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
+		6D401BEF1AAC7D2F0041ABC6 /* voipsession.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = voipsession.xcodeproj; path = Face/backend/voipsession/voipsession.xcodeproj; sourceTree = "<group>"; };
 		6DBE5F511AA6BBEE00D03195 /* c.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = c.h; sourceTree = "<group>"; };
 		6DBE5F521AA6BBEE00D03195 /* cache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cache.h; sourceTree = "<group>"; };
 		6DBE5F531AA6BBEE00D03195 /* comparator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = comparator.h; sourceTree = "<group>"; };
@@ -228,14 +240,6 @@
 		6DF399A819EBA30B009B03C4 /* PhoneNumber.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhoneNumber.m; sourceTree = "<group>"; };
 		6DF399A919EBA30B009B03C4 /* pinyin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pinyin.c; sourceTree = "<group>"; };
 		6DF399AA19EBA30B009B03C4 /* pinyin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pinyin.h; sourceTree = "<group>"; };
-		6DF399AC19EBA30B009B03C4 /* AsyncTCP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncTCP.h; sourceTree = "<group>"; };
-		6DF399AD19EBA30B009B03C4 /* AsyncTCP.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AsyncTCP.m; sourceTree = "<group>"; };
-		6DF399AE19EBA30B009B03C4 /* IMService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMService.h; sourceTree = "<group>"; };
-		6DF399AF19EBA30B009B03C4 /* IMService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMService.m; sourceTree = "<group>"; };
-		6DF399B019EBA30B009B03C4 /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
-		6DF399B119EBA30B009B03C4 /* Message.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Message.m; sourceTree = "<group>"; };
-		6DF399B219EBA30B009B03C4 /* util.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = util.c; sourceTree = "<group>"; };
-		6DF399B319EBA30B009B03C4 /* util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = util.h; sourceTree = "<group>"; };
 		6DF399CE19EBA313009B03C4 /* AskPhoneNumberViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AskPhoneNumberViewController.h; sourceTree = "<group>"; };
 		6DF399CF19EBA313009B03C4 /* AskPhoneNumberViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AskPhoneNumberViewController.m; sourceTree = "<group>"; };
 		6DF399D019EBA313009B03C4 /* AskPhoneNumberViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AskPhoneNumberViewController.xib; sourceTree = "<group>"; };
@@ -366,8 +370,6 @@
 		6DF39B2C19EBB649009B03C4 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		6DF39B4219EBBD52009B03C4 /* VOIPViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VOIPViewController.h; sourceTree = "<group>"; };
 		6DF39B4319EBBD52009B03C4 /* VOIPViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VOIPViewController.m; sourceTree = "<group>"; };
-		6DF39B4519EBC855009B03C4 /* VOIP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VOIP.h; sourceTree = "<group>"; };
-		6DF39B4619EBC855009B03C4 /* VOIP.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VOIP.mm; sourceTree = "<group>"; };
 		6DF39BB119ECFD5F009B03C4 /* History.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = History.h; sourceTree = "<group>"; };
 		6DF39BB219ECFD5F009B03C4 /* History.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = History.m; sourceTree = "<group>"; };
 		6DF39BB419ED01E3009B03C4 /* HistoryDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HistoryDB.h; sourceTree = "<group>"; };
@@ -391,6 +393,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6D401C101AAC7E420041ABC6 /* libvoipsession.a in Frameworks */,
 				6D401BCB1AAC7BAB0041ABC6 /* GLKit.framework in Frameworks */,
 				6D401BC61AAC31F90041ABC6 /* libvoipsdk.a in Frameworks */,
 				6DF39BC919ED72D7009B03C4 /* libsqlite3.dylib in Frameworks */,
@@ -483,19 +486,9 @@
 		6D03316A1AAB7375004AA39F /* Projects */ = {
 			isa = PBXGroup;
 			children = (
+				6D401BEF1AAC7D2F0041ABC6 /* voipsession.xcodeproj */,
 			);
 			name = Projects;
-			sourceTree = "<group>";
-		};
-		6D343AB51A9893130095FCB8 /* stund */ = {
-			isa = PBXGroup;
-			children = (
-				6D343ABB1A9894F20095FCB8 /* stun.h */,
-				6D343ABA1A9894DE0095FCB8 /* udp.h */,
-				6D343AB61A9893360095FCB8 /* stun.cxx */,
-				6D343AB71A9893360095FCB8 /* udp.cxx */,
-			);
-			name = stund;
 			sourceTree = "<group>";
 		};
 		6D401BC31AAC31C10041ABC6 /* voip_bin */ = {
@@ -505,6 +498,15 @@
 				6D401BC41AAC31CE0041ABC6 /* VOIPEngine.h */,
 			);
 			name = voip_bin;
+			sourceTree = "<group>";
+		};
+		6D401BF01AAC7D2F0041ABC6 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6D401BF51AAC7D300041ABC6 /* libvoipsession.a */,
+				6D401BF71AAC7D300041ABC6 /* voipsessionTests.xctest */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		6DBE5F501AA6BBEE00D03195 /* leveldb */ = {
@@ -579,8 +581,6 @@
 				6DF39A0019EBA624009B03C4 /* APIRequest.m */,
 				6DF399F319EBA345009B03C4 /* Config.h */,
 				6DF399F419EBA345009B03C4 /* Config.m */,
-				6DF39B4519EBC855009B03C4 /* VOIP.h */,
-				6DF39B4619EBC855009B03C4 /* VOIP.mm */,
 				6DF399FE19EBA5CF009B03C4 /* Constants.h */,
 				6DF399F519EBA345009B03C4 /* PublicFunc.h */,
 				6DF399F619EBA345009B03C4 /* PublicFunc.m */,
@@ -625,7 +625,6 @@
 				6D401BC31AAC31C10041ABC6 /* voip_bin */,
 				6DBE5F501AA6BBEE00D03195 /* leveldb */,
 				6DF399A019EBA30B009B03C4 /* contact */,
-				6DF399AB19EBA30B009B03C4 /* im_sdk */,
 			);
 			path = backend;
 			sourceTree = "<group>";
@@ -645,21 +644,6 @@
 				6DF399AA19EBA30B009B03C4 /* pinyin.h */,
 			);
 			path = contact;
-			sourceTree = "<group>";
-		};
-		6DF399AB19EBA30B009B03C4 /* im_sdk */ = {
-			isa = PBXGroup;
-			children = (
-				6DF399AC19EBA30B009B03C4 /* AsyncTCP.h */,
-				6DF399AD19EBA30B009B03C4 /* AsyncTCP.m */,
-				6DF399AE19EBA30B009B03C4 /* IMService.h */,
-				6DF399AF19EBA30B009B03C4 /* IMService.m */,
-				6DF399B019EBA30B009B03C4 /* Message.h */,
-				6DF399B119EBA30B009B03C4 /* Message.m */,
-				6DF399B219EBA30B009B03C4 /* util.c */,
-				6DF399B319EBA30B009B03C4 /* util.h */,
-			);
-			path = im_sdk;
 			sourceTree = "<group>";
 		};
 		6DF399CD19EBA313009B03C4 /* controller */ = {
@@ -714,7 +698,6 @@
 		6DF399F919EBA552009B03C4 /* third_party */ = {
 			isa = PBXGroup;
 			children = (
-				6D343AB51A9893130095FCB8 /* stund */,
 				489A8CBA1A0E14E900753BB8 /* water_wave */,
 				48986B9F1A064C74004740B6 /* DebugView */,
 				48BCCF901A0514BC00A7889D /* ReflectionView */,
@@ -949,6 +932,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				6D401C0F1AAC7E360041ABC6 /* PBXTargetDependency */,
 			);
 			name = Face;
 			productName = Face;
@@ -999,6 +983,12 @@
 			mainGroup = 6DF3995B19EB9AAE009B03C4;
 			productRefGroup = 6DF3996519EB9AAE009B03C4 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 6D401BF01AAC7D2F0041ABC6 /* Products */;
+					ProjectRef = 6D401BEF1AAC7D2F0041ABC6 /* voipsession.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				6DF3996319EB9AAE009B03C4 /* Face */,
@@ -1006,6 +996,23 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		6D401BF51AAC7D300041ABC6 /* libvoipsession.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libvoipsession.a;
+			remoteRef = 6D401BF41AAC7D300041ABC6 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6D401BF71AAC7D300041ABC6 /* voipsessionTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = voipsessionTests.xctest;
+			remoteRef = 6D401BF61AAC7D300041ABC6 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		6DF3996219EB9AAE009B03C4 /* Resources */ = {
@@ -1062,10 +1069,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				48BCCF981A0514BC00A7889D /* ReflectionView.m in Sources */,
-				6DF39B4719EBC855009B03C4 /* VOIP.mm in Sources */,
 				6DF39A6E19EBA6CC009B03C4 /* FBShimmeringView.m in Sources */,
 				6DF399FD19EBA552009B03C4 /* Reachability.m in Sources */,
-				6DF399CB19EBA30B009B03C4 /* util.c in Sources */,
 				6DF399F719EBA345009B03C4 /* Config.m in Sources */,
 				6DF399C419EBA30B009B03C4 /* ContactDB.m in Sources */,
 				6DF39BC719ED72C3009B03C4 /* FMResultSet.m in Sources */,
@@ -1075,7 +1080,6 @@
 				6DF39A7019EBA6CC009B03C4 /* JSMessageSoundEffect.m in Sources */,
 				6DF39A8C19EBA6CC009B03C4 /* SDWebImageDownloaderOperation.m in Sources */,
 				6DF399E219EBA313009B03C4 /* MainTabBarController.m in Sources */,
-				6DF399CA19EBA30B009B03C4 /* Message.m in Sources */,
 				6DF399DF19EBA313009B03C4 /* ContactListTableViewController.m in Sources */,
 				6DF39A8719EBA6CC009B03C4 /* NSData+ImageContentType.m in Sources */,
 				6DF39A0719EBA67B009B03C4 /* MBProgressHUD.m in Sources */,
@@ -1090,7 +1094,6 @@
 				6DF39A8919EBA6CC009B03C4 /* SDWebImageCompat.m in Sources */,
 				6DF39A9119EBA6CC009B03C4 /* UIImage+MultiFormat.m in Sources */,
 				6DF39A9919EBA6CC009B03C4 /* UIView+Toast.m in Sources */,
-				6DF399C819EBA30B009B03C4 /* AsyncTCP.m in Sources */,
 				4877C0521A067FCF00CCF1DC /* CotactMeViewController.m in Sources */,
 				6DF39A8219EBA6CC009B03C4 /* UIImage+JSMessagesView.m in Sources */,
 				6DF39A9219EBA6CC009B03C4 /* UIImage+WebP.m in Sources */,
@@ -1129,12 +1132,9 @@
 				6DF39BC419ED72C3009B03C4 /* FMDatabaseAdditions.m in Sources */,
 				6DF39A9419EBA6CC009B03C4 /* UIImageView+WebCache.m in Sources */,
 				6DF39A9A19EBA6CC009B03C4 /* UIApplication+Util.m in Sources */,
-				6D343AB81A9893360095FCB8 /* stun.cxx in Sources */,
 				6DF399C519EBA30B009B03C4 /* IMContact.m in Sources */,
 				6DF39A8B19EBA6CC009B03C4 /* SDWebImageDownloader.m in Sources */,
 				48C7A1431A06650D0020E7F6 /* HistoryTableViewCell.m in Sources */,
-				6DF399C919EBA30B009B03C4 /* IMService.m in Sources */,
-				6D343AB91A9893360095FCB8 /* udp.cxx in Sources */,
 				6DF399C719EBA30B009B03C4 /* pinyin.c in Sources */,
 				6DF399F819EBA345009B03C4 /* PublicFunc.m in Sources */,
 				6DF39A9D19EBA6CC009B03C4 /* UIImageView+Letters.m in Sources */,
@@ -1159,6 +1159,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		6D401C0F1AAC7E360041ABC6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = voipsession;
+			targetProxy = 6D401C0E1AAC7E360041ABC6 /* PBXContainerItemProxy */;
+		};
 		6DF3998E19EB9AAE009B03C4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 6DF3996319EB9AAE009B03C4 /* Face */;

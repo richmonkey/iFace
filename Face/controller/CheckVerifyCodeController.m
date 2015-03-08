@@ -9,7 +9,6 @@
 #import "CheckVerifyCodeController.h"
 #import "APIRequest.h"
 #import "MBProgressHUD.h"
-#import "IMService.h"
 #import "UserPresent.h"
 #import "TAHttpOperation.h"
 #import "Config.h"

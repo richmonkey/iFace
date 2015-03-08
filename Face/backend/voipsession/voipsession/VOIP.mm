@@ -9,7 +9,6 @@
 #import "VOIP.h"
 #import "IMService.h"
 #import "stun.h"
-//#import "Config.h"
 
 @interface VOIP()
 
