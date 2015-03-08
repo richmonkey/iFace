@@ -28,6 +28,7 @@
 		6D343AB81A9893360095FCB8 /* stun.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 6D343AB61A9893360095FCB8 /* stun.cxx */; };
 		6D343AB91A9893360095FCB8 /* udp.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 6D343AB71A9893360095FCB8 /* udp.cxx */; };
 		6D401BC61AAC31F90041ABC6 /* libvoipsdk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D401BC51AAC31F90041ABC6 /* libvoipsdk.a */; };
+		6D401BCB1AAC7BAB0041ABC6 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D401BCA1AAC7BAB0041ABC6 /* GLKit.framework */; };
 		6DBE5F5F1AA6BBEE00D03195 /* libleveldb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DBE5F581AA6BBEE00D03195 /* libleveldb.a */; };
 		6DF3996819EB9AAE009B03C4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF3996719EB9AAE009B03C4 /* Foundation.framework */; };
 		6DF3996A19EB9AAE009B03C4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF3996919EB9AAE009B03C4 /* CoreGraphics.framework */; };
@@ -186,6 +187,7 @@
 		6D343ABB1A9894F20095FCB8 /* stun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stun.h; path = stund/stun.h; sourceTree = "<group>"; };
 		6D401BC41AAC31CE0041ABC6 /* VOIPEngine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VOIPEngine.h; path = voip_bin/VOIPEngine.h; sourceTree = "<group>"; };
 		6D401BC51AAC31F90041ABC6 /* libvoipsdk.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvoipsdk.a; path = voip_bin/libvoipsdk.a; sourceTree = "<group>"; };
+		6D401BCA1AAC7BAB0041ABC6 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
 		6DBE5F511AA6BBEE00D03195 /* c.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = c.h; sourceTree = "<group>"; };
 		6DBE5F521AA6BBEE00D03195 /* cache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cache.h; sourceTree = "<group>"; };
 		6DBE5F531AA6BBEE00D03195 /* comparator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = comparator.h; sourceTree = "<group>"; };
@@ -389,6 +391,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6D401BCB1AAC7BAB0041ABC6 /* GLKit.framework in Frameworks */,
 				6D401BC61AAC31F90041ABC6 /* libvoipsdk.a in Frameworks */,
 				6DF39BC919ED72D7009B03C4 /* libsqlite3.dylib in Frameworks */,
 				6DF3996C19EB9AAE009B03C4 /* UIKit.framework in Frameworks */,
@@ -548,6 +551,7 @@
 		6DF3996619EB9AAE009B03C4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				6D401BCA1AAC7BAB0041ABC6 /* GLKit.framework */,
 				6DF39BC819ED72D7009B03C4 /* libsqlite3.dylib */,
 				6DF39B2C19EBB649009B03C4 /* AVFoundation.framework */,
 				6DF39B2A19EBB617009B03C4 /* AudioToolbox.framework */,
@@ -1281,6 +1285,7 @@
 					"$(PROJECT_DIR)/Face/backend/voip_bin",
 				);
 				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "9c427468-87c0-4286-abb0-526951222de4";
 				USER_HEADER_SEARCH_PATHS = "Face/backend/ Face/third_party/webrtc/src";
@@ -1312,6 +1317,7 @@
 					"$(PROJECT_DIR)/Face/backend/voip_bin",
 				);
 				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "d81a365e-83e4-4acd-a81d-179ac65fa617";
 				USER_HEADER_SEARCH_PATHS = "Face/backend/ Face/third_party/webrtc/src";
