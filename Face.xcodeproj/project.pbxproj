@@ -28,6 +28,7 @@
 		6D401BC61AAC31F90041ABC6 /* libvoipsdk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D401BC51AAC31F90041ABC6 /* libvoipsdk.a */; };
 		6D401BCB1AAC7BAB0041ABC6 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D401BCA1AAC7BAB0041ABC6 /* GLKit.framework */; };
 		6D401C101AAC7E420041ABC6 /* libvoipsession.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D401BF51AAC7D300041ABC6 /* libvoipsession.a */; };
+		6D401C201AAC925C0041ABC6 /* apns.caf in Resources */ = {isa = PBXBuildFile; fileRef = 6D401C1F1AAC925C0041ABC6 /* apns.caf */; };
 		6DBE5F5F1AA6BBEE00D03195 /* libleveldb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DBE5F581AA6BBEE00D03195 /* libleveldb.a */; };
 		6DF3996819EB9AAE009B03C4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF3996719EB9AAE009B03C4 /* Foundation.framework */; };
 		6DF3996A19EB9AAE009B03C4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF3996919EB9AAE009B03C4 /* CoreGraphics.framework */; };
@@ -200,6 +201,7 @@
 		6D401BC51AAC31F90041ABC6 /* libvoipsdk.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvoipsdk.a; path = voip_bin/libvoipsdk.a; sourceTree = "<group>"; };
 		6D401BCA1AAC7BAB0041ABC6 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
 		6D401BEF1AAC7D2F0041ABC6 /* voipsession.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = voipsession.xcodeproj; path = Face/backend/voipsession/voipsession.xcodeproj; sourceTree = "<group>"; };
+		6D401C1F1AAC925C0041ABC6 /* apns.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = apns.caf; sourceTree = "<group>"; };
 		6DBE5F511AA6BBEE00D03195 /* c.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = c.h; sourceTree = "<group>"; };
 		6DBE5F521AA6BBEE00D03195 /* cache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cache.h; sourceTree = "<group>"; };
 		6DBE5F531AA6BBEE00D03195 /* comparator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = comparator.h; sourceTree = "<group>"; };
@@ -476,6 +478,7 @@
 		48C7A1391A065BD90020E7F6 /* sound */ = {
 			isa = PBXGroup;
 			children = (
+				6D401C1F1AAC925C0041ABC6 /* apns.caf */,
 				48C7A13A1A065BDA0020E7F6 /* CallConnected.mp3 */,
 				48C7A13B1A065BDA0020E7F6 /* end.mp3 */,
 				48C7A13C1A065BDA0020E7F6 /* start.mp3 */,
@@ -1037,6 +1040,7 @@
 				6DF39A7419EBA6CC009B03C4 /* input-bar-flat.png in Resources */,
 				48C7A13E1A065BDA0020E7F6 /* end.mp3 in Resources */,
 				6DF39A8119EBA6CC009B03C4 /* messageSent.aiff in Resources */,
+				6D401C201AAC925C0041ABC6 /* apns.caf in Resources */,
 				6DF39A7E19EBA6CC009B03C4 /* send.png in Resources */,
 				6DF39A7319EBA6CC009B03C4 /* bubble-typing@2x.png in Resources */,
 				6DF39A7F19EBA6CC009B03C4 /* send@2x.png in Resources */,
