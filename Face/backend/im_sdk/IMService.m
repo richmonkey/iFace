@@ -17,7 +17,7 @@
 #define HEARTBEAT (180ull*NSEC_PER_SEC)
 
 @interface IMService()
-@property(atomic, copy) NSString *hostIP;
+
 @property(atomic, assign) time_t timestmap;
 
 @property(nonatomic, assign)BOOL stopped;
@@ -32,8 +32,6 @@
 
 @property(nonatomic)NSMutableArray *voipObservers;
 
-@property(nonatomic, assign)int udpFD;
-@property(nonatomic, strong)dispatch_source_t readSource;
 @end
 
 @implementation IMService
@@ -66,82 +64,10 @@
         self.data = [NSMutableData data];
         self.connectState = STATE_UNCONNECTED;
         self.stopped = YES;
-        
-        self.udpFD = -1;
-
     }
     return self;
 }
 
--(void)handleRead {
-    char buf[64*1024];
-    struct sockaddr_in addr;
-    socklen_t len = sizeof(addr);
-    int n = recvfrom(self.udpFD, buf, 64*1024, 0, (struct sockaddr*)&addr, &len);
-    if (n <= 0) {
-        NSLog(@"recv udp error:%d, %s", errno, strerror(errno));
-        [self closeUDP];
-        [self listenVOIP];
-        return;
-    }
-
-    if (n <= 16) {
-        NSLog(@"invalid voip data length");
-        return;
-    }
-    
-    VOIPData *vdata = [[VOIPData alloc] init];
-    char *p = buf;
-    
-    vdata.sender = readInt64(p);
-    p += 8;
-    vdata.receiver = readInt64(p);
-    p += 8;
-    vdata.type = *p++;
-    if (*p == VOIP_RTP) {
-        vdata.rtp = YES;
-    } else if (*p == VOIP_RTCP) {
-        vdata.rtp = NO;
-    }
-    p++;
-    
-    vdata.content = [NSData dataWithBytes:p length:n-18];
-    id<VOIPObserver> ob = [self.voipObservers lastObject];
-    if (ob) {
-        int ip = ntohl(addr.sin_addr.s_addr);
-        int port = ntohs(addr.sin_port);
-        [ob onVOIPData:vdata ip:ip port:port];
-    }
-}
-
--(void)listenVOIP {
-    if (self.readSource) {
-        return;
-    }
-    
-    struct sockaddr_in addr;
-    self.udpFD = socket(AF_INET,SOCK_DGRAM,0);
-    bzero(&addr,sizeof(addr));
-    addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr=htonl(INADDR_ANY);
-    addr.sin_port=htons(self.voipPort);
-    
-    int one = 1;
-    setsockopt(self.udpFD, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));
-    
-    bind(self.udpFD, (struct sockaddr *)&addr,sizeof(addr));
-    
-    sock_nonblock(self.udpFD, 1);
-    
-    dispatch_queue_t queue = dispatch_get_main_queue();
-    self.readSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_READ, self.udpFD, 0, queue);
-    __weak IMService *wself = self;
-    dispatch_source_set_event_handler(self.readSource, ^{
-        [wself handleRead];
-    });
-    
-    dispatch_resume(self.readSource);
-}
 
 -(void)start:(int64_t)uid {
     if (!self.host || !self.port) {
@@ -181,18 +107,7 @@
     [self close];
 }
 
--(void)closeUDP {
-    if (self.readSource) {
-        dispatch_source_set_cancel_handler(self.readSource, ^{
-            NSLog(@"udp read source canceled");
-        });
-        dispatch_source_cancel(self.readSource);
-        NSLog(@"close udp socket");
-        close(self.udpFD);
-        self.udpFD = -1;
-        self.readSource = nil;
-    }
-}
+
 
 -(void)close {
     if (self.tcp) {
@@ -456,56 +371,6 @@
     m.cmd = MSG_VOIP_CONTROL;
     m.body = ctl;
     return [self sendMessage:m];
-}
-
--(BOOL)sendVOIPData:(VOIPData*)data ip:(int)ip port:(short)port {
-    if (self.udpFD == -1) {
-        return NO;
-    }
-    if (data.content.length > 60*1024) {
-        return NO;
-    }
-    
-    char buff[64*1024];
-    char *p = buff;
-    writeInt64(data.sender, p);
-    p += 8;
-    writeInt64(data.receiver, p);
-    p += 8;
-    
-    *p++ = data.type;
-    if (data.isRTP) {
-        *p++ = VOIP_RTP;
-    } else {
-        *p++ = VOIP_RTCP;
-    }
-    
-    const void *src = [data.content bytes];
-    int len = [data.content length];
-    
-    memcpy(p, src, len);
-    
-    struct sockaddr_in addr;
-    bzero(&addr, sizeof(addr));
-    
-    addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr=htonl(ip);
-    addr.sin_port=htons(port);
-    
-    int r = sendto(self.udpFD, buff, len + 18, 0, (struct sockaddr*)&addr, sizeof(addr));
-    if (r == -1) {
-        NSLog(@"send voip data error:%s", strerror(errno));
-    }
-    return YES;
-}
-
--(BOOL)sendVOIPData:(VOIPData*)data {
-    if (self.hostIP.length == 0) {
-        return NO;
-    }
-    int ip = inet_addr([self.hostIP UTF8String]);
-    ip = ntohl(ip);
-    return [self sendVOIPData:data ip:ip port:self.voipPort];
 }
 
 @end

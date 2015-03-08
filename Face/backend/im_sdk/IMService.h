@@ -22,8 +22,6 @@
 
 -(void)onVOIPControl:(VOIPControl*)ctl;
 
-@optional
--(void)onVOIPData:(VOIPData*)data ip:(int)ip port:(int)port;
 
 @end
 
@@ -36,7 +34,8 @@
 
 @interface IMService : NSObject
 
-@property(nonatomic)NSString *host;
+@property(atomic, copy) NSString *hostIP;
+@property(nonatomic, copy)NSString *host;
 @property(nonatomic)int port;
 @property(nonatomic)int voipPort;
 @property(nonatomic, assign)int connectState;
@@ -46,9 +45,6 @@
 -(void)start:(int64_t)uid;
 -(void)stop;
 
--(void)listenVOIP;
--(void)closeUDP;
-
 -(void)addMessageObserver:(id<MessageObserver>)ob;
 -(void)removeMessageObserver:(id<MessageObserver>)ob;
 
@@ -56,7 +52,5 @@
 -(void)popVOIPObserver:(id<VOIPObserver>)ob;
 
 -(BOOL)sendVOIPControl:(VOIPControl*)ctl;
--(BOOL)sendVOIPData:(VOIPData*)data ip:(int)ip port:(short)port;
--(BOOL)sendVOIPData:(VOIPData*)data;
 @end
 

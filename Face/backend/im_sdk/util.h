@@ -9,6 +9,9 @@
 #ifndef IM_UTIL_H
 #define IM_UTIL_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 void writeInt32(int32_t v, void *p);
 int32_t readInt32(const void *p);
 
@@ -23,5 +26,8 @@ int lookupAddr(const char *host, int port, struct sockaddr_in *addr);
 
 int sock_nonblock(int fd, int set);
 int write_data(int fd, uint8_t *bytes, int len);
+#ifdef __cplusplus
+}
+#endif
 
 #endif

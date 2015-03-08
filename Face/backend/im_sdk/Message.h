@@ -60,13 +60,7 @@ enum VOIPCommand {
 @property(nonatomic) NatPortMap *natMap;//VOIP_COMMAND_ACCEPT，VOIP_COMMAND_CONNECTED
 @end
 
-@interface VOIPData : NSObject
-@property(nonatomic, assign)int64_t sender;
-@property(nonatomic, assign)int64_t receiver;
-@property(nonatomic, assign) int type;
-@property(nonatomic, getter = isRTP) BOOL rtp;
-@property(nonatomic) NSData *content;
-@end
+
 
 @interface Message : NSObject
 @property(nonatomic, assign)int cmd;

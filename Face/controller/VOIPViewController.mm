@@ -6,13 +6,10 @@
 //  Copyright (c) 2014年 beetle. All rights reserved.
 //
 
+#include <arpa/inet.h>
 #import <AVFoundation/AVAudioSession.h>
+#import "VOIPEngine.h"
 #import "VOIPViewController.h"
-#import "WebRTC.h"
-#import "AVSendStream.h"
-#import "AVReceiveStream.h"
-#import "WebRTC.h"
-#include "webrtc/voice_engine/include/voe_network.h"
 
 #import "User.h"
 #import "UserDB.h"
@@ -27,7 +24,7 @@
 #import "VWWWaterView.h"
 #import "stun.h"
 #import "Config.h"
-#include <arpa/inet.h>
+
 
 
 #define kBtnWidth  72
@@ -41,9 +38,7 @@
 #define kBtnYposition  (self.view.frame.size.height - 2.5*kBtnSqureHeight)
 
 @interface VOIPViewController ()
-
-@property(strong, nonatomic) AudioSendStream *sendStream;
-@property(strong, nonatomic) AudioReceiveStream *recvStream;
+@property(nonatomic) VOIPEngine *engine;
 @property(nonatomic, assign) BOOL isCaller;
 @property(nonatomic) User* peerUser;
 
@@ -80,9 +75,6 @@
 
 @property(nonatomic) NatPortMap *peerNatMap;
 @property(nonatomic) NatPortMap *localNatMap;
-
-@property(nonatomic) NSDate *beginDate;
-@property(atomic) BOOL isPeerConnected;
 
 @property(atomic, assign) StunAddress4 mappedAddr;
 @property(atomic, assign) NatType natType;
@@ -654,8 +646,6 @@
 }
 
 - (void)startStream {
-    if (self.sendStream || self.recvStream) return;
-    
     if (self.localNatMap != nil) {
         struct in_addr addr;
         addr.s_addr = htonl(self.localNatMap.ip);
@@ -684,34 +674,34 @@
         NSLog(@"start stream");
     }
 
+    if (self.engine != nil) {
+        return;
+    }
+    
     BOOL isHeadphone = [self isHeadsetPluggedIn];
     
-    self.sendStream = [[AudioSendStream alloc] init];
-    self.sendStream.voiceTransport = self;
-    [self.sendStream start];
-
-    self.recvStream = [[AudioReceiveStream alloc] init];
-    self.recvStream.voiceTransport = self;
-    self.recvStream.isHeadphone = isHeadphone;
-    self.recvStream.isLoudspeaker = NO;
+    self.engine = [[VOIPEngine alloc] init];
+    self.engine.serverIP = [IMService instance].hostIP;
+    self.engine.voipPort = [Config instance].voipPort;
+    self.engine.caller = [UserPresent instance].uid;
+    self.engine.callee = self.peerUser.uid;
+    if (self.isP2P) {
+        self.engine.calleeIP = self.peerNatMap.ip;
+        self.engine.calleePort = self.peerNatMap.port;
+    }
     
-    [self.recvStream start];
-    
-    [[IMService instance] listenVOIP];
+    [self.engine startStream:isHeadphone];
     
     self.history.beginTimestamp = time(NULL);
-    self.beginDate = [NSDate date];
 }
 
 
 -(void)stopStream {
-    if (!self.sendStream && !self.recvStream) return;
+    if (self.engine == nil) {
+        return;
+    }
     NSLog(@"stop stream");
-    [self.sendStream stop];
-    [self.recvStream stop];
-    
-    [[IMService instance] closeUDP];
-    
+    [self.engine stopStream];
     self.history.endTimestamp = time(NULL);
 }
 
@@ -854,41 +844,6 @@
     }
 }
 
--(void)onVOIPData:(VOIPData*)data ip:(int)ip port:(int)port {
-    if (data.sender != self.peerUser.uid) {
-        [self sendReset];
-        return;
-    }
-    VOIP *voip = [VOIP instance];
-    if (voip.state == VOIP_CONNECTED) {
-        int channel = self.recvStream.voiceChannel;
-        
-        const void *packet = [data.content bytes];
-        int packet_length = [data.content length];
-        
-        WebRTC *rtc = [WebRTC sharedWebRTC];
-        
-        if (!self.isPeerConnected && self.peerNatMap.ip == ip && self.peerNatMap.port == port) {
-            self.isPeerConnected = YES;
-            NSLog(@"peer connected");
-        }
-        
-        if (data.isRTP) {
-            if (data.type == VOIP_AUDIO) {
-                NSLog(@"audio data:%d content:%d", packet_length, data.content.length);
-                rtc.voe_network->ReceivedRTPPacket(channel, packet, packet_length);
-            }
-        } else {
-            if (data.type == VOIP_AUDIO) {
-                NSLog(@"audio rtcp data:%d", packet_length);
-                rtc.voe_network->ReceivedRTCPPacket(channel, packet, packet_length);
-            }
-        }
-
-    } else {
-        NSLog(@"skip data...");
-    }
-}
 
 
 #pragma mark - AVAudioPlayerDelegate
@@ -904,58 +859,6 @@
     NSLog(@"player decode error");
 }
 
-
-#pragma mark VoiceTransport
--(void)sendVOIPData:(VOIPData*)vData {
-    
-    BOOL isP2P = self.isP2P;
-    //2s内还未接受到对端的数据，转而使用服务器中转
-    if (isP2P && !self.isPeerConnected && [self.beginDate timeIntervalSinceNow]*1000 < -2000) {
-        isP2P = NO;
-    }
-    
-    BOOL r = NO;
-    if (isP2P) {
-        r = [[IMService instance] sendVOIPData:vData ip:self.peerNatMap.ip port:self.peerNatMap.port];
-    } else {
-        r = [[IMService instance] sendVOIPData:vData];
-    }
-    if (!r) {
-        NSLog(@"send rtp data fail");
-    }
-}
-
--(int)sendRTPPacketA:(const void*)data length:(int)length {
-    VOIPData *vData = [[VOIPData alloc] init];
-    
-    vData.sender = [UserPresent instance].uid;
-    vData.receiver = self.peerUser.uid;
-    vData.type = VOIP_AUDIO;
-    vData.rtp = YES;
-    vData.content = [NSData dataWithBytes:data length:length];
-    //NSLog(@"send rtp package:%d", length);
-    
-    [self sendVOIPData:vData];
-    return length;
-}
-
--(int)sendRTCPPacketA:(const void*)data length:(int)length STOR:(BOOL)STOR {
-    if (!STOR) {
-        return 0;
-    }
-
-    //NSLog(@"send rtcp package:%d", length);
-    VOIPData *vData = [[VOIPData alloc] init];
-    
-    vData.sender = [UserPresent instance].uid;
-    vData.receiver = self.peerUser.uid;
-    vData.rtp = NO;
-    vData.type = VOIP_AUDIO;
-    vData.content = [NSData dataWithBytes:data length:length];
-    
-    [self sendVOIPData:vData];
-    return length;
-}
 
 -(void)playDialIn {
 

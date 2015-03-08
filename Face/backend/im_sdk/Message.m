@@ -19,9 +19,7 @@
 
 @end
 
-@implementation VOIPData
 
-@end
 
 @implementation Message
 -(NSData*)pack {
