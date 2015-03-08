@@ -382,19 +382,11 @@
         struct in_addr addr;
         addr.s_addr = htonl(self.voip.localNatMap.ip);
         NSLog(@"local nat map:%s:%d", inet_ntoa(addr), self.voip.localNatMap.port);
-        
-
-        addr.s_addr = htonl(self.voip.localNatMap.localIP);
-        NSLog(@"local host:%s:%d", inet_ntoa(addr), self.voip.localNatMap.localPort);
-        
     }
     if (self.voip.peerNatMap != nil) {
         struct in_addr addr;
         addr.s_addr = htonl(self.voip.peerNatMap.ip);
         NSLog(@"peer nat map:%s:%d", inet_ntoa(addr), self.voip.peerNatMap.port);
-        
-        addr.s_addr = htonl(self.voip.peerNatMap.localIP);
-        NSLog(@"peer local host:%s:%d", inet_ntoa(addr), self.voip.peerNatMap.localPort);
     }
     
     if (self.isP2P) {

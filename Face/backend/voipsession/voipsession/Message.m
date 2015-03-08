@@ -56,11 +56,7 @@
             p += 4;
             writeInt16(ctl.natMap.port, p);
             p += 2;
-            writeInt32(ctl.natMap.localIP, p);
-            p += 4;
-            writeInt16(ctl.natMap.localPort, p);
-            p += 2;
-            return [NSData dataWithBytes:buf length:HEAD_SIZE+32];
+            return [NSData dataWithBytes:buf length:HEAD_SIZE+26];
         } else {
             return [NSData dataWithBytes:buf length:HEAD_SIZE+20];
         }
@@ -92,15 +88,11 @@
         if (ctl.cmd == VOIP_COMMAND_DIAL) {
             ctl.dialCount = readInt32(p);
         } else if (ctl.cmd == VOIP_COMMAND_ACCEPT || ctl.cmd == VOIP_COMMAND_CONNECTED) {
-            if (data.length >= HEAD_SIZE + 32) {
+            if (data.length >= HEAD_SIZE + 26) {
                 ctl.natMap = [[NatPortMap alloc] init];
                 ctl.natMap.ip = readInt32(p);
                 p += 4;
                 ctl.natMap.port = readInt16(p);
-                p += 2;
-                ctl.natMap.localIP = readInt32(p);
-                p += 4;
-                ctl.natMap.localPort = readInt16(p);
                 p += 2;
             }
         }
