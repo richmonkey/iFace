@@ -417,6 +417,10 @@
     [self.engine startStream:isHeadphone];
     
     self.history.beginTimestamp = time(NULL);
+    
+    self.refreshTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(refreshDuration) userInfo:nil repeats:YES];
+    [self.refreshTimer fire];
+    
 }
 
 
@@ -425,6 +429,12 @@
         return;
     }
     NSLog(@"stop stream");
+    
+    if (self.refreshTimer && [self.refreshTimer isValid]) {
+        [self.refreshTimer invalidate];
+        self.refreshTimer = nil;
+    }
+    
     [self.engine stopStream];
     self.history.endTimestamp = time(NULL);
 }
@@ -500,10 +510,6 @@
     [self.durationLabel sizeToFit];
     [self.durationLabel setTextAlignment:NSTextAlignmentCenter];
     [self.durationLabel setCenter:CGPointMake((self.view.frame.size.width)/2, self.headView.frame.origin.y + self.headView.frame.size.height + 50)];
-    
-    self.refreshTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(refreshDuration) userInfo:nil repeats:YES];
-    [self.refreshTimer fire];
-
 }
 
 /**
@@ -551,6 +557,7 @@
             [self.refreshTimer invalidate];
             self.refreshTimer = nil;
         }
+        [self stopStream];
         [self dismiss];
     }
 }
