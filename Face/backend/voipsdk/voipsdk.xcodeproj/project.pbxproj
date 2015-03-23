@@ -14,7 +14,7 @@
 		6D0331A61AAB7529004AA39F /* libwebrtc_all.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D0331A51AAB7529004AA39F /* libwebrtc_all.a */; };
 		6D401BB21AAC2B470041ABC6 /* VOIPEngine.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6D401BB11AAC2B470041ABC6 /* VOIPEngine.mm */; };
 		6D401BB51AAC2DD80041ABC6 /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D401BB31AAC2DD80041ABC6 /* util.c */; };
-		6D401BC21AAC2F110041ABC6 /* VOIPEngine.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6D401BB01AAC2B470041ABC6 /* VOIPEngine.h */; };
+		6D401BC21AAC2F110041ABC6 /* VOIPEngine.h in Copy Files */ = {isa = PBXBuildFile; fileRef = 6D401BB01AAC2B470041ABC6 /* VOIPEngine.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -28,14 +28,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		6D0331751AAB73E3004AA39F /* CopyFiles */ = {
+		6D0331751AAB73E3004AA39F /* Copy Files */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "include/$(PRODUCT_NAME)";
 			dstSubfolderSpec = 16;
 			files = (
-				6D401BC21AAC2F110041ABC6 /* VOIPEngine.h in CopyFiles */,
+				6D401BC21AAC2F110041ABC6 /* VOIPEngine.h in Copy Files */,
 			);
+			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -136,19 +137,19 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		6D0331761AAB73E3004AA39F /* voipsdk */ = {
+		6D0331761AAB73E3004AA39F /* voipengine */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 6D03318B1AAB73E4004AA39F /* Build configuration list for PBXNativeTarget "voipsdk" */;
+			buildConfigurationList = 6D03318B1AAB73E4004AA39F /* Build configuration list for PBXNativeTarget "voipengine" */;
 			buildPhases = (
 				6D0331731AAB73E3004AA39F /* Sources */,
 				6D0331741AAB73E3004AA39F /* Frameworks */,
-				6D0331751AAB73E3004AA39F /* CopyFiles */,
+				6D0331751AAB73E3004AA39F /* Copy Files */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = voipsdk;
+			name = voipengine;
 			productName = voipsdk;
 			productReference = 6D0331771AAB73E3004AA39F /* libvoipsdk.a */;
 			productType = "com.apple.product-type.library.static";
@@ -200,7 +201,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				6D0331761AAB73E3004AA39F /* voipsdk */,
+				6D0331761AAB73E3004AA39F /* voipengine */,
 				6D0331811AAB73E3004AA39F /* voipsdkTests */,
 			);
 		};
@@ -241,7 +242,7 @@
 /* Begin PBXTargetDependency section */
 		6D0331851AAB73E3004AA39F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 6D0331761AAB73E3004AA39F /* voipsdk */;
+			target = 6D0331761AAB73E3004AA39F /* voipengine */;
 			targetProxy = 6D0331841AAB73E3004AA39F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -406,7 +407,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		6D03318B1AAB73E4004AA39F /* Build configuration list for PBXNativeTarget "voipsdk" */ = {
+		6D03318B1AAB73E4004AA39F /* Build configuration list for PBXNativeTarget "voipengine" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				6D03318C1AAB73E4004AA39F /* Debug */,
