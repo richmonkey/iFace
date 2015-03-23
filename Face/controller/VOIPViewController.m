@@ -260,7 +260,7 @@
     self.voip.peerUID = self.peerUser.uid;
     self.voip.delegate = self;
     [self.voip holePunch];
-    [[IMService instance] pushVOIPObserver:self.voip];
+    [[VOIPService instance] pushVOIPObserver:self.voip];
     
     [[AVAudioSession sharedInstance] requestRecordPermission:^(BOOL granted) {
         if (granted) {
@@ -278,7 +278,7 @@
             NSLog(@"can't grant record permission");
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 [self dismissViewControllerAnimated:NO completion:^{
-                    [[IMService instance] popVOIPObserver:self.voip];
+                    [[VOIPService instance] popVOIPObserver:self.voip];
                 }];
             });
         }
@@ -291,7 +291,7 @@
 
     [self dismissViewControllerAnimated:YES completion:^{
 
-        [[IMService instance] popVOIPObserver:self.voip];
+        [[VOIPService instance] popVOIPObserver:self.voip];
         [[HistoryDB instance] addHistory:self.history];
        
         NSNotification* notification = [NSNotification notificationWithName:ON_NEW_CALL_HISTORY_NOTIFY object:self.history];
@@ -405,7 +405,7 @@
     BOOL isHeadphone = [self isHeadsetPluggedIn];
     
     self.engine = [[VOIPEngine alloc] init];
-    self.engine.serverIP = [IMService instance].hostIP;
+    self.engine.serverIP = [VOIPService instance].hostIP;
     self.engine.voipPort = [Config instance].voipPort;
     self.engine.caller = [UserPresent instance].uid;
     self.engine.callee = self.peerUser.uid;

@@ -42,7 +42,7 @@
                                  @"网络状态",
                                  @"清除所有通话记录"
                                 ];
-        [[IMService instance] addMessageObserver:self];
+        [[VOIPService instance] addMessageObserver:self];
     }
     return self;
 }
@@ -94,7 +94,7 @@
             }
             [cell.detailTextLabel setFont:[UIFont systemFontOfSize:16.0f]];
             cell.tag = (indexPath.section + 1) * 100 + indexPath.row;
-            if ([[IMService instance] connectState] != STATE_CONNECTED) {
+            if ([[VOIPService instance] connectState] != STATE_CONNECTED) {
                 [self addActivityView:cell];
             }else{
                 [cell.detailTextLabel setTextColor: kGreenColor];

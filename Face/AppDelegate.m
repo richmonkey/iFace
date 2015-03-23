@@ -7,7 +7,7 @@
 //
 
 #import "AppDelegate.h"
-#import <voipsession/IMService.h>
+#import <voipsession/VOIPService.h>
 #import "Config.h"
 #import "Token.h"
 #import "MainTabBarController.h"
@@ -21,9 +21,9 @@
     // Override point for customization after application launch.
     
     //配置im server地址
-    [IMService instance].host = [Config instance].host;
-    [IMService instance].port = [Config instance].port;
-    [IMService instance].voipPort = [Config instance].voipPort;
+    [VOIPService instance].host = [Config instance].host;
+    [VOIPService instance].port = [Config instance].port;
+    [VOIPService instance].voipPort = [Config instance].voipPort;
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     application.statusBarHidden = NO;

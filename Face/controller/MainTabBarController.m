@@ -11,7 +11,7 @@
 #import "ConversationHistoryViewController.h"
 #import "SettingViewController.h"
 #import "Token.h"
-#import <voipsession/IMService.h>
+#import <voipsession/VOIPService.h>
 #import "UserPresent.h"
 #import "Reachability.h"
 #import "APIRequest.h"
@@ -90,22 +90,22 @@
     self.reach.reachableBlock = ^(Reachability*reach) {
         dispatch_async(dispatch_get_main_queue(), ^{
             NSLog(@"reachable");
-            [[IMService instance] stop];
-            [[IMService instance] start:[UserPresent instance].uid];
+            [[VOIPService instance] stop];
+            [[VOIPService instance] start:[UserPresent instance].uid];
         });
     };
     __weak UIView *view = self.view;
     self.reach.unreachableBlock = ^(Reachability*reach) {
         dispatch_async(dispatch_get_main_queue(), ^{
             NSLog(@"unreachable");
-            [[IMService instance] stop];
+            [[VOIPService instance] stop];
             [view makeToast:@"手机网络错误,请检查" duration:3.0 position:@"center"];
         });
     };
     
     [self.reach startNotifier];
     
-    [[IMService instance] start:[UserPresent instance].uid];
+    [[VOIPService instance] start:[UserPresent instance].uid];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appDidEnterBackground) name:UIApplicationDidEnterBackgroundNotification object:nil];
     
@@ -114,7 +114,7 @@
     [[self tabBar] setTintColor: RGBACOLOR(48,176,87, 1)];
     [[self tabBar] setBarTintColor: RGBACOLOR(245, 245, 246, 1)];
     
-    [[IMService instance] pushVOIPObserver:self];
+    [[VOIPService instance] pushVOIPObserver:self];
     
 }
 
@@ -127,11 +127,11 @@
 
 -(void)appDidEnterBackground {
     //todo check voip state
-    [[IMService instance] stop];
+    [[VOIPService instance] stop];
 }
 
 -(void)appWillEnterForeground {
-    [[IMService instance] start:[UserPresent instance].uid];
+    [[VOIPService instance] start:[UserPresent instance].uid];
 }
 
 
@@ -213,7 +213,7 @@
     ctl.receiver = uid;
     ctl.cmd = VOIP_COMMAND_RESET;
 
-    [[IMService instance] sendVOIPControl:ctl];
+    [[VOIPService instance] sendVOIPControl:ctl];
 }
 
 @end

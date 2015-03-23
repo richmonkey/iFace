@@ -7,9 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <voipsession/IMService.h>
+#import <voipsession/VOIPService.h>
 
-@interface SettingViewController : UIViewController <UITableViewDataSource,UITableViewDelegate,MessageObserver,UIAlertViewDelegate>
+@interface SettingViewController : UIViewController <UITableViewDataSource,UITableViewDelegate,VOIPConnectObserver,UIAlertViewDelegate>
 
 @property (strong,nonatomic) IBOutlet UITableView *tableView;
 @property (strong,nonatomic) NSArray *cellTitleArray;
