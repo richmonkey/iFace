@@ -22,7 +22,7 @@ enum VOIPState {
     VOIP_RESETED,//通话连接被重置
 };
 
-@protocol VOIPStateDelegate <NSObject>
+@protocol VOIPSessionDelegate <NSObject>
 -(void)onRefuse;
 -(void)onHangUp;
 -(void)onReset;
@@ -33,10 +33,10 @@ enum VOIPState {
 -(void)onRefuseFinished;
 @end
 
-@interface VOIP : NSObject<VOIPObserver>
+@interface VOIPSession : NSObject<VOIPObserver>
 
 
-@property(nonatomic, weak) NSObject<VOIPStateDelegate> *delegate;
+@property(nonatomic, weak) NSObject<VOIPSessionDelegate> *delegate;
 
 @property(nonatomic, assign) enum VOIPState state;
 

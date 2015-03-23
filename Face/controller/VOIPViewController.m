@@ -35,7 +35,7 @@
 
 #define kBtnYposition  (self.view.frame.size.height - 2.5*kBtnSqureHeight)
 
-@interface VOIPViewController ()<VOIPStateDelegate>
+@interface VOIPViewController ()<VOIPSessionDelegate>
 
 @property(nonatomic, assign) BOOL isCaller;
 @property(nonatomic) User* peerUser;
@@ -60,7 +60,7 @@
 @property(nonatomic) AVAudioPlayer *player;
 
 @property(nonatomic) VOIPEngine *engine;
-@property(nonatomic) VOIP *voip;
+@property(nonatomic) VOIPSession *voip;
 @property(nonatomic) BOOL isConnected;
 
 @end
@@ -253,7 +253,7 @@
         self.hangUpButton.hidden = YES;
     }
 
-    self.voip = [[VOIP alloc] init];
+    self.voip = [[VOIPSession alloc] init];
     self.voip.voipPort = [Config instance].voipPort;
     self.voip.stunServer = [Config instance].stunServer;
     self.voip.currentUID = [UserPresent instance].uid;
@@ -494,7 +494,7 @@
  *
  *  @param voip  VOIP
  */
--(void) makeDialing:(VOIP*)voip{
+-(void) makeDialing:(VOIPSession*)voip{
     [voip dial];
     [self playDialOut];
 }

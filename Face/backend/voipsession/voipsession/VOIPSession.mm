@@ -10,7 +10,7 @@
 #import "IMService.h"
 #import "stun.h"
 
-@interface VOIP()
+@interface VOIPSession()
 
 @property(nonatomic, assign) int dialCount;
 @property(nonatomic, assign) time_t dialBeginTimestamp;
@@ -29,7 +29,7 @@
 
 @end
 
-@implementation VOIP
+@implementation VOIPSession
 
 -(id)init {
     self = [super init];
@@ -210,7 +210,7 @@
         NSLog(@"refuse timeout");
         [self.refuseTimer invalidate];
         
-        VOIP *voip = self;
+        VOIPSession *voip = self;
         voip.state = VOIP_REFUSED;
 
         [self.delegate onRefuseFinished];
@@ -224,7 +224,7 @@
 
 #pragma mark - VOIPObserver
 -(void)onVOIPControl:(VOIPControl*)ctl {
-    VOIP *voip = self;
+    VOIPSession *voip = self;
     
     if (ctl.sender != self.peerUID) {
         [self sendTalking];
@@ -344,7 +344,7 @@
 }
 
 -(void)accept {
-    VOIP *voip = self;
+    VOIPSession *voip = self;
     voip.state = VOIP_ACCEPTED;
     
     if (self.localNatMap == nil) {
@@ -377,7 +377,7 @@
 }
 
 -(void)hangUp {
-    VOIP *voip = self;
+    VOIPSession *voip = self;
     if (voip.state == VOIP_DIALING ) {
         [self.dialTimer invalidate];
         self.dialTimer = nil;
