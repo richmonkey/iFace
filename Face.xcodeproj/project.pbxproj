@@ -25,10 +25,10 @@
 		48C7A13F1A065BDA0020E7F6 /* start.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 48C7A13C1A065BDA0020E7F6 /* start.mp3 */; };
 		48C7A1431A06650D0020E7F6 /* HistoryTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 48C7A1411A06650D0020E7F6 /* HistoryTableViewCell.m */; };
 		48C7A1441A06650D0020E7F6 /* HistoryTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 48C7A1421A06650D0020E7F6 /* HistoryTableViewCell.xib */; };
-		6D401BC61AAC31F90041ABC6 /* libvoipsdk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D401BC51AAC31F90041ABC6 /* libvoipsdk.a */; };
 		6D401BCB1AAC7BAB0041ABC6 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D401BCA1AAC7BAB0041ABC6 /* GLKit.framework */; };
 		6D401C101AAC7E420041ABC6 /* libvoipsession.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D401BF51AAC7D300041ABC6 /* libvoipsession.a */; };
 		6D401C201AAC925C0041ABC6 /* apns.caf in Resources */ = {isa = PBXBuildFile; fileRef = 6D401C1F1AAC925C0041ABC6 /* apns.caf */; };
+		6D5C18471AC053BC0047A9A3 /* libvoipengine.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D5C18461AC053BC0047A9A3 /* libvoipengine.a */; };
 		6DBE5F5F1AA6BBEE00D03195 /* libleveldb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DBE5F581AA6BBEE00D03195 /* libleveldb.a */; };
 		6DF3996819EB9AAE009B03C4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF3996719EB9AAE009B03C4 /* Foundation.framework */; };
 		6DF3996A19EB9AAE009B03C4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF3996919EB9AAE009B03C4 /* CoreGraphics.framework */; };
@@ -198,10 +198,10 @@
 		48DC1A111A0686F6004EC222 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		48DC1A121A0686F6004EC222 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		6D401BC41AAC31CE0041ABC6 /* VOIPEngine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VOIPEngine.h; path = voip_bin/VOIPEngine.h; sourceTree = "<group>"; };
-		6D401BC51AAC31F90041ABC6 /* libvoipsdk.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvoipsdk.a; path = voip_bin/libvoipsdk.a; sourceTree = "<group>"; };
 		6D401BCA1AAC7BAB0041ABC6 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
 		6D401BEF1AAC7D2F0041ABC6 /* voipsession.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = voipsession.xcodeproj; path = Face/backend/voipsession/voipsession.xcodeproj; sourceTree = "<group>"; };
 		6D401C1F1AAC925C0041ABC6 /* apns.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = apns.caf; sourceTree = "<group>"; };
+		6D5C18461AC053BC0047A9A3 /* libvoipengine.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvoipengine.a; path = voip_bin/libvoipengine.a; sourceTree = "<group>"; };
 		6DBE5F511AA6BBEE00D03195 /* c.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = c.h; sourceTree = "<group>"; };
 		6DBE5F521AA6BBEE00D03195 /* cache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cache.h; sourceTree = "<group>"; };
 		6DBE5F531AA6BBEE00D03195 /* comparator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = comparator.h; sourceTree = "<group>"; };
@@ -397,7 +397,6 @@
 			files = (
 				6D401C101AAC7E420041ABC6 /* libvoipsession.a in Frameworks */,
 				6D401BCB1AAC7BAB0041ABC6 /* GLKit.framework in Frameworks */,
-				6D401BC61AAC31F90041ABC6 /* libvoipsdk.a in Frameworks */,
 				6DF39BC919ED72D7009B03C4 /* libsqlite3.dylib in Frameworks */,
 				6DF3996C19EB9AAE009B03C4 /* UIKit.framework in Frameworks */,
 				6DF3996819EB9AAE009B03C4 /* Foundation.framework in Frameworks */,
@@ -406,6 +405,7 @@
 				6DF3996A19EB9AAE009B03C4 /* CoreGraphics.framework in Frameworks */,
 				6DF39B2B19EBB617009B03C4 /* AudioToolbox.framework in Frameworks */,
 				6DF39B2919EBB607009B03C4 /* CoreMedia.framework in Frameworks */,
+				6D5C18471AC053BC0047A9A3 /* libvoipengine.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -497,7 +497,7 @@
 		6D401BC31AAC31C10041ABC6 /* voip_bin */ = {
 			isa = PBXGroup;
 			children = (
-				6D401BC51AAC31F90041ABC6 /* libvoipsdk.a */,
+				6D5C18461AC053BC0047A9A3 /* libvoipengine.a */,
 				6D401BC41AAC31CE0041ABC6 /* VOIPEngine.h */,
 			);
 			name = voip_bin;
