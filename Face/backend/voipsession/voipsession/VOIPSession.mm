@@ -6,7 +6,7 @@
 //  Copyright (c) 2014年 beetle. All rights reserved.
 //
 #include <arpa/inet.h>
-#import "VOIP.h"
+#import "VOIPSession.h"
 #import "IMService.h"
 #import "stun.h"
 

@@ -14,7 +14,7 @@
 #import "User.h"
 #import "UserDB.h"
 #import "UserPresent.h"
-#import <voipsession/VOIP.h>
+#import <voipsession/VOIPSession.h>
 #import "HistoryDB.h"
 
 #import "UIImageView+WebCache.h"
