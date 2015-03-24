@@ -12,7 +12,7 @@
 #import "Token.h"
 #import "MainTabBarController.h"
 #import "AskPhoneNumberViewController.h"
-
+#import "APIRequest.h"
 
 @implementation AppDelegate
 
@@ -21,9 +21,10 @@
     // Override point for customization after application launch.
     
     //配置im server地址
-    [VOIPService instance].host = [Config instance].host;
-    [VOIPService instance].port = [Config instance].port;
+//    [VOIPService instance].host = [Config instance].host;
+//    [VOIPService instance].port = [Config instance].port;
     
+    [VOIPService instance].deviceID = [[[UIDevice currentDevice] identifierForVendor] UUIDString];
     [[VOIPService instance] startRechabilityNotifier];
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
@@ -55,6 +56,19 @@
 	newToken = [newToken stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"<>"]];
 	newToken = [newToken stringByReplacingOccurrencesOfString:@" " withString:@""];
     self.deviceToken = newToken;
+    
+    Token *token = [Token instance];
+    if (token.uid > 0) {
+        [APIRequest bindDeviceToken:self.deviceToken
+                           success:^{
+                               NSLog(@"bind device token success");
+                           }
+                              fail:^{
+                                  NSLog(@"bind device token fail");
+                              }];
+    }
+
+    
     NSLog(@"device token is: %@:%@", deviceToken, newToken);
 }
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {

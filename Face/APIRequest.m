@@ -179,7 +179,7 @@
      
         NSString *accessToken = [resp objectForKey:@"access_token"];
         NSString *refreshToken = [resp objectForKey:@"refresh_token"];
-        int expireTimestamp = time(NULL) + [[resp objectForKey:@"expires_in"] intValue];
+        int expireTimestamp = (int)time(NULL) + [[resp objectForKey:@"expires_in"] intValue];
         int64_t uid = [[resp objectForKey:@"uid"] longLongValue];
         NSString *state = [resp objectForKey:@"state"];
         success(uid, accessToken, refreshToken, expireTimestamp, state);
@@ -230,7 +230,7 @@
     request.method = @"POST";
     request.headers = headers;
     request.successCB = ^(TAHttpOperation*commObj, NSURLResponse *response, NSData *data) {
-        int statusCode = [(NSHTTPURLResponse*)response statusCode];
+        NSInteger statusCode = [(NSHTTPURLResponse*)response statusCode];
         if (statusCode != 200) {
             NSDictionary *d = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];
             IMLog(@"request users fail:%@", d);
@@ -260,7 +260,7 @@
     request.postBody = data;
     request.method = @"POST";
     request.successCB = ^(TAHttpOperation*commObj, NSURLResponse *response, NSData *data) {
-        int statusCode = [(NSHTTPURLResponse*)response statusCode];
+        NSInteger statusCode = [(NSHTTPURLResponse*)response statusCode];
         if (statusCode != 200) {
             NSDictionary *e = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];
             IMLog(@"refresh token fail:%@", e);
@@ -270,7 +270,7 @@
         NSDictionary *resp = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];
         NSString *accessToken = [resp objectForKey:@"access_token"];
         NSString *refreshToken = [resp objectForKey:@"refresh_token"];
-        int expireTimestamp = time(NULL) + [[resp objectForKey:@"expires_in"] intValue];
+        int expireTimestamp = (int)time(NULL) + [[resp objectForKey:@"expires_in"] intValue];
         success(accessToken, refreshToken, expireTimestamp);
     };
     request.failCB = ^(TAHttpOperation*commObj, TAHttpOperationError error) {
@@ -279,4 +279,37 @@
     [[NSOperationQueue mainQueue] addOperation:request];
     return request;
 }
+
+
++(NSOperation*)bindDeviceToken:(NSString*)deviceToken success:(void (^)())success fail:(void (^)())fail {
+    TAHttpOperation *request = [TAHttpOperation httpOperationWithTimeoutInterval:60];
+    request.targetURL = [[Config instance].URL stringByAppendingString:@"/device/bind"];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    [dict setObject:deviceToken forKey:@"apns_device_token"];
+    NSMutableDictionary *headers = [NSMutableDictionary dictionaryWithObject:@"application/json" forKey:@"Content-Type"];
+    NSString *auth = [NSString stringWithFormat:@"Bearer %@", [Token instance].accessToken];
+    [headers setObject:auth forKey:@"Authorization"];
+    
+    request.headers = headers;
+    NSData *data = [NSJSONSerialization dataWithJSONObject:dict options:0 error:nil];
+    request.postBody = data;
+    request.method = @"POST";
+    request.successCB = ^(TAHttpOperation*commObj, NSURLResponse *response, NSData *data) {
+        NSInteger statusCode = [(NSHTTPURLResponse*)response statusCode];
+        if (statusCode != 200) {
+            NSLog(@"bind device token fail");
+            fail();
+            return;
+        }
+        success();
+    };
+    request.failCB = ^(TAHttpOperation*commObj, TAHttpOperationError error) {
+        NSLog(@"bind device token fail");
+        fail();
+    };
+    [[NSOperationQueue mainQueue] addOperation:request];
+    return request;
+}
+
+
 @end

@@ -11,9 +11,6 @@
 @interface Config : NSObject
 +(Config*)instance;
 
-@property(nonatomic)NSString *host;
-@property(nonatomic)int port;
-@property(nonatomic)int voipPort;
 @property(nonatomic, readonly)NSString *URL;
-@property(nonatomic, readonly)NSString *stunServer;
+
 @end

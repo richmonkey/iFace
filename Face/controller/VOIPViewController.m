@@ -254,8 +254,6 @@
     }
 
     self.voip = [[VOIPSession alloc] init];
-    self.voip.voipPort = [Config instance].voipPort;
-    self.voip.stunServer = [Config instance].stunServer;
     self.voip.currentUID = [UserPresent instance].uid;
     self.voip.peerUID = self.peerUser.uid;
     self.voip.delegate = self;
@@ -406,7 +404,7 @@
     
     self.engine = [[VOIPEngine alloc] init];
     self.engine.serverIP = [VOIPService instance].hostIP;
-    self.engine.voipPort = [Config instance].voipPort;
+    self.engine.voipPort = self.voip.voipPort;
     self.engine.caller = [UserPresent instance].uid;
     self.engine.callee = self.peerUser.uid;
     if (self.isP2P) {

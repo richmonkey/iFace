@@ -33,4 +33,6 @@
                         success:(void (^)(NSArray *resp))success
                            fail:(void (^)())fail;
 
++(NSOperation*)bindDeviceToken:(NSString*)deviceToken success:(void (^)())success fail:(void (^)())fail;
+
 @end

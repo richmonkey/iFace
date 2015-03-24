@@ -84,8 +84,7 @@
     });
     
     [self startRefreshTimer];
-   
-    [VOIPService instance].uid = [Token instance].uid;
+
     [VOIPService instance].token = [Token instance].accessToken;
     [[VOIPService instance] start];
     

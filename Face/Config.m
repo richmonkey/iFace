@@ -7,6 +7,9 @@
 //
 
 #import "Config.h"
+@interface Config()
+
+@end
 
 @implementation Config
 +(Config*)instance {
@@ -23,17 +26,13 @@
 -(id)init {
     self = [super init];
     if (self) {
-        self.host = @"voip.yufeng.me";
-        self.port = 20000;
-        self.voipPort = 20001;
+
     }
     return self;
 }
 -(NSString*)URL {
-    return @"http://voip.yufeng.me";
+    return @"http://api.voip.gobelieve.io";
 }
--(NSString*)stunServer {
-    return @"stun.counterpath.net";
-}
+
 
 @end
