@@ -13,7 +13,6 @@
 #import "Token.h"
 #import <voipsession/VOIPService.h>
 #import "UserPresent.h"
-#import "Reachability.h"
 #import "APIRequest.h"
 #import "JSBadgeView.h"
 #import "Constants.h"
@@ -21,7 +20,6 @@
 #import "UIView+Toast.h"
 
 @interface MainTabBarController ()
-@property(atomic) Reachability *reach;
 @property(nonatomic)dispatch_source_t refreshTimer;
 @property(nonatomic)int refreshFailCount;
 @end
@@ -86,26 +84,10 @@
     });
     
     [self startRefreshTimer];
-    self.reach = [Reachability reachabilityForInternetConnection];
-    self.reach.reachableBlock = ^(Reachability*reach) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            NSLog(@"reachable");
-            [[VOIPService instance] stop];
-            [[VOIPService instance] start:[UserPresent instance].uid];
-        });
-    };
-    __weak UIView *view = self.view;
-    self.reach.unreachableBlock = ^(Reachability*reach) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            NSLog(@"unreachable");
-            [[VOIPService instance] stop];
-            [view makeToast:@"手机网络错误,请检查" duration:3.0 position:@"center"];
-        });
-    };
-    
-    [self.reach startNotifier];
-    
-    [[VOIPService instance] start:[UserPresent instance].uid];
+   
+    [VOIPService instance].uid = [Token instance].uid;
+    [VOIPService instance].token = [Token instance].accessToken;
+    [[VOIPService instance] start];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appDidEnterBackground) name:UIApplicationDidEnterBackgroundNotification object:nil];
     
@@ -127,11 +109,11 @@
 
 -(void)appDidEnterBackground {
     //todo check voip state
-    [[VOIPService instance] stop];
+    [[VOIPService instance] enterBackground];
 }
 
 -(void)appWillEnterForeground {
-    [[VOIPService instance] start:[UserPresent instance].uid];
+    [[VOIPService instance] enterForeground];
 }
 
 
@@ -144,7 +126,7 @@
                                token.expireTimestamp = expireTimestamp;
                                [token save];
                                [self prepareTimer];
-                               
+                               [VOIPService instance].token = accessToken;
                            }
                               fail:^{
                                   self.refreshFailCount = self.refreshFailCount + 1;

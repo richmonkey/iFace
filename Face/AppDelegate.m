@@ -23,7 +23,8 @@
     //配置im server地址
     [VOIPService instance].host = [Config instance].host;
     [VOIPService instance].port = [Config instance].port;
-    [VOIPService instance].voipPort = [Config instance].voipPort;
+    
+    [[VOIPService instance] startRechabilityNotifier];
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     application.statusBarHidden = NO;
