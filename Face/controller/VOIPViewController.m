@@ -403,7 +403,8 @@
     BOOL isHeadphone = [self isHeadsetPluggedIn];
     
     self.engine = [[VOIPEngine alloc] init];
-    self.engine.serverIP = [VOIPService instance].hostIP;
+    NSLog(@"relay ip:%@", self.voip.relayIP);
+    self.engine.serverIP = self.voip.relayIP;
     self.engine.voipPort = self.voip.voipPort;
     self.engine.caller = [UserPresent instance].uid;
     self.engine.callee = self.peerUser.uid;
