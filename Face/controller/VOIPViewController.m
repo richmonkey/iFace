@@ -549,15 +549,16 @@
     }
 }
 
--(void)onReset {
-    if (self.isConnected) {
-        if (self.refreshTimer && [self.refreshTimer isValid]) {
-            [self.refreshTimer invalidate];
-            self.refreshTimer = nil;
-        }
-        [self stopStream];
+-(void)onTalking {
+    [self.player stop];
+    self.player = nil;
+    self.history.flag = self.history.flag|FLAG_UNRECEIVED;
+    
+    [self.view makeToast:@"对方正在通话中!" duration:2.0 position:@"center"];
+
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self dismiss];
-    }
+    });
 }
 
 -(void)onDialTimeout {
@@ -565,8 +566,8 @@
     self.player = nil;
     
     self.history.flag = self.history.flag|FLAG_UNRECEIVED;
+    
     [self dismiss];
-
 }
 
 -(void)onAcceptTimeout {
