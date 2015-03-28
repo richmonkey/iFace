@@ -30,9 +30,22 @@
     }
     return self;
 }
+#if 1
 -(NSString*)URL {
-    return @"http://api.voip.gobelieve.io";
+    return @"http://face.gobelieve.io";
 }
 
+-(NSString*)sdkHost {
+    return @"voipnode.gobelieve.io";
+}
+#else
+-(NSString*)URL {
+    return @"http://192.168.1.101:8000";
+}
+
+-(NSString*)sdkHost {
+    return @"192.168.1.101";
+}
+#endif
 
 @end

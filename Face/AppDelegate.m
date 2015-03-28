@@ -21,8 +21,8 @@
     // Override point for customization after application launch.
     
     //配置im server地址
-//    [VOIPService instance].host = [Config instance].host;
-//    [VOIPService instance].port = [Config instance].port;
+    [VOIPService instance].host = [Config instance].sdkHost;
+
     
     [VOIPService instance].deviceID = [[[UIDevice currentDevice] identifierForVendor] UUIDString];
     [[VOIPService instance] startRechabilityNotifier];
