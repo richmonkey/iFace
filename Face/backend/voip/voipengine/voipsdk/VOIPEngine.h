@@ -11,14 +11,16 @@
 @interface VOIPEngine : NSObject
 @property(nonatomic)int voipPort;
 
-@property(nonatomic, copy) NSString *serverIP;
+@property(nonatomic, copy) NSString *relayIP;
+@property(nonatomic, copy) NSString *token;
+
 
 @property(nonatomic)int64_t caller;
 
 @property(nonatomic)int64_t callee;
 @property(nonatomic)int32_t calleeIP;
 @property(nonatomic)int calleePort;
-
--(void)startStream:(BOOL)isHeadphone;
+@property(nonatomic)BOOL isHeadphone;
+-(void)startStream;
 -(void)stopStream;
 @end
