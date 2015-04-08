@@ -12,5 +12,6 @@
 +(Config*)instance;
 
 @property(nonatomic, readonly)NSString *URL;
+@property(nonatomic, readonly)NSString *sdkAPIURL;
 @property(nonatomic, readonly)NSString *sdkHost;
 @end

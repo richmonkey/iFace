@@ -283,7 +283,7 @@
 
 +(NSOperation*)bindDeviceToken:(NSString*)deviceToken success:(void (^)())success fail:(void (^)())fail {
     TAHttpOperation *request = [TAHttpOperation httpOperationWithTimeoutInterval:60];
-    request.targetURL = [[Config instance].URL stringByAppendingString:@"/device/bind"];
+    request.targetURL = [[Config instance].sdkAPIURL stringByAppendingString:@"/device/bind"];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [dict setObject:deviceToken forKey:@"apns_device_token"];
     NSMutableDictionary *headers = [NSMutableDictionary dictionaryWithObject:@"application/json" forKey:@"Content-Type"];

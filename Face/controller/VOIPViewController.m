@@ -23,7 +23,7 @@
 #import "PublicFunc.h"
 #import "VWWWaterView.h"
 #import "Config.h"
-
+#import "Token.h"
 
 #define kBtnWidth  72
 #define kBtnHeight 72
@@ -404,16 +404,18 @@
     
     self.engine = [[VOIPEngine alloc] init];
     NSLog(@"relay ip:%@", self.voip.relayIP);
-    self.engine.serverIP = self.voip.relayIP;
+    self.engine.relayIP = self.voip.relayIP;
     self.engine.voipPort = self.voip.voipPort;
     self.engine.caller = [UserPresent instance].uid;
     self.engine.callee = self.peerUser.uid;
+    self.engine.isHeadphone = isHeadphone;
+    self.engine.token = [Token instance].accessToken;
     if (self.isP2P) {
         self.engine.calleeIP = self.voip.peerNatMap.ip;
         self.engine.calleePort = self.voip.peerNatMap.port;
     }
     
-    [self.engine startStream:isHeadphone];
+    [self.engine startStream];
     
     self.history.beginTimestamp = time(NULL);
     
