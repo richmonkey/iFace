@@ -1296,7 +1296,7 @@
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "9c427468-87c0-4286-abb0-526951222de4";
+				PROVISIONING_PROFILE = "645f94e1-92a1-4291-ac7e-ce0e0fd01a8d";
 				USER_HEADER_SEARCH_PATHS = "Face/backend/ Face/third_party/webrtc/src";
 				VALID_ARCHS = "armv7 arm64";
 				WRAPPER_EXTENSION = app;
