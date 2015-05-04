@@ -1,10 +1,11 @@
-//
-//  VOIP.m
-//  Face
-//
-//  Created by houxh on 14-10-13.
-//  Copyright (c) 2014年 beetle. All rights reserved.
-//
+/*
+ Copyright (c) 2014-2015, GoBelieve
+ All rights reserved.
+ 
+ This source code is licensed under the BSD-style license found in the
+ LICENSE file in the root directory of this source tree. An additional grant
+ of patent rights can be found in the PATENTS file in the same directory.
+ */
 #include <arpa/inet.h>
 #import "VOIPSession.h"
 #import "VOIPService.h"
@@ -255,7 +256,7 @@
             }
             
             if (self.relayIP == nil) {
-                self.relayIP = [VOIPService instance].hostIP;
+                self.relayIP = [VOIPService instance].relayIP;
             }
             
             [self sendConnected];
@@ -302,7 +303,7 @@
                 const char *str = inet_ntop(AF_INET, &addr, buff, 64);
                 self.relayIP = [NSString stringWithUTF8String:str];
             } else {
-                self.relayIP = [VOIPService instance].hostIP;
+                self.relayIP = [VOIPService instance].relayIP;
             }
             
             [self.acceptTimer invalidate];

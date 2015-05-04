@@ -1,10 +1,11 @@
-//
-//  IM.h
-//  im
-//
-//  Created by houxh on 14-6-21.
-//  Copyright (c) 2014年 potato. All rights reserved.
-//
+/*                                                                            
+  Copyright (c) 2014-2015, GoBelieve     
+    All rights reserved.		    				     			
+ 
+  This source code is licensed under the BSD-style license found in the
+  LICENSE file in the root directory of this source tree. An additional grant
+  of patent rights can be found in the PATENTS file in the same directory.
+*/
 
 #import <Foundation/Foundation.h>
 
@@ -69,6 +70,11 @@ enum VOIPCommand {
 @property(nonatomic, copy) NSString *token;
 @property(nonatomic, assign) int8_t platformID;
 @property(nonatomic, copy) NSString *deviceID;
+@end
+
+@interface VOIPAuthenticationStatus : NSObject
+@property(nonatomic, assign) int32_t status;
+@property(nonatomic, assign) int32_t ip;
 @end
 
 @interface VOIPMessage : NSObject
