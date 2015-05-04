@@ -1,10 +1,11 @@
-//
-//  IM.m
-//  im
-//
-//  Created by houxh on 14-6-21.
-//  Copyright (c) 2014年 potato. All rights reserved.
-//
+/*                                                                            
+  Copyright (c) 2014-2015, GoBelieve     
+    All rights reserved.		    				     			
+ 
+  This source code is licensed under the BSD-style license found in the
+  LICENSE file in the root directory of this source tree. An additional grant
+  of patent rights can be found in the PATENTS file in the same directory.
+*/
 
 #import "VOIPMessage.h"
 #import "VOIPUtil.h"
@@ -23,6 +24,9 @@
 
 @end
 
+@implementation VOIPAuthenticationStatus
+
+@end
 
 @implementation VOIPMessage
 -(NSData*)pack {
@@ -99,8 +103,11 @@
     if (self.cmd == MSG_RST) {
         return YES;
     } else if (self.cmd == MSG_AUTH_STATUS) {
-        int status = voip_readInt32(p);
-        self.body = [NSNumber numberWithInt:status];
+        VOIPAuthenticationStatus *status = [[VOIPAuthenticationStatus alloc] init];
+        status.status = voip_readInt32(p);
+        p += 4;
+        status.ip = voip_readInt32(p);
+        self.body = status;
         return YES;
     } else if (self.cmd == MSG_VOIP_CONTROL) {
         VOIPControl *ctl = [[VOIPControl alloc] init];
