@@ -16,7 +16,7 @@
 #import "ContactHeaderView.h"
 #import "ContactIMUserTableViewCell.h"
 #import "ContactPhoneTableViewCell.h"
-#import "VOIPViewController.h"
+#import "VOIPVoiceViewController.h"
 #import "UIView+Toast.h"
 #import <voipsession/VOIPService.h>
 
@@ -246,7 +246,7 @@
  */
 -(void)phoneingByUser:(User*)user{
     if ([[VOIPService instance] connectState] == STATE_CONNECTED) {
-        VOIPViewController *controller = [[VOIPViewController alloc] initWithCalledUID:user.uid];
+        VOIPVoiceViewController *controller = [[VOIPVoiceViewController alloc] initWithCalledUID:user.uid];
         [self presentViewController:controller animated:YES completion:nil];
     }else if([[VOIPService instance] connectState] == STATE_CONNECTING){
         [self.tabBarController.view makeToast:@"正在连接,请稍等" duration:2.0f position:@"bottom"];

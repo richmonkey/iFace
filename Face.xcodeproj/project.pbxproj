@@ -29,6 +29,8 @@
 		6D401C101AAC7E420041ABC6 /* libvoipsession.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D401BF51AAC7D300041ABC6 /* libvoipsession.a */; };
 		6D401C201AAC925C0041ABC6 /* apns.caf in Resources */ = {isa = PBXBuildFile; fileRef = 6D401C1F1AAC925C0041ABC6 /* apns.caf */; };
 		6D4D55E11BA4033800247208 /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D4D55E01BA4033800247208 /* VideoToolbox.framework */; };
+		6D4D55E81BA412AC00247208 /* VOIPVideoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D4D55E51BA412AC00247208 /* VOIPVideoViewController.m */; };
+		6D4D55E91BA412AC00247208 /* VOIPVoiceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D4D55E71BA412AC00247208 /* VOIPVoiceViewController.m */; };
 		6D5C18471AC053BC0047A9A3 /* libvoipengine.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D5C18461AC053BC0047A9A3 /* libvoipengine.a */; };
 		6DBE5F5F1AA6BBEE00D03195 /* libleveldb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DBE5F581AA6BBEE00D03195 /* libleveldb.a */; };
 		6DF3996819EB9AAE009B03C4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF3996719EB9AAE009B03C4 /* Foundation.framework */; };
@@ -203,6 +205,11 @@
 		6D401BEF1AAC7D2F0041ABC6 /* voipsession.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = voipsession.xcodeproj; path = Face/backend/voipsession/voipsession.xcodeproj; sourceTree = "<group>"; };
 		6D401C1F1AAC925C0041ABC6 /* apns.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = apns.caf; sourceTree = "<group>"; };
 		6D4D55E01BA4033800247208 /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = System/Library/Frameworks/VideoToolbox.framework; sourceTree = SDKROOT; };
+		6D4D55E41BA412AC00247208 /* VOIPVideoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VOIPVideoViewController.h; sourceTree = "<group>"; };
+		6D4D55E51BA412AC00247208 /* VOIPVideoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VOIPVideoViewController.m; sourceTree = "<group>"; };
+		6D4D55E61BA412AC00247208 /* VOIPVoiceViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VOIPVoiceViewController.h; sourceTree = "<group>"; };
+		6D4D55E71BA412AC00247208 /* VOIPVoiceViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VOIPVoiceViewController.m; sourceTree = "<group>"; };
+		6D4D55EB1BA415E400247208 /* VOIPRenderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VOIPRenderView.h; path = voip_bin/VOIPRenderView.h; sourceTree = "<group>"; };
 		6D5C18461AC053BC0047A9A3 /* libvoipengine.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvoipengine.a; path = voip_bin/libvoipengine.a; sourceTree = "<group>"; };
 		6DBE5F511AA6BBEE00D03195 /* c.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = c.h; sourceTree = "<group>"; };
 		6DBE5F521AA6BBEE00D03195 /* cache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cache.h; sourceTree = "<group>"; };
@@ -501,6 +508,7 @@
 			isa = PBXGroup;
 			children = (
 				6D5C18461AC053BC0047A9A3 /* libvoipengine.a */,
+				6D4D55EB1BA415E400247208 /* VOIPRenderView.h */,
 				6D401BC41AAC31CE0041ABC6 /* VOIPEngine.h */,
 			);
 			name = voip_bin;
@@ -673,6 +681,10 @@
 				6DF399DA19EBA313009B03C4 /* MainTabBarController.m */,
 				6DF39B4219EBBD52009B03C4 /* VOIPViewController.h */,
 				6DF39B4319EBBD52009B03C4 /* VOIPViewController.m */,
+				6D4D55E41BA412AC00247208 /* VOIPVideoViewController.h */,
+				6D4D55E51BA412AC00247208 /* VOIPVideoViewController.m */,
+				6D4D55E61BA412AC00247208 /* VOIPVoiceViewController.h */,
+				6D4D55E71BA412AC00247208 /* VOIPVoiceViewController.m */,
 				4813DC801A05FCFB004598F3 /* ConversationHistoryViewController.h */,
 				4813DC811A05FCFB004598F3 /* ConversationHistoryViewController.m */,
 				4813DC831A060447004598F3 /* SettingViewController.h */,
@@ -1114,12 +1126,14 @@
 				6DF39A9719EBA6CC009B03C4 /* ESImageViewController.m in Sources */,
 				6DF39A8819EBA6CC009B03C4 /* SDImageCache.m in Sources */,
 				6DF399F119EBA31D009B03C4 /* UserDB.m in Sources */,
+				6D4D55E91BA412AC00247208 /* VOIPVoiceViewController.m in Sources */,
 				6DF39A8E19EBA6CC009B03C4 /* SDWebImagePrefetcher.m in Sources */,
 				6DF39A0119EBA624009B03C4 /* APIRequest.m in Sources */,
 				6DF3997819EB9AAE009B03C4 /* AppDelegate.m in Sources */,
 				4877C0501A067FCF00CCF1DC /* AboutViewController.m in Sources */,
 				6DF39BB319ECFD5F009B03C4 /* History.m in Sources */,
 				6DF39A8619EBA6CC009B03C4 /* MKAnnotationView+WebCache.m in Sources */,
+				6D4D55E81BA412AC00247208 /* VOIPVideoViewController.m in Sources */,
 				6DF39A6F19EBA6CC009B03C4 /* JSBadgeView.m in Sources */,
 				6DF39A7119EBA6CC009B03C4 /* NSString+JSMessagesView.m in Sources */,
 				6DF399DB19EBA313009B03C4 /* AskPhoneNumberViewController.m in Sources */,

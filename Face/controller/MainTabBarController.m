@@ -16,7 +16,8 @@
 #import "APIRequest.h"
 #import "JSBadgeView.h"
 #import "Constants.h"
-#import "VOIPViewController.h"
+#import "VOIPVoiceViewController.h"
+#import "VOIPVideoViewController.h"
 #import "UIView+Toast.h"
 
 @interface MainTabBarController ()
@@ -182,7 +183,10 @@
     NSLog(@"voip command:%d", ctl.cmd);
 
     if (ctl.cmd == VOIP_COMMAND_DIAL) {
-        VOIPViewController *controller = [[VOIPViewController alloc] initWithCallerUID:ctl.sender];
+        VOIPVoiceViewController *controller = [[VOIPVoiceViewController alloc] initWithCallerUID:ctl.sender];
+        [self presentViewController:controller animated:YES completion:nil];
+    } else if (ctl.cmd == VOIP_COMMAND_DIAL_VIDEO) {
+        VOIPVideoViewController *controller = [[VOIPVideoViewController alloc] initWithCallerUID:ctl.sender];
         [self presentViewController:controller animated:YES completion:nil];
     }
 }

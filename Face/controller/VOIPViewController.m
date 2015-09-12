@@ -37,9 +37,6 @@
 
 @interface VOIPViewController ()<VOIPSessionDelegate>
 
-@property(nonatomic, assign) BOOL isCaller;
-@property(nonatomic) User* peerUser;
-
 @property(nonatomic) UIButton *hangUpButton;
 @property(nonatomic) UIButton *acceptButton;
 @property(nonatomic) UIButton *refuseButton;
@@ -59,8 +56,6 @@
 
 @property(nonatomic) AVAudioPlayer *player;
 
-@property(nonatomic) VOIPEngine *engine;
-@property(nonatomic) VOIPSession *voip;
 @property(nonatomic) BOOL isConnected;
 
 @end
@@ -375,69 +370,48 @@
     return headphonesLocated;
 }
 
-- (void)startStream {
-    if (self.voip.localNatMap != nil) {
-        struct in_addr addr;
-        addr.s_addr = htonl(self.voip.localNatMap.ip);
-        NSLog(@"local nat map:%s:%d", inet_ntoa(addr), self.voip.localNatMap.port);
-    }
-    if (self.voip.peerNatMap != nil) {
-        struct in_addr addr;
-        addr.s_addr = htonl(self.voip.peerNatMap.ip);
-        NSLog(@"peer nat map:%s:%d", inet_ntoa(addr), self.voip.peerNatMap.port);
-    }
-    
-    if (self.isP2P) {
-        struct in_addr addr;
-        addr.s_addr = htonl(self.voip.peerNatMap.ip);
-        NSLog(@"peer address:%s:%d", inet_ntoa(addr), self.voip.peerNatMap.port);
-        NSLog(@"start p2p stream");
-    } else {
-        NSLog(@"start stream");
-    }
 
-    if (self.engine != nil) {
-        return;
-    }
+-(void)dial {
     
-    BOOL isHeadphone = [self isHeadsetPluggedIn];
-    
-    self.engine = [[VOIPEngine alloc] init];
-    NSLog(@"relay ip:%@", self.voip.relayIP);
-    self.engine.relayIP = self.voip.relayIP;
-    self.engine.voipPort = self.voip.voipPort;
-    self.engine.caller = [UserPresent instance].uid;
-    self.engine.callee = self.peerUser.uid;
-    self.engine.isHeadphone = isHeadphone;
-    self.engine.token = [Token instance].accessToken;
-    if (self.isP2P) {
-        self.engine.calleeIP = self.voip.peerNatMap.ip;
-        self.engine.calleePort = self.voip.peerNatMap.port;
-    }
-    
-    [self.engine startStream];
-    
+}
+
+- (void)startStream {
     self.history.beginTimestamp = time(NULL);
-    
-    self.refreshTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(refreshDuration) userInfo:nil repeats:YES];
-    [self.refreshTimer fire];
-    
 }
 
 
 -(void)stopStream {
-    if (self.engine == nil) {
-        return;
-    }
-    NSLog(@"stop stream");
-    
-    if (self.refreshTimer && [self.refreshTimer isValid]) {
-        [self.refreshTimer invalidate];
-        self.refreshTimer = nil;
-    }
-    
-    [self.engine stopStream];
     self.history.endTimestamp = time(NULL);
+}
+
+
+-(int)SetLoudspeakerStatus:(BOOL)enable {
+    AVAudioSession* session = [AVAudioSession sharedInstance];
+    NSString* category = session.category;
+    AVAudioSessionCategoryOptions options = session.categoryOptions;
+    // Respect old category options if category is
+    // AVAudioSessionCategoryPlayAndRecord. Otherwise reset it since old options
+    // might not be valid for this category.
+    if ([category isEqualToString:AVAudioSessionCategoryPlayAndRecord]) {
+        if (enable) {
+            options |= AVAudioSessionCategoryOptionDefaultToSpeaker;
+        } else {
+            options &= ~AVAudioSessionCategoryOptionDefaultToSpeaker;
+        }
+    } else {
+        options = AVAudioSessionCategoryOptionDefaultToSpeaker;
+    }
+    
+    NSError* error = nil;
+    [session setCategory:AVAudioSessionCategoryPlayAndRecord
+             withOptions:options
+                   error:&error];
+    if (error != nil) {
+        NSLog(@"set loudspeaker err:%@", error);
+        return -1;
+    }
+    
+    return 0;
 }
 
 
@@ -584,6 +558,9 @@
     [self setOnTalkingUIShow];
     [self.player stop];
     self.player = nil;
+    
+    self.refreshTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(refreshDuration) userInfo:nil repeats:YES];
+    [self.refreshTimer fire];
     
     NSLog(@"call voip connected");
     [self startStream];
