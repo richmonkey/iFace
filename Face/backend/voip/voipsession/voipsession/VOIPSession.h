@@ -54,6 +54,7 @@ enum VOIPState {
 
 -(void)holePunch;
 -(void)dial;
+-(void)dialVideo;
 -(void)accept;
 -(void)refuse;
 -(void)hangUp;
