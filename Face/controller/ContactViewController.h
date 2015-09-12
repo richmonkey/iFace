@@ -13,6 +13,6 @@
 
 @property (nonatomic)IMContact *contact;
 @property (nonatomic)UITableView *tableview;
-@property (nonatomic)UIButton  *sendIMBtn;
+//@property (nonatomic)UIButton  *sendIMBtn;
 @property (nonatomic)UIButton *inviteBtn;
 @end

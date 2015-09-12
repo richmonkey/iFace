@@ -19,17 +19,23 @@
 #import "Token.h"
 
 @interface VOIPVideoViewController ()
+
 @property(nonatomic) VOIPRenderView *remoteRender;
 @property(nonatomic) VOIPRenderView *localRender;
+@property BOOL showCancel;
+
 @end
 
 @implementation VOIPVideoViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
     self.remoteRender = [[VOIPRenderView alloc] initWithFrame:self.view.bounds];
     [self.view insertSubview:self.remoteRender atIndex:0];
+    
+    
+    UITapGestureRecognizer*tapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapAction:)];
+    [self.remoteRender addGestureRecognizer:tapGesture];
     
     self.localRender = [[VOIPRenderView alloc] initWithFrame:CGRectMake(200, 380, 72, 96)];
     [self.view insertSubview:self.localRender aboveSubview:self.remoteRender];
@@ -37,23 +43,42 @@
     self.localRender.hidden = YES;
     self.remoteRender.hidden = YES;
     
+    self.showCancel = YES;
+    
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+-(void)tapAction:(id)sender{
+    if (self.showCancel) {
+        self.showCancel = NO;
+       
+        [UIView animateWithDuration:1.0 animations:^{
+            [self.hangUpButton setAlpha:0.0];
+            [self.headView setAlpha:0.0];
+            [self.durationLabel setAlpha:0.0];
+        } completion:^(BOOL finished){
+            [self.hangUpButton setHidden:YES];
+            [self.headView setHidden:YES];
+            [self.durationLabel setHidden:YES];
+        }];
+    }else {
+        self.showCancel = YES;
+        
+        [UIView animateWithDuration:1.0 animations:^{
+            [self.hangUpButton setAlpha:1.0];
+            [self.headView setAlpha:1.0];
+            [self.durationLabel setAlpha:1.0];
+        } completion:^(BOOL finished){
+            [self.hangUpButton setHidden:NO];
+            [self.headView setHidden:NO];
+            [self.durationLabel setHidden:NO];
+        }];
+    }
+    
 }
-*/
-
 
 - (void)dial {
     [self.voip dialVideo];
@@ -61,6 +86,8 @@
 
 - (void)startStream {
     [super startStream];
+    [self tapAction:nil];
+    
     if (self.voip.localNatMap != nil) {
         struct in_addr addr;
         addr.s_addr = htonl(self.voip.localNatMap.ip);

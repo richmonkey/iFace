@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="7706" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="DailCompView">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="101"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <button opaque="NO" tag="100" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9tn-AN-umG">
+                    <rect key="frame" x="8" y="0.0" width="304" height="40"/>
+                    <color key="backgroundColor" red="0.20784313725490194" green="0.73725490196078436" blue="0.43137254901960786" alpha="1" colorSpace="calibratedRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="40" id="2ku-q4-uTi"/>
+                    </constraints>
+                    <state key="normal" title="语音呼叫">
+                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                </button>
+                <button opaque="NO" tag="101" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hnG-Y1-AME">
+                    <rect key="frame" x="8" y="61" width="304" height="40"/>
+                    <color key="backgroundColor" red="0.20000000000000001" green="0.54117647058823526" blue="0.77647058823529413" alpha="1" colorSpace="calibratedRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="40" id="d8q-Os-NKm"/>
+                    </constraints>
+                    <state key="normal" title="视频呼叫">
+                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                </button>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="hnG-Y1-AME" secondAttribute="trailing" constant="8" id="L4K-HZ-l3M"/>
+                <constraint firstItem="hnG-Y1-AME" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="8" id="LcO-vb-gkm"/>
+                <constraint firstAttribute="trailing" secondItem="9tn-AN-umG" secondAttribute="trailing" constant="8" id="NcF-W3-Hwy"/>
+                <constraint firstItem="9tn-AN-umG" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="SsQ-gd-DnP"/>
+                <constraint firstAttribute="bottom" secondItem="hnG-Y1-AME" secondAttribute="bottom" id="fOi-68-ttm"/>
+                <constraint firstItem="9tn-AN-umG" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="8" id="fvq-ez-9eu"/>
+            </constraints>
+            <nil key="simulatedStatusBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="videoBtn" destination="hnG-Y1-AME" id="3Ln-kQ-ZHT"/>
+                <outlet property="voiceBtn" destination="9tn-AN-umG" id="ntx-ur-Nsb"/>
+            </connections>
+            <point key="canvasLocation" x="328" y="-15.5"/>
+        </view>
+    </objects>
+</document>

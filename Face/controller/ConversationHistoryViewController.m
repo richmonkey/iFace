@@ -17,6 +17,10 @@
 #import "UIView+Toast.h"
 #import <voipsession/VOIPService.h>
 
+#import "VOIPVideoViewController.h"
+#import "VOIPVoiceViewController.h"
+
+
 #define kGreenColor         RGBCOLOR(48,176,87)
 #define kRedColor           RGBCOLOR(207,6,6)
 
@@ -27,6 +31,7 @@ static NSString *HISTORYSTR = @"historyCell";
 @property (strong,nonatomic) UITableView *tableView;
 @property (strong,nonatomic) NSMutableArray *historys;
 @property (strong ,nonatomic) UILabel  *emputyLabel;
+@property (strong,nonatomic) IMUser *selectedUser;
 
 @end
 
@@ -153,17 +158,21 @@ static NSString *HISTORYSTR = @"historyCell";
 }
 #pragma mark - UITableViewDelegate
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    
+    //取消选中项
+    [tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES];
+    
     History *history = [self.historys objectAtIndex:indexPath.row];
-    IMUser *user = [[UserDB instance] loadUser:history.peerUID];
-    if ([[VOIPService instance] connectState] == STATE_CONNECTED) {
-        VOIPViewController *controller = [[VOIPViewController alloc] initWithCalledUID:user.uid];
-        [self presentViewController:controller animated:YES completion:nil];
-    }else if([[VOIPService instance] connectState] == STATE_CONNECTING){
-        [self.tabBarController.view makeToast:@"正在连接,请稍等" duration:2.0f position:@"bottom"];
-    }else if([[VOIPService instance] connectState] == STATE_UNCONNECTED){
-        [self.tabBarController.view makeToast:@"连接出错,请检查" duration:2.0f position:@"bottom"];
-    }
-
+    self.selectedUser = [[UserDB instance] loadUser:history.peerUID];
+    
+    UIActionSheet *actionSheet = [[UIActionSheet alloc]
+                                  initWithTitle:nil
+                                  delegate:self
+                                  cancelButtonTitle:@"取消"
+                                  destructiveButtonTitle:nil
+                                  otherButtonTitles:@"语音呼叫", @"视频呼叫", nil];
+    actionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
+    [actionSheet showInView:self.view];
     
 }
 
@@ -206,6 +215,29 @@ static NSString *HISTORYSTR = @"historyCell";
     }
 }
 
+#pragma mark - UIActionSheetDelegate
+
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (buttonIndex == actionSheet.cancelButtonIndex) {
+        return;
+    }
+    
+    
+    if ([[VOIPService instance] connectState] == STATE_CONNECTED) {
+        if(buttonIndex == 0){
+            VOIPVoiceViewController *controller = [[VOIPVoiceViewController alloc] initWithCalledUID:self.selectedUser.uid];
+            [self presentViewController:controller animated:YES completion:nil];
+        }else if (buttonIndex == 1) {
+            VOIPVideoViewController *controller = [[VOIPVideoViewController alloc] initWithCalledUID:self.selectedUser.uid];
+            [self presentViewController:controller animated:YES completion:nil];
+        }
+    }else if([[VOIPService instance] connectState] == STATE_CONNECTING){
+        [self.tabBarController.view makeToast:@"正在连接,请稍等" duration:2.0f position:@"bottom"];
+    }else if([[VOIPService instance] connectState] == STATE_UNCONNECTED){
+        [self.tabBarController.view makeToast:@"连接出错,请检查" duration:2.0f position:@"bottom"];
+    }
+
+}
 
 
 -(void) onNewHistory:(NSNotification*)notify{
@@ -264,15 +296,5 @@ static NSString *HISTORYSTR = @"historyCell";
     }
 }
 
-/*
- #pragma mark - Navigation
- 
- // In a storyboard-based application, you will often want to do a little preparation before navigation
- - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
- {
- // Get the new view controller using [segue destinationViewController].
- // Pass the selected object to the new view controller.
- }
- */
 
 @end
