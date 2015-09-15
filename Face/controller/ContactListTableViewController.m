@@ -344,6 +344,10 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    //取消选中项
+    [tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES];
+    
     if (self.tableView == tableView) {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"ContactCell"];
         

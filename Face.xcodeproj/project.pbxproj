@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		4813DC821A05FCFB004598F3 /* ConversationHistoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4813DC811A05FCFB004598F3 /* ConversationHistoryViewController.m */; };
 		4813DC851A060447004598F3 /* SettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4813DC841A060447004598F3 /* SettingViewController.m */; };
+		4825ACDD1BA429E2006D3730 /* DailCompView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4825ACDC1BA429E2006D3730 /* DailCompView.m */; };
+		4825ACDF1BA42A0E006D3730 /* DailCompView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4825ACDE1BA42A0E006D3730 /* DailCompView.xib */; };
 		4877C0501A067FCF00CCF1DC /* AboutViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4877C0471A067FCF00CCF1DC /* AboutViewController.m */; };
 		4877C0511A067FCF00CCF1DC /* AboutViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4877C0481A067FCF00CCF1DC /* AboutViewController.xib */; };
 		4877C0521A067FCF00CCF1DC /* CotactMeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4877C04A1A067FCF00CCF1DC /* CotactMeViewController.m */; };
@@ -16,7 +18,6 @@
 		4877C0561A067FCF00CCF1DC /* SettingViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4877C04F1A067FCF00CCF1DC /* SettingViewController.xib */; };
 		48986BA41A064C74004740B6 /* DebugFrameView.m in Sources */ = {isa = PBXBuildFile; fileRef = 48986BA11A064C74004740B6 /* DebugFrameView.m */; };
 		48986BA51A064C74004740B6 /* UIView+Debug.m in Sources */ = {isa = PBXBuildFile; fileRef = 48986BA31A064C74004740B6 /* UIView+Debug.m */; };
-		489A8CBD1A0E14E900753BB8 /* VWWWaterView.m in Sources */ = {isa = PBXBuildFile; fileRef = 489A8CBC1A0E14E900753BB8 /* VWWWaterView.m */; };
 		48BCCF981A0514BC00A7889D /* ReflectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 48BCCF921A0514BC00A7889D /* ReflectionView.m */; };
 		48BCCF991A0514BC00A7889D /* ANBlurredImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 48BCCF951A0514BC00A7889D /* ANBlurredImageView.m */; };
 		48BCCF9A1A0514BC00A7889D /* UIImage+BoxBlur.m in Sources */ = {isa = PBXBuildFile; fileRef = 48BCCF971A0514BC00A7889D /* UIImage+BoxBlur.m */; };
@@ -173,6 +174,9 @@
 		4813DC811A05FCFB004598F3 /* ConversationHistoryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConversationHistoryViewController.m; sourceTree = "<group>"; };
 		4813DC831A060447004598F3 /* SettingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingViewController.h; sourceTree = "<group>"; };
 		4813DC841A060447004598F3 /* SettingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingViewController.m; sourceTree = "<group>"; };
+		4825ACDB1BA429E2006D3730 /* DailCompView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DailCompView.h; sourceTree = "<group>"; };
+		4825ACDC1BA429E2006D3730 /* DailCompView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DailCompView.m; sourceTree = "<group>"; };
+		4825ACDE1BA42A0E006D3730 /* DailCompView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DailCompView.xib; sourceTree = "<group>"; };
 		4877C0461A067FCF00CCF1DC /* AboutViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AboutViewController.h; sourceTree = "<group>"; };
 		4877C0471A067FCF00CCF1DC /* AboutViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AboutViewController.m; sourceTree = "<group>"; };
 		4877C0481A067FCF00CCF1DC /* AboutViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AboutViewController.xib; sourceTree = "<group>"; };
@@ -184,8 +188,6 @@
 		48986BA11A064C74004740B6 /* DebugFrameView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DebugFrameView.m; sourceTree = "<group>"; };
 		48986BA21A064C74004740B6 /* UIView+Debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Debug.h"; sourceTree = "<group>"; };
 		48986BA31A064C74004740B6 /* UIView+Debug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Debug.m"; sourceTree = "<group>"; };
-		489A8CBB1A0E14E900753BB8 /* VWWWaterView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VWWWaterView.h; sourceTree = "<group>"; };
-		489A8CBC1A0E14E900753BB8 /* VWWWaterView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VWWWaterView.m; sourceTree = "<group>"; };
 		48BCCF911A0514BC00A7889D /* ReflectionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReflectionView.h; sourceTree = "<group>"; };
 		48BCCF921A0514BC00A7889D /* ReflectionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReflectionView.m; sourceTree = "<group>"; };
 		48BCCF941A0514BC00A7889D /* ANBlurredImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ANBlurredImageView.h; sourceTree = "<group>"; };
@@ -432,6 +434,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4825ACDA1BA42989006D3730 /* component */ = {
+			isa = PBXGroup;
+			children = (
+				4825ACDB1BA429E2006D3730 /* DailCompView.h */,
+				4825ACDC1BA429E2006D3730 /* DailCompView.m */,
+				4825ACDE1BA42A0E006D3730 /* DailCompView.xib */,
+			);
+			path = component;
+			sourceTree = "<group>";
+		};
 		4877C0451A067FCF00CCF1DC /* setting */ = {
 			isa = PBXGroup;
 			children = (
@@ -454,15 +466,6 @@
 				48986BA31A064C74004740B6 /* UIView+Debug.m */,
 			);
 			path = DebugView;
-			sourceTree = "<group>";
-		};
-		489A8CBA1A0E14E900753BB8 /* water_wave */ = {
-			isa = PBXGroup;
-			children = (
-				489A8CBB1A0E14E900753BB8 /* VWWWaterView.h */,
-				489A8CBC1A0E14E900753BB8 /* VWWWaterView.m */,
-			);
-			path = water_wave;
 			sourceTree = "<group>";
 		};
 		48BCCF901A0514BC00A7889D /* ReflectionView */ = {
@@ -584,6 +587,7 @@
 		6DF3996D19EB9AAE009B03C4 /* Face */ = {
 			isa = PBXGroup;
 			children = (
+				4825ACDA1BA42989006D3730 /* component */,
 				48C7A1391A065BD90020E7F6 /* sound */,
 				6DF39AA419EBA88E009B03C4 /* cell */,
 				6DF399F919EBA552009B03C4 /* third_party */,
@@ -717,7 +721,6 @@
 		6DF399F919EBA552009B03C4 /* third_party */ = {
 			isa = PBXGroup;
 			children = (
-				489A8CBA1A0E14E900753BB8 /* water_wave */,
 				48986B9F1A064C74004740B6 /* DebugView */,
 				48BCCF901A0514BC00A7889D /* ReflectionView */,
 				48BCCF931A0514BC00A7889D /* ANBlurredImageView */,
@@ -1055,6 +1058,7 @@
 				6DF39AA919EBA88E009B03C4 /* ContactHeaderView.xib in Resources */,
 				6DF39A7419EBA6CC009B03C4 /* input-bar-flat.png in Resources */,
 				48C7A13E1A065BDA0020E7F6 /* end.mp3 in Resources */,
+				4825ACDF1BA42A0E006D3730 /* DailCompView.xib in Resources */,
 				6DF39A8119EBA6CC009B03C4 /* messageSent.aiff in Resources */,
 				6D401C201AAC925C0041ABC6 /* apns.caf in Resources */,
 				6DF39A7E19EBA6CC009B03C4 /* send.png in Resources */,
@@ -1103,6 +1107,7 @@
 				6DF399DF19EBA313009B03C4 /* ContactListTableViewController.m in Sources */,
 				6DF39A8719EBA6CC009B03C4 /* NSData+ImageContentType.m in Sources */,
 				6DF39A0719EBA67B009B03C4 /* MBProgressHUD.m in Sources */,
+				4825ACDD1BA429E2006D3730 /* DailCompView.m in Sources */,
 				6DF399DD19EBA313009B03C4 /* CheckVerifyCodeController.m in Sources */,
 				6DF39A9519EBA6CC009B03C4 /* UIView+WebCacheOperation.m in Sources */,
 				48986BA41A064C74004740B6 /* DebugFrameView.m in Sources */,
@@ -1150,7 +1155,6 @@
 				6DF39A8F19EBA6CC009B03C4 /* UIButton+WebCache.m in Sources */,
 				6DF399EE19EBA31D009B03C4 /* LevelDB.mm in Sources */,
 				6DF39BC319ED72C3009B03C4 /* FMDatabase.m in Sources */,
-				489A8CBD1A0E14E900753BB8 /* VWWWaterView.m in Sources */,
 				6DF39BC419ED72C3009B03C4 /* FMDatabaseAdditions.m in Sources */,
 				6DF39A9419EBA6CC009B03C4 /* UIImageView+WebCache.m in Sources */,
 				6DF39A9A19EBA6CC009B03C4 /* UIApplication+Util.m in Sources */,
@@ -1292,8 +1296,8 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "compiler-default";
-				CODE_SIGN_IDENTITY = "iPhone Developer: Zhifeng Zhou (PV548P44SL)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Zhifeng Zhou (PV548P44SL)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = "compiler-default";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Face/Face-Prefix.pch";
@@ -1314,7 +1318,7 @@
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "645f94e1-92a1-4291-ac7e-ce0e0fd01a8d";
+				PROVISIONING_PROFILE = "";
 				USER_HEADER_SEARCH_PATHS = "Face/backend/ Face/third_party/webrtc/src";
 				VALID_ARCHS = "armv7 arm64";
 				WRAPPER_EXTENSION = app;
@@ -1346,7 +1350,7 @@
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "d81a365e-83e4-4acd-a81d-179ac65fa617";
+				PROVISIONING_PROFILE = "";
 				USER_HEADER_SEARCH_PATHS = "Face/backend/ Face/third_party/webrtc/src";
 				VALID_ARCHS = "armv7 arm64";
 				WRAPPER_EXTENSION = app;

@@ -17,7 +17,12 @@
 #import "ContactIMUserTableViewCell.h"
 #import "ContactPhoneTableViewCell.h"
 #import "VOIPVoiceViewController.h"
+#import "VOIPVideoViewController.h"
 #import "UIView+Toast.h"
+
+#import "DailCompView.h"
+
+
 #import <voipsession/VOIPService.h>
 
 /*
@@ -41,12 +46,16 @@
  发送信息
  
  */
-
+typedef enum {
+    ConnectVoiceType,
+    ConnectVideoType
+} ConnectType;
 
 
 @interface ContactViewController ()
 
-
+@property (strong,nonatomic) DailCompView *dailView;
+@property ConnectType nowContType;
 
 @end
 
@@ -64,6 +73,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    self.title = @"详细资料";
     
     [self.view setBackgroundColor:[UIColor whiteColor]];
     
@@ -87,16 +98,13 @@
     [self handleHeadViewImage:headerView];
     
     if ([self getUserCount] > 0) {
-  
-        rect = CGRectMake(0, 0, self.view.frame.size.width, 50);
-        self.sendIMBtn = [[UIButton  alloc] initWithFrame: rect];
-        [self.sendIMBtn setBackgroundColor:RGBACOLOR(47, 174, 136, 0.9f)];
-        [self.sendIMBtn.titleLabel setFont:[UIFont systemFontOfSize:15]];
-        [self.sendIMBtn setTitle:@"呼叫" forState:UIControlStateNormal];
-        [self.sendIMBtn setTitleColor:RGBACOLOR(239, 239, 239, 1.0f) forState:UIControlStateNormal];
         
-        [self.sendIMBtn addTarget:self action:@selector(onSendMessage) forControlEvents:UIControlEventTouchUpInside];
-        [self.tableview setTableFooterView: self.sendIMBtn];
+        self.dailView = [DailCompView fromXib];
+        [self.dailView.voiceBtn addTarget:self action:@selector(onSendMessage:) forControlEvents:UIControlEventTouchUpInside];
+        [self.dailView.videoBtn addTarget:self action:@selector(onSendMessage:) forControlEvents:UIControlEventTouchUpInside];
+        
+        [self.tableview setTableFooterView: self.dailView];
+        
     }
  }
 
@@ -144,10 +152,16 @@
     }
 }
 
+
 #pragma mark - UITableViewDelegate
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     return 108;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    //取消选中项
+    [tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES];
 }
 
 -(NSInteger)getUserCount{
@@ -155,13 +169,21 @@
 }
 
 
--(void)onSendMessage {
+-(void)onSendMessage:(id)sender {
+    
+    
+    UIButton* btn = (UIButton*)sender;
+    if (btn.tag == kDailVideoBtnTag) {
+        self.nowContType = ConnectVideoType;
+    }else if(btn.tag == kDailVoiceBtnTag){
+        self.nowContType = ConnectVoiceType;
+    }
     
     if ([self.contact.users count] == 1) {
         
         NSLog(@"send message");
         User *u = [self.contact.users objectAtIndex:0];
-        [self phoneingByUser:u];
+        [self phoneingByUser:u andConnectType:self.nowContType];
         
     } else if ([self.contact.users count] > 1) {
         if (self.contact.users.count == 2) {
@@ -203,6 +225,7 @@
         }
     }
 }
+#pragma mark - UIActionSheetDelegate
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (buttonIndex == actionSheet.cancelButtonIndex) {
@@ -210,8 +233,8 @@
     }
     
     NSAssert(buttonIndex < self.contact.users.count, @"");
-   User *u = [self.contact.users objectAtIndex:buttonIndex];
-    [self phoneingByUser:u];
+    User *u = [self.contact.users objectAtIndex:buttonIndex];
+    [self phoneingByUser:u andConnectType:self.nowContType];
 }
 
 - (void)didReceiveMemoryWarning
@@ -244,10 +267,25 @@
  *
  *  @param user User
  */
--(void)phoneingByUser:(User*)user{
+-(void)phoneingByUser:(User*)user andConnectType:(ConnectType)type{
     if ([[VOIPService instance] connectState] == STATE_CONNECTED) {
-        VOIPVoiceViewController *controller = [[VOIPVoiceViewController alloc] initWithCalledUID:user.uid];
-        [self presentViewController:controller animated:YES completion:nil];
+        switch (type) {
+            case ConnectVideoType:
+            {
+                VOIPVideoViewController*controller = [[VOIPVideoViewController alloc] initWithCalledUID:user.uid];
+                [self presentViewController:controller animated:YES completion:nil];
+            }
+                break;
+            case ConnectVoiceType:
+            {
+                VOIPVoiceViewController *controller = [[VOIPVoiceViewController alloc] initWithCalledUID:user.uid];
+                [self presentViewController:controller animated:YES completion:nil];
+            }
+                break;
+                
+            default:
+                break;
+        }
     }else if([[VOIPService instance] connectState] == STATE_CONNECTING){
         [self.tabBarController.view makeToast:@"正在连接,请稍等" duration:2.0f position:@"bottom"];
     }else if([[VOIPService instance] connectState] == STATE_UNCONNECTED){

@@ -15,7 +15,11 @@
 #import "UserPresent.h"
 #import "Token.h"
 
+
+
 @interface VOIPVoiceViewController ()
+
+
 
 @end
 
@@ -24,7 +28,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    
  
 }
 
