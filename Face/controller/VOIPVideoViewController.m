@@ -20,6 +20,7 @@
 
 @interface VOIPVideoViewController ()
 
+@property(nonatomic) UIButton *switchButton;
 @property(nonatomic) VOIPRenderView *remoteRender;
 @property(nonatomic) VOIPRenderView *localRender;
 @property BOOL showCancel;
@@ -30,6 +31,15 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    UIButton *switchButton = [[UIButton alloc] initWithFrame:CGRectMake(240, 50, 80, 40)];
+    
+    [switchButton setTitle:@"切换" forState:UIControlStateNormal];
+    [switchButton addTarget:self
+                     action:@selector(switchCamera:)
+           forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:switchButton];
+    self.switchButton = switchButton;
+    
     self.remoteRender = [[VOIPRenderView alloc] initWithFrame:self.view.bounds];
     [self.view insertSubview:self.remoteRender atIndex:0];
     
@@ -51,6 +61,12 @@
     [super didReceiveMemoryWarning];
 }
 
+
+-(void)switchCamera:(id)sender {
+    NSLog(@"switch camera");
+    [self.engine switchCamera];
+}
+
 -(void)tapAction:(id)sender{
     if (self.showCancel) {
         self.showCancel = NO;
@@ -59,22 +75,28 @@
             [self.hangUpButton setAlpha:0.0];
             [self.headView setAlpha:0.0];
             [self.durationLabel setAlpha:0.0];
+            [self.switchButton setAlpha:0.0];
         } completion:^(BOOL finished){
             [self.hangUpButton setHidden:YES];
             [self.headView setHidden:YES];
             [self.durationLabel setHidden:YES];
+            [self.switchButton setHidden:YES];
         }];
     }else {
         self.showCancel = YES;
+        
+        [self.hangUpButton setHidden:NO];
+        [self.headView setHidden:NO];
+        [self.durationLabel setHidden:NO];
+        [self.switchButton setHidden:NO];
         
         [UIView animateWithDuration:1.0 animations:^{
             [self.hangUpButton setAlpha:1.0];
             [self.headView setAlpha:1.0];
             [self.durationLabel setAlpha:1.0];
+            [self.switchButton setAlpha:1.0];
         } completion:^(BOOL finished){
-            [self.hangUpButton setHidden:NO];
-            [self.headView setHidden:NO];
-            [self.durationLabel setHidden:NO];
+
         }];
     }
     
