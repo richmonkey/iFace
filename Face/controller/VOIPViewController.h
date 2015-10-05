@@ -26,6 +26,7 @@
 @property(nonatomic) UILabel *durationLabel;
 
 @property (nonatomic) ReflectionView *headView;
+@property (nonatomic) CGPoint durationCenter;
 
 -(id)initWithCalledUID:(int64_t)uid;
 -(id)initWithCallerUID:(int64_t)uid;

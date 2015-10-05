@@ -96,6 +96,11 @@
     return self;
 }
 
+
+- (BOOL)prefersStatusBarHidden {
+    return YES;
+}
+
 -(void)dealloc {
     NSLog(@"voip view controller dealloc");
 }
@@ -152,14 +157,17 @@
     
     self.durationLabel = [[UILabel alloc] init];
     [self.durationLabel setFont:[UIFont systemFontOfSize:23.0f]];
+    
     [self.durationLabel setTextAlignment:NSTextAlignmentCenter];
     [self.durationLabel sizeToFit];
     [self.durationLabel setTextColor: RGBCOLOR(11, 178, 39)];
     [self.durationLabel setHidden:YES];
     [self.view addSubview:self.durationLabel];
-    [self.durationLabel setCenter:CGPointMake((self.view.frame.size.width)/2, self.headView.frame.origin.y + self.headView.frame.size.height + 50)];
     [self.durationLabel setBackgroundColor:[UIColor clearColor]];
+
+    self.durationCenter = CGPointMake((self.view.frame.size.width)/2, self.headView.frame.origin.y + self.headView.frame.size.height + 50);
     
+    [self.durationLabel setCenter:self.durationCenter];
     
     self.acceptButton = [UIButton buttonWithType:UIButtonTypeCustom];
     
@@ -479,7 +487,9 @@
     [self.durationLabel setText:[PublicFunc getTimeStrFromSeconds:self.conversationDuration]];
     [self.durationLabel sizeToFit];
     [self.durationLabel setTextAlignment:NSTextAlignmentCenter];
-    [self.durationLabel setCenter:CGPointMake((self.view.frame.size.width)/2, self.headView.frame.origin.y + self.headView.frame.size.height + 50)];
+    
+    [self.durationLabel setCenter:self.durationCenter];
+    
 }
 
 /**
@@ -490,7 +500,7 @@
     [self.durationLabel setText:[PublicFunc getTimeStrFromSeconds:self.conversationDuration]];
     [self.durationLabel sizeToFit];
     [self.durationLabel setTextAlignment:NSTextAlignmentCenter];
-    [self.durationLabel setCenter:CGPointMake((self.view.frame.size.width)/2, self.headView.frame.origin.y + self.headView.frame.size.height + 50)];
+    [self.durationLabel setCenter:self.durationCenter];
 }
 
 #pragma mark - VOIPStateDelegate

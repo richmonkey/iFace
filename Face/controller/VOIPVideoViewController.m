@@ -31,14 +31,20 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    UIButton *switchButton = [[UIButton alloc] initWithFrame:CGRectMake(240, 50, 80, 40)];
+    self.switchButton = [[UIButton alloc] initWithFrame:CGRectMake(240,60,42,24)];
     
-    [switchButton setTitle:@"切换" forState:UIControlStateNormal];
-    [switchButton addTarget:self
+    [self.switchButton setImage:[UIImage imageNamed:@"switch"] forState:UIControlStateNormal];
+    [self.switchButton addTarget:self
                      action:@selector(switchCamera:)
            forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:switchButton];
-    self.switchButton = switchButton;
+    [self.switchButton setAlpha:0.0f];
+    [self.switchButton setHidden:YES];
+    
+    [self.view addSubview:self.switchButton];
+    
+    [self.hangUpButton setAlpha:0.6f];
+    
+    self.durationCenter = CGPointMake(self.view.frame.size.width/2, 45);
     
     self.remoteRender = [[VOIPRenderView alloc] initWithFrame:self.view.bounds];
     [self.view insertSubview:self.remoteRender atIndex:0];
@@ -57,10 +63,10 @@
     
 }
 
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
 }
-
 
 -(void)switchCamera:(id)sender {
     NSLog(@"switch camera");
@@ -70,30 +76,33 @@
 -(void)tapAction:(id)sender{
     if (self.showCancel) {
         self.showCancel = NO;
-       
+        
+        [self.headView setHidden:YES];
+        
         [UIView animateWithDuration:1.0 animations:^{
             [self.hangUpButton setAlpha:0.0];
-            [self.headView setAlpha:0.0];
             [self.durationLabel setAlpha:0.0];
+            [self.switchButton setAlpha:0.0];
             [self.switchButton setAlpha:0.0];
         } completion:^(BOOL finished){
             [self.hangUpButton setHidden:YES];
-            [self.headView setHidden:YES];
             [self.durationLabel setHidden:YES];
+            [self.switchButton setHidden:YES];
             [self.switchButton setHidden:YES];
         }];
     }else {
+        
         self.showCancel = YES;
         
         [self.hangUpButton setHidden:NO];
-        [self.headView setHidden:NO];
         [self.durationLabel setHidden:NO];
+        [self.switchButton setHidden:NO];
         [self.switchButton setHidden:NO];
         
         [UIView animateWithDuration:1.0 animations:^{
-            [self.hangUpButton setAlpha:1.0];
-            [self.headView setAlpha:1.0];
+            [self.hangUpButton setAlpha:0.6f];
             [self.durationLabel setAlpha:1.0];
+            [self.switchButton setAlpha:1.0];
             [self.switchButton setAlpha:1.0];
         } completion:^(BOOL finished){
 
