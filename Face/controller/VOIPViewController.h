@@ -22,6 +22,7 @@
 @property(nonatomic, assign) BOOL isCaller;
 @property(nonatomic) User* peerUser;
 
+@property(nonatomic) UIButton *switchButton;
 @property(nonatomic) UIButton *hangUpButton;
 @property(nonatomic) UILabel *durationLabel;
 

@@ -40,7 +40,6 @@
 
 @property(nonatomic) UIButton *acceptButton;
 @property(nonatomic) UIButton *refuseButton;
-@property (nonatomic) UIButton *changeStateButton;
 
 @property (nonatomic) UIButton *reDialingButton;
 @property (nonatomic) UIButton *cancelButton;
@@ -481,13 +480,14 @@
  *  显示通话中
  */
 -(void) setOnTalkingUIShow{
+    self.switchButton.hidden = NO;
+    self.hangUpButton.hidden = NO;
+    self.acceptButton.hidden = YES;
+    self.refuseButton.hidden = YES;
     
-    [self.changeStateButton setHidden:NO];
     [self.durationLabel setHidden:NO];
     [self.durationLabel setText:[PublicFunc getTimeStrFromSeconds:self.conversationDuration]];
     [self.durationLabel sizeToFit];
-    [self.durationLabel setTextAlignment:NSTextAlignmentCenter];
-    
     [self.durationLabel setCenter:self.durationCenter];
     
 }
@@ -499,7 +499,6 @@
     self.conversationDuration += 1;
     [self.durationLabel setText:[PublicFunc getTimeStrFromSeconds:self.conversationDuration]];
     [self.durationLabel sizeToFit];
-    [self.durationLabel setTextAlignment:NSTextAlignmentCenter];
     [self.durationLabel setCenter:self.durationCenter];
 }
 
@@ -557,23 +556,18 @@
 }
 
 -(void)onConnected {
+    NSLog(@"call voip connected");
     self.isConnected = YES;
     self.history.flag = self.history.flag|FLAG_ACCEPTED;
-    
-    [self setOnTalkingUIShow];
+
     [self.player stop];
     self.player = nil;
     
+    [self setOnTalkingUIShow];
     self.refreshTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(refreshDuration) userInfo:nil repeats:YES];
     [self.refreshTimer fire];
-    
-    NSLog(@"call voip connected");
+
     [self startStream];
-    
-    
-    self.hangUpButton.hidden = NO;
-    self.acceptButton.hidden = YES;
-    self.refuseButton.hidden = YES;
 }
 
 -(void)onRefuseFinished {

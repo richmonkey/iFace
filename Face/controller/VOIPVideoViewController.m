@@ -20,7 +20,6 @@
 
 @interface VOIPVideoViewController ()
 
-@property(nonatomic) UIButton *switchButton;
 @property(nonatomic) VOIPRenderView *remoteRender;
 @property(nonatomic) VOIPRenderView *localRender;
 @property BOOL showCancel;
@@ -31,16 +30,11 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    CGFloat xPosition = self.view.frame.size.width - 25 - 20 - 20;
-    CGFloat yPosition = 45;
-    self.switchButton = [[UIButton alloc] initWithFrame:CGRectMake(xPosition,yPosition,27,25)];
-    
+    self.switchButton = [[UIButton alloc] initWithFrame:CGRectMake(240,27,42,24)];
     [self.switchButton setImage:[UIImage imageNamed:@"switch"] forState:UIControlStateNormal];
     [self.switchButton addTarget:self
                      action:@selector(switchCamera:)
            forControlEvents:UIControlEventTouchUpInside];
-    [self.switchButton setAlpha:0.0f];
     [self.switchButton setHidden:YES];
     
     [self.view addSubview:self.switchButton];
@@ -56,7 +50,7 @@
     UITapGestureRecognizer*tapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapAction:)];
     [self.remoteRender addGestureRecognizer:tapGesture];
     
-    self.localRender = [[VOIPRenderView alloc] initWithFrame:CGRectMake(200, 380, 72, 96)];
+    self.localRender = [[VOIPRenderView alloc] initWithFrame:CGRectMake(230, 380, 72, 96)];
     [self.view insertSubview:self.localRender aboveSubview:self.remoteRender];
     
     self.localRender.hidden = YES;
