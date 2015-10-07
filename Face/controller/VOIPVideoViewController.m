@@ -31,7 +31,10 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.switchButton = [[UIButton alloc] initWithFrame:CGRectMake(240,60,42,24)];
+    
+    CGFloat xPosition = self.view.frame.size.width - 25 - 20 - 20;
+    CGFloat yPosition = 45;
+    self.switchButton = [[UIButton alloc] initWithFrame:CGRectMake(xPosition,yPosition,27,25)];
     
     [self.switchButton setImage:[UIImage imageNamed:@"switch"] forState:UIControlStateNormal];
     [self.switchButton addTarget:self
@@ -44,7 +47,7 @@
     
     [self.hangUpButton setAlpha:0.6f];
     
-    self.durationCenter = CGPointMake(self.view.frame.size.width/2, 45);
+    self.durationCenter = CGPointMake(self.view.frame.size.width/2, 40);
     
     self.remoteRender = [[VOIPRenderView alloc] initWithFrame:self.view.bounds];
     [self.view insertSubview:self.remoteRender atIndex:0];
