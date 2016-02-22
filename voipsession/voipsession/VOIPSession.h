@@ -9,6 +9,7 @@
 
 #import <Foundation/Foundation.h>
 #import "VOIPService.h"
+#import "VOIPCommand.h"
 
 //todo 状态变迁图
 enum VOIPState {
@@ -37,11 +38,13 @@ enum VOIPState {
 
 @interface VOIPSession : NSObject<VOIPObserver>
 
++(void)setVOIPHost:(NSString*)voipHost;
 
 @property(nonatomic, weak) NSObject<VOIPSessionDelegate> *delegate;
 
 @property(nonatomic, assign) enum VOIPState state;
 
+@property(nonatomic, copy) NSString *voipHost;
 @property(nonatomic, copy) NSString *relayIP;
 
 @property(nonatomic, assign) int voipPort;
