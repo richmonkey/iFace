@@ -42,7 +42,7 @@
                                  @"网络状态",
                                  @"清除所有通话记录"
                                 ];
-        [[VOIPService instance] addMessageObserver:self];
+        [[VOIPService instance] addConnectionObserver:self];
     }
     return self;
 }

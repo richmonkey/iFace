@@ -19,6 +19,7 @@
 #import "VOIPVoiceViewController.h"
 #import "VOIPVideoViewController.h"
 #import "UIView+Toast.h"
+#import <voipsession/voipcommand.h>
 
 @interface MainTabBarController ()
 @property(nonatomic)dispatch_source_t refreshTimer;
@@ -180,25 +181,15 @@
 
 #pragma mark - VOIPObserver
 -(void)onVOIPControl:(VOIPControl*)ctl {
-    NSLog(@"voip command:%d", ctl.cmd);
-
-    if (ctl.cmd == VOIP_COMMAND_DIAL) {
+    VOIPCommand *command = [[VOIPCommand alloc] initWithContent:ctl.content];
+    NSLog(@"voip command:%d", command.cmd);
+    if (command.cmd == VOIP_COMMAND_DIAL) {
         VOIPVoiceViewController *controller = [[VOIPVoiceViewController alloc] initWithCallerUID:ctl.sender];
         [self presentViewController:controller animated:YES completion:nil];
-    } else if (ctl.cmd == VOIP_COMMAND_DIAL_VIDEO) {
+    } else if (command.cmd == VOIP_COMMAND_DIAL_VIDEO) {
         VOIPVideoViewController *controller = [[VOIPVideoViewController alloc] initWithCallerUID:ctl.sender];
         [self presentViewController:controller animated:YES completion:nil];
     }
-}
-
-
--(void)sendReset:(int64_t)uid {
-    VOIPControl *ctl = [[VOIPControl alloc] init];
-    ctl.sender = [UserPresent instance].uid;
-    ctl.receiver = uid;
-    ctl.cmd = VOIP_COMMAND_RESET;
-
-    [[VOIPService instance] sendVOIPControl:ctl];
 }
 
 @end

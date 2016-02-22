@@ -124,11 +124,15 @@
             NSString *sdkAPIHost = [Config instance].sdkAPIURL;
             NSString *sdkAPIIP = [self resolveIP:sdkAPIHost];
             
+            NSString *voipHost = @"voipnode.gobelieve.io";
+            NSString *voipHostIP = [self resolveIP:voipHost];
+            
             NSLog(@"host:%@ ip:%@", host, ip);
             NSLog(@"api host:%@ ip:%@", apiHost, apiIP);
             NSLog(@"sdk api host:%@ ip:%@", sdkAPIHost, sdkAPIIP);
             
-            if (ip.length == 0 || apiIP.length == 0 || sdkAPIIP.length == 0) {
+            if (ip.length == 0 || apiIP.length == 0 ||
+                sdkAPIIP.length == 0 || voipHostIP.length == 0) {
                 continue;
             } else {
                 break;

@@ -40,7 +40,7 @@
 }
 
 -(NSString*)sdkHost {
-    return @"voipnode.gobelieve.io";
+    return @"imnode.gobelieve.io";
 }
 #else
 -(NSString*)URL {

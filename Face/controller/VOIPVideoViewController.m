@@ -11,8 +11,8 @@
 #include <arpa/inet.h>
 #import <AVFoundation/AVAudioSession.h>
 #import <UIKit/UIKit.h>
-#import "VOIPEngine.h"
-#import "VOIPRenderView.h"
+#import <voipengine/VOIPEngine.h>
+#import <voipengine/VOIPRenderView.h>
 
 #import <voipsession/VOIPSession.h>
 #import "UserPresent.h"
