@@ -10,21 +10,10 @@
 #import <AVFoundation/AVCaptureDevice.h>
 #import <AVFoundation/AVMediaFormat.h>
 
+#include <string>
 #include "webrtc/common_types.h"
 
 #include "webrtc/modules/video_capture/include/video_capture_factory.h"
-#include "webrtc/base/thread.h"
-#include "webrtc/base/scoped_ptr.h"
-#include "webrtc/base/asyncinvoker.h"
-#include "webrtc/base/messagehandler.h"
-#include "webrtc/base/bind.h"
-#include "webrtc/base/helpers.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/base/safe_conversions.h"
-#include "webrtc/base/thread.h"
-#include "webrtc/base/timeutils.h"
 #include "webrtc/common_video/libyuv/include/webrtc_libyuv.h"
 #include "webrtc/modules/video_capture/include/video_capture.h"
 #include "webrtc/video/audio_receive_stream.h"
@@ -33,7 +22,6 @@
 #include "webrtc/video_engine/vie_channel_group.h"
 #include "webrtc/modules/utility/interface/process_thread.h"
 #include "webrtc/modules/video_coding/codecs/h264/include/h264.h"
-
 
 #include "webrtc/voice_engine/include/voe_network.h"
 #include "webrtc/voice_engine/include/voe_base.h"
@@ -46,19 +34,16 @@
 #include "webrtc/voice_engine/include/voe_rtp_rtcp.h"
 #include "webrtc/voice_engine/include/voe_hardware.h"
 
-
-
 #include "webrtc/engine_configurations.h"
 #include "webrtc/modules/video_render/include/video_render_defines.h"
 #include "webrtc/modules/video_render/include/video_render.h"
 #include "webrtc/modules/video_capture/include/video_capture_factory.h"
 #include "webrtc/system_wrappers/interface/tick_util.h"
 #include "webrtc/video_engine/vie_encoder.h"
-#include <string>
-#import "WebRTC.h"
-//#include "channel_transport.h"
+
 #include "ChannelTransport.h"
 
+#import "WebRTC.h"
 #import "VOIPRenderView.h"
 #import "RTCI420Frame+Internal.h"
 #import "RTCI420Frame.h"
@@ -101,119 +86,15 @@ const char kCodecParamMaxBitrate[] = "x-google-max-bitrate";
 
 static const int kNackHistoryMs = 1000;
 
-@interface AudioSendStream()
-@property(assign, nonatomic)VoiceChannelTransport *voiceChannelTransport;
-@end
-
-@implementation AudioSendStream
-
-- (void)dealloc
-{
-    NSAssert(self.voiceChannelTransport == NULL, @"");
-    NSLog(@"audio send stream dealloc");
-}
-
-
-- (void)startSend
-{
-    WebRTC *rtc = [WebRTC sharedWebRTC];
-    rtc.voe_base->StartSend(self.voiceChannel);
-}
-
-- (void)startReceive
-{
-    WebRTC *rtc = [WebRTC sharedWebRTC];
-    rtc.voe_base->StartReceive(self.voiceChannel);
-}
-
--(void)setSendVoiceCodec {
-    int error;
-    WebRTC *rtc = [WebRTC sharedWebRTC];
-    rtc.voe_codec->NumOfCodecs();
-    webrtc::CodecInst audio_codec;
-    memset(&audio_codec, 0, sizeof(webrtc::CodecInst));
-    for (int codec_idx = 0; codec_idx < rtc.voe_codec->NumOfCodecs(); codec_idx++) {
-        error = rtc.voe_codec->GetCodec(codec_idx, audio_codec);
-        
-        if (strcmp(audio_codec.plname, DEFAULT_AUDIO_CODEC) == 0) {
-            break;
-        }
-    }
-    
-    error = rtc.voe_codec->SetSendCodec(self.voiceChannel, audio_codec);
-    NSLog(@"codec:%s", audio_codec.plname);
-}
-
--(BOOL) start
-{
-    WebRTC *rtc = [WebRTC sharedWebRTC];
-    
-    self.voiceChannel = rtc.voe_base->CreateChannel();
-    //register external transport
-    self.voiceChannelTransport = new VoiceChannelTransport(rtc.voe_network,
-                                                           self.voiceChannel,
-                                                           self.voiceTransport, YES);
-
-    [self setSendVoiceCodec];
-
-
-    [self startSend];
-    [self startReceive];
-    
-    return YES;
-}
-
--(BOOL)stop {
-    WebRTC *rtc = [WebRTC sharedWebRTC];
-
-    //deregister external transport
-    delete self.voiceChannelTransport;
-    self.voiceChannelTransport = NULL;
-    
-    rtc.voe_base->StopReceive(self.voiceChannel);
-    rtc.voe_base->StopSend(self.voiceChannel);
-    rtc.voe_base->DeleteChannel(self.voiceChannel);
-    
-
-    return YES;
-}
-
-@end
-
-struct VideoFormat {
-    int width;  // Number of pixels.
-    int height;  // Number of pixels.
-    int64_t interval;  // Nanoseconds.
-    uint32_t fourcc;  // Color space. FOURCC_ANY means that any color space is OK.
-};
-
-class WebRtcVcmFactory {
-public:
-    virtual webrtc::VideoCaptureModule* Create(int id, const char* device) {
-        return webrtc::VideoCaptureFactory::Create(id, device);
-    }
-    virtual webrtc::VideoCaptureModule::DeviceInfo* CreateDeviceInfo(int id) {
-        return webrtc::VideoCaptureFactory::CreateDeviceInfo(id);
-    }
-    virtual void DestroyDeviceInfo(webrtc::VideoCaptureModule::DeviceInfo* info) {
-        delete info;
-    }
-};
-
-#define ARRAY_SIZE(x) (static_cast<int>(sizeof(x) / sizeof(x[0])))
+#define STREAM_WIDTH 480
+#define STREAM_HEIGHT 640
 
 union VideoEncoderSettings {
     webrtc::VideoCodecVP8 vp8;
     webrtc::VideoCodecVP9 vp9;
 };
 
-class VideoCaptureDataCallback;
 @interface AVSendStream() {
-    WebRtcVcmFactory *factory_;
-    webrtc::VideoCaptureModule* module_;
-    
-    VideoCaptureDataCallback *cb_;
-    int captured_frames_;
     std::vector<uint8_t> capture_buffer_;
     
     webrtc::Call *call_;
@@ -223,75 +104,36 @@ class VideoCaptureDataCallback;
     webrtc::VideoEncoder *encoder_;
     
 }
-@property(assign, nonatomic)VoiceChannelTransport *voiceChannelTransport;
-@property(nonatomic, getter=isFrontCamera) BOOL frontCamera;
+
+@property(assign, nonatomic) VoiceChannelTransport *voiceChannelTransport;
 
 -(void)OnIncomingCapturedFrame:(int32_t)id frame:(const webrtc::VideoFrame*)frame;
 @end
 
 
-class VideoCaptureDataCallback:public webrtc::VideoCaptureDataCallback {
-public:
-    // Callback when a frame is captured by camera.
-    virtual void OnIncomingCapturedFrame(const int32_t id,
-                                         const webrtc::VideoFrame& frame) {
-        [sendStream OnIncomingCapturedFrame:id frame:&frame];
-    }
-    virtual void OnCaptureDelayChanged(const int32_t id,
-                                       const int32_t delay) {
-        
-    }
-    
-    __weak AVSendStream *sendStream;
-    
-    VideoCaptureDataCallback(AVSendStream *s):sendStream(s) {}
-};
-
 
 @implementation AVSendStream
--(id)init {
+- (id)init {
     self = [super init];
     if (self) {
-        factory_ =new WebRtcVcmFactory();
-
-        cb_ = new VideoCaptureDataCallback(self);
-        
-        self.frontCamera = YES;
+ 
         
     }
     return self;
 }
 
--(void)dealloc {
-    delete cb_;
-    delete factory_;
+- (void)dealloc {
+
 }
 
--(void)setCall:(void*)call {
+- (void)setCall:(void*)call {
     call_ = (webrtc::Call*)call;
 }
 
--(void)OnIncomingCapturedFrame:(int32_t)id frame:(const webrtc::VideoFrame*)frame {
-    
-    ++captured_frames_;
-    // Log the size and pixel aspect ratio of the first captured frame.
-    if (1 == captured_frames_) {
-        NSLog(@"frame width:%d heigth:%d rotation:%d", frame->width(), frame->height(), frame->rotation());
-    }
-
-    //2帧取1帧
-    if (stream_ && captured_frames_%2 == 0) {
+- (void)OnIncomingCapturedFrame:(int32_t)id frame:(const webrtc::VideoFrame*)frame {
+    if (stream_) {
         webrtc::VideoCaptureInput *input = stream_->Input();
         input->IncomingCapturedFrame(*frame);
-    }
-    
-    if (self.render) {
-        
-        RTCEAGLVideoView *rtcView = (__bridge RTCEAGLVideoView*)[self.render getRTCView];
-        
-        RTCI420Frame *f = [[RTCI420Frame alloc] initWithVideoFrame:frame];
-        
-        [rtcView renderFrame:f];
     }
 }
 
@@ -301,132 +143,14 @@ public:
     }
 }
 
-
--(void)switchCamera {
-    module_->DeRegisterCaptureDataCallback();
-    module_->StopCapture();
-    
-    module_->Release();
-    module_ = NULL;
-    
-
-    self.frontCamera = !self.isFrontCamera;
-    [self startCapture:self.isFrontCamera];
-
-}
-
-#define WIDTH 352
-#define HEIGHT 288
-#define FPS 30
-
-#define STREAM_WIDTH 240
-#define STREAM_HEIGHT 320
-
--(BOOL)startCapture:(BOOL)front {
-    AVCaptureDevice *device;
-    for (AVCaptureDevice *captureDevice in [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo] ) {
-        if (front && captureDevice.position == AVCaptureDevicePositionFront) {
-            device = captureDevice;
-            break;
-        } else if (!front && captureDevice.position == AVCaptureDevicePositionBack) {
-            device = captureDevice;
-            break;
-        }
-    }
-    NSLog(@"device:%@ %@", device.uniqueID, device.localizedName);
-    
-    const char *device_name = [device.localizedName UTF8String];
-    
-    webrtc::VideoCaptureModule::DeviceInfo* info = factory_->CreateDeviceInfo(0);
-    if (!info) {
-        return NO;
-    }
-    
-    int num_cams = info->NumberOfDevices();
-    char vcm_id[256] = "";
-    bool found = false;
-    for (int index = 0; index < num_cams; ++index) {
-        char vcm_name[256] = {0};
-        if (info->GetDeviceName(index, vcm_name, ARRAY_SIZE(vcm_name),
-                                vcm_id, ARRAY_SIZE(vcm_id)) != -1) {
-            
-            NSLog(@"vcm name:%s", vcm_name);
-            if (strcmp(vcm_name, device_name) == 0) {
-                found = true;
-                break;
-            }
-        }
-    }
-    
-    if (!found) {
-        NSLog(@"Failed to find capturer for name:%s", device_name);
-        factory_->DestroyDeviceInfo(info);
-        return NO;
-    }
-    
-    webrtc::VideoCaptureCapability best_cap;
-    best_cap.width = WIDTH;
-    best_cap.height = HEIGHT;
-    best_cap.maxFPS = FPS;
-    best_cap.rawType = webrtc::kVideoNV12;
-    
-    int best_diff = INT_MAX;
-    
-    int32_t num_caps = info->NumberOfCapabilities(vcm_id);
-    for (int32_t i = 0; i < num_caps; ++i) {
-        webrtc::VideoCaptureCapability cap;
-        if (info->GetCapability(vcm_id, i, cap) != -1) {
-            NSLog(@"cap width:%d height:%d raw type:%d max fps:%d", cap.width, cap.height, cap.rawType, cap.maxFPS);
-        }
-        
-        int area = cap.width*cap.height;
-        int diff = abs(area - WIDTH*HEIGHT);
-        
-        if (diff < best_diff) {
-            best_cap = cap;
-            best_diff = diff;
-        }
-    }
-    
-    NSLog(@"best cap width:%d height:%d raw type:%d max fps:%d",
-          best_cap.width, best_cap.height, best_cap.rawType, best_cap.maxFPS);
-    
-    factory_->DestroyDeviceInfo(info);
-    
-    
-    module_ = factory_->Create(0, vcm_id);
-    if (!module_) {
-        NSLog(@"Failed to create capturer for name:%s ", device_name);
-        return NO;
-    }
-    
-    // It is safe to change member attributes now.
-    module_->AddRef();
-
-    
-    module_->RegisterCaptureDataCallback(*cb_);
-    if (module_->StartCapture(best_cap) != 0) {
-        module_->DeRegisterCaptureDataCallback();
-        return NO;
-    }
-    
-    return YES;
-}
-
--(BOOL) start {
-    captured_frames_ = 0;
-
-    [self startCapture:self.isFrontCamera];
-    
+- (BOOL)start {
     [self startSendStream];
-    
     [self startAudioStream];
-    
     return YES;
 }
 
 
--(void)setSendVoiceCodec {
+- (void)setSendVoiceCodec {
     int error;
     WebRTC *rtc = [WebRTC sharedWebRTC];
     rtc.voe_codec->NumOfCodecs();
@@ -445,7 +169,7 @@ public:
 }
 
 
--(void)startAudioStream {
+- (void)startAudioStream {
     WebRTC *rtc = [WebRTC sharedWebRTC];
     
     self.voiceChannel = rtc.voe_base->CreateChannel();
@@ -460,7 +184,7 @@ public:
     rtc.voe_base->StartSend(self.voiceChannel);
 }
 
--(std::vector<webrtc::VideoStream>) CreateVideoStreams {
+- (std::vector<webrtc::VideoStream>) CreateVideoStreams {
     int max_bitrate_bps = kMaxVideoBitrate * 1000;
     
     webrtc::VideoStream stream;
@@ -479,7 +203,7 @@ public:
 }
 
 
--(webrtc::VideoEncoderConfig)CreateVideoEncoderConfig {
+- (webrtc::VideoEncoderConfig)CreateVideoEncoderConfig {
     webrtc::VideoEncoderConfig encoder_config;
 
     encoder_config.min_transmit_bitrate_bps = 0;
@@ -489,7 +213,7 @@ public:
     return encoder_config;
 }
 
--(void*) ConfigureVideoEncoderSettings:(webrtc::VideoCodecType) type {
+- (void*)ConfigureVideoEncoderSettings:(webrtc::VideoCodecType)type {
     if (type == webrtc::kVideoCodecVP8) {
         encoder_settings_.vp8 = webrtc::VideoEncoder::GetDefaultVp8Settings();
         encoder_settings_.vp8.automaticResizeOn = true;
@@ -507,7 +231,7 @@ public:
 }
 
 
--(void)startSendStream {
+- (void)startSendStream {
     NSLog(@"support h264:%d", webrtc::H264Encoder::IsSupported());
     
     struct webrtc::VideoEncoderConfig encoder_config = [self CreateVideoEncoderConfig];
@@ -555,16 +279,10 @@ public:
 }
 
 
--(BOOL) stop {
+- (BOOL)stop {
     if (stream_ == NULL) {
         return YES;
     }
-    
-    module_->DeRegisterCaptureDataCallback();
-    module_->StopCapture();
-    
-    module_->Release();
-    module_ = NULL;
 
     stream_->Stop();
     call_->DestroyVideoSendStream(stream_);

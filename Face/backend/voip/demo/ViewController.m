@@ -35,8 +35,9 @@
 
 
     //app可以单独部署服务器，给予第三方应用更多的灵活性
-    //在开发阶段也可以配置成测试环境的地址 "sandbox.voipnode.gobelieve.io"
-    [VOIPService instance].host = @"voipnode.gobelieve.io";
+    //在开发阶段也可以配置成测试环境的地址 "sandbox.imnode.gobelieve.io", "sandbox.voipnode.gobelieve.io"
+    [VOIPSession setVOIPHost:@"voipnode.gobelieve.io"];
+    [VOIPService instance].host = @"imnode.gobelieve.io";
     [VOIPService instance].deviceID = [[[UIDevice currentDevice] identifierForVendor] UUIDString];
     [[VOIPService instance] startRechabilityNotifier];
 }
@@ -157,7 +158,8 @@
 }
 
 -(void)onVOIPControl:(VOIPControl*)ctl {
-    if (ctl.cmd == VOIP_COMMAND_DIAL) {
+    VOIPCommand *command = [[VOIPCommand alloc] initWithContent:ctl.content];
+    if (command.cmd == VOIP_COMMAND_DIAL) {
         if (ctl.sender == self.peerUID) {
             
             [self.hud hide:NO];
@@ -172,7 +174,7 @@
             
             [self presentViewController:controller animated:YES completion:nil];
         }
-    } else if (ctl.cmd == VOIP_COMMAND_DIAL_VIDEO) {
+    } else if (command.cmd == VOIP_COMMAND_DIAL_VIDEO) {
         if (ctl.sender == self.peerUID) {
             
             [self.hud hide:NO];
