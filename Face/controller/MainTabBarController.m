@@ -20,10 +20,13 @@
 #import "VOIPVideoViewController.h"
 #import "UIView+Toast.h"
 #import <voipsession/voipcommand.h>
+#import "APIRequest.h"
 
 @interface MainTabBarController ()
 @property(nonatomic)dispatch_source_t refreshTimer;
 @property(nonatomic)int refreshFailCount;
+
+@property(nonatomic) int bindFailCount;
 @end
 
 @implementation MainTabBarController
@@ -99,8 +102,46 @@
     
     [[VOIPService instance] pushVOIPObserver:self];
     
+    
+    UIApplication *application = [UIApplication sharedApplication];
+    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeAlert
+                                                                                         | UIUserNotificationTypeBadge
+                                                                                         | UIUserNotificationTypeSound) categories:nil];
+    [application registerUserNotificationSettings:settings];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didRegisterForRemoteNotificationsWithDeviceToken:) name:@"didRegisterForRemoteNotificationsWithDeviceToken" object:nil];
 }
 
+-(void)didRegisterForRemoteNotificationsWithDeviceToken:(NSNotification*)notification {
+    NSData *deviceToken = (NSData*)notification.object;
+    
+    NSString* newToken = [deviceToken description];
+    newToken = [newToken stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"<>"]];
+    newToken = [newToken stringByReplacingOccurrencesOfString:@" " withString:@""];
+    
+    NSLog(@"device token is: %@:%@", deviceToken, newToken);
+
+    self.bindFailCount = 0;
+    [self bindDeviceToken:newToken];
+}
+
+- (void)bindDeviceToken:(NSString*)deviceToken {
+    [APIRequest bindDeviceToken:deviceToken
+                        success:^{
+                            NSLog(@"bind device token success");
+                        }
+                           fail:^{
+                               NSLog(@"bind device token fail");
+                               self.bindFailCount = self.bindFailCount + 1;
+                               if (self.bindFailCount >= 10) {
+                                   return;
+                               }
+                               
+                               dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                                   [self bindDeviceToken:deviceToken];
+                               });
+                           }];
+}
 
 - (void)didReceiveMemoryWarning
 {

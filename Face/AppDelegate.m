@@ -56,26 +56,17 @@
     return YES;
 }
 
-- (void)application:(UIApplication *)app didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-    NSString* newToken = [deviceToken description];
-	newToken = [newToken stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"<>"]];
-	newToken = [newToken stringByReplacingOccurrencesOfString:@" " withString:@""];
-    self.deviceToken = newToken;
-    
-    Token *token = [Token instance];
-    if (token.uid > 0) {
-        [APIRequest bindDeviceToken:self.deviceToken
-                           success:^{
-                               NSLog(@"bind device token success");
-                           }
-                              fail:^{
-                                  NSLog(@"bind device token fail");
-                              }];
-    }
-
-    
-    NSLog(@"device token is: %@:%@", deviceToken, newToken);
+- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings
+{
+    //register to receive notifications
+    [application registerForRemoteNotifications];
 }
+
+- (void)application:(UIApplication *)app didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"didRegisterForRemoteNotificationsWithDeviceToken"
+                                                        object:deviceToken];
+}
+
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
     NSLog(@"register remote notification error:%@", error);
 }
