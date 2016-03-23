@@ -26,7 +26,6 @@
 		48C7A13F1A065BDA0020E7F6 /* start.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 48C7A13C1A065BDA0020E7F6 /* start.mp3 */; };
 		48C7A1431A06650D0020E7F6 /* HistoryTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 48C7A1411A06650D0020E7F6 /* HistoryTableViewCell.m */; };
 		48C7A1441A06650D0020E7F6 /* HistoryTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 48C7A1421A06650D0020E7F6 /* HistoryTableViewCell.xib */; };
-		6D2E3FB71C7B6C4400707C00 /* libvoipengine.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D2E3FB21C7B6C2300707C00 /* libvoipengine.a */; };
 		6D401BCB1AAC7BAB0041ABC6 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D401BCA1AAC7BAB0041ABC6 /* GLKit.framework */; };
 		6D401C101AAC7E420041ABC6 /* libvoipsession.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D401BF51AAC7D300041ABC6 /* libvoipsession.a */; };
 		6D401C201AAC925C0041ABC6 /* apns.caf in Resources */ = {isa = PBXBuildFile; fileRef = 6D401C1F1AAC925C0041ABC6 /* apns.caf */; };
@@ -152,13 +151,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = 6D0331821AAB73E3004AA39F;
 			remoteInfo = voipengineTests;
-		};
-		6D2E3FB51C7B6C3500707C00 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6D2E3FAB1C7B6C2300707C00 /* voipengine.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 6D0331761AAB73E3004AA39F;
-			remoteInfo = voipengine;
 		};
 		6D401BF41AAC7D300041ABC6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -426,7 +418,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6D2E3FB71C7B6C4400707C00 /* libvoipengine.a in Frameworks */,
 				6D4D55E11BA4033800247208 /* VideoToolbox.framework in Frameworks */,
 				6D401C101AAC7E420041ABC6 /* libvoipsession.a in Frameworks */,
 				6D401BCB1AAC7BAB0041ABC6 /* GLKit.framework in Frameworks */,
@@ -974,7 +965,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				6D2E3FB61C7B6C3500707C00 /* PBXTargetDependency */,
 				6D401C0F1AAC7E360041ABC6 /* PBXTargetDependency */,
 			);
 			name = Face;
@@ -1227,11 +1217,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		6D2E3FB61C7B6C3500707C00 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = voipengine;
-			targetProxy = 6D2E3FB51C7B6C3500707C00 /* PBXContainerItemProxy */;
-		};
 		6D401C0F1AAC7E360041ABC6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = voipsession;

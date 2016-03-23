@@ -11,17 +11,12 @@
 #include <arpa/inet.h>
 #import <AVFoundation/AVAudioSession.h>
 #import <UIKit/UIKit.h>
-#import <voipengine/VOIPEngine.h>
-#import <voipengine/VOIPRenderView.h>
-
 #import <voipsession/VOIPSession.h>
 #import "UserPresent.h"
 #import "Token.h"
 
 @interface VOIPVideoViewController ()
 
-@property(nonatomic) VOIPRenderView *remoteRender;
-@property(nonatomic) VOIPRenderView *localRender;
 @property BOOL showCancel;
 
 @end
@@ -43,18 +38,7 @@
     
     self.durationCenter = CGPointMake(self.view.frame.size.width/2, 40);
     
-    self.remoteRender = [[VOIPRenderView alloc] initWithFrame:self.view.bounds];
-    [self.view insertSubview:self.remoteRender atIndex:0];
-    
-    
-    UITapGestureRecognizer*tapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapAction:)];
-    [self.remoteRender addGestureRecognizer:tapGesture];
-    
-    self.localRender = [[VOIPRenderView alloc] initWithFrame:CGRectMake(230, 380, 72, 96)];
-    [self.view insertSubview:self.localRender aboveSubview:self.remoteRender];
-    
-    self.localRender.hidden = YES;
-    self.remoteRender.hidden = YES;
+
     
     self.showCancel = YES;
     
@@ -67,7 +51,7 @@
 
 -(void)switchCamera:(id)sender {
     NSLog(@"switch camera");
-    [self.engine switchCamera];
+
 }
 
 -(void)tapAction:(id)sender{
@@ -116,55 +100,10 @@
     [super startStream];
     [self tapAction:nil];
     
-    if (self.voip.localNatMap != nil) {
-        struct in_addr addr;
-        addr.s_addr = htonl(self.voip.localNatMap.ip);
-        NSLog(@"local nat map:%s:%d", inet_ntoa(addr), self.voip.localNatMap.port);
-    }
-    if (self.voip.peerNatMap != nil) {
-        struct in_addr addr;
-        addr.s_addr = htonl(self.voip.peerNatMap.ip);
-        NSLog(@"peer nat map:%s:%d", inet_ntoa(addr), self.voip.peerNatMap.port);
-    }
-    
-    if (self.isP2P) {
-        struct in_addr addr;
-        addr.s_addr = htonl(self.voip.peerNatMap.ip);
-        NSLog(@"peer address:%s:%d", inet_ntoa(addr), self.voip.peerNatMap.port);
-        NSLog(@"start p2p stream");
-    } else {
-        NSLog(@"start stream");
-    }
-    
-    if (self.engine != nil) {
-        return;
-    }
-    
-    self.engine = [[VOIPEngine alloc] init];
-    NSLog(@"relay ip:%@", self.voip.relayIP);
-    self.engine.relayIP = self.voip.relayIP;
-    self.engine.voipPort = self.voip.voipPort;
-    self.engine.caller = [UserPresent instance].uid;
-    self.engine.callee = self.peerUser.uid;
-    self.engine.token = [Token instance].accessToken;
-    self.engine.isCaller = self.isCaller;
-    self.engine.videoEnabled = YES;
-    
-    self.engine.remoteRender = self.remoteRender;
-    self.engine.localRender = self.localRender;
-    
-    
-    if (self.isP2P) {
-        self.engine.calleeIP = self.voip.peerNatMap.ip;
-        self.engine.calleePort = self.voip.peerNatMap.port;
-    }
-    
-    [self.engine startStream];
     
     [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
     
-    self.localRender.hidden = NO;
-    self.remoteRender.hidden = NO;
+
     
     [self SetLoudspeakerStatus:YES];
 }
@@ -172,11 +111,7 @@
 
 -(void)stopStream {
     [super stopStream];
-    if (self.engine == nil) {
-        return;
-    }
-    NSLog(@"stop stream");
-    [self.engine stopStream];
+
     
     [[UIApplication sharedApplication] setIdleTimerDisabled:NO];
 }

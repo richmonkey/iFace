@@ -8,7 +8,6 @@
 
 #include <arpa/inet.h>
 #import <AVFoundation/AVAudioSession.h>
-#import <voipengine/VOIPEngine.h>
 #import "VOIPViewController.h"
 
 #import "User.h"
