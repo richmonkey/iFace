@@ -36,7 +36,7 @@
                         <action selector="contactUs:" destination="-1" eventType="touchUpInside" id="9ZF-Pd-ji9"/>
                     </connections>
                 </button>
-                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Copyright 2014 HY Inc." lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="L2m-dI-9Ny">
+                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Copyright 2016 HY Inc." lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="L2m-dI-9Ny">
                     <rect key="frame" x="76" y="327" width="169" height="20"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="20" id="DJn-xo-cp3"/>
