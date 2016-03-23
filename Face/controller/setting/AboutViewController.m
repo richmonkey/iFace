@@ -11,6 +11,7 @@
 
 
 @interface AboutViewController ()
+@property (weak, nonatomic) IBOutlet UILabel *versionLabel;
 
 @property (weak, nonatomic) IBOutlet UIButton *contactUsBtn;
 @property (strong, nonatomic) NSArray *reciver;
@@ -34,6 +35,17 @@
 {
     [super viewDidLoad];
     [self setTitle:@"关于"];
+    
+    NSString *version = [[NSBundle mainBundle] objectForInfoDictionaryKey: (NSString *)kCFBundleVersionKey];
+#ifdef DEBUG
+    NSString *ver = [NSString stringWithFormat:@"version %@ dev", version];
+#else
+    NSString *ver = [NSString stringWithFormat:@"version %@", version];
+#endif
+    
+    [self.versionLabel setText:ver];
+
+    
     
     NSMutableAttributedString *str = [[NSMutableAttributedString alloc] initWithString:@"联系我们"];
     NSRange strRange = {0,[str length]};
