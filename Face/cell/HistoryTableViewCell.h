@@ -15,4 +15,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *statusLabel;
 @property (weak, nonatomic) IBOutlet UILabel *timeLabel;
 
++(id)fromXib;
+
 @end

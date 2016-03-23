@@ -10,6 +10,12 @@
 
 @implementation HistoryTableViewCell
 
++(id)fromXib{
+    NSArray *subviewArray = [[NSBundle mainBundle] loadNibNamed:@"HistoryTableViewCell" owner:self options:nil];
+    id mainView = [subviewArray objectAtIndex:0];
+    return mainView;
+}
+
 - (void)awakeFromNib
 {
     // Initialization code

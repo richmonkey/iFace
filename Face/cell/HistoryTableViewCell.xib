@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="7706" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9532" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <objects>
@@ -15,23 +15,39 @@
                 <rect key="frame" x="0.0" y="0.0" width="320" height="69"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LJb-M7-HZb" userLabel="name">
+                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LJb-M7-HZb" userLabel="name">
                         <rect key="frame" x="43" y="11" width="202" height="21"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="21" id="w4e-nb-Hut"/>
+                            <constraint firstAttribute="width" constant="202" id="zgK-IJ-S9e"/>
+                        </constraints>
                         <fontDescription key="fontDescription" type="system" pointSize="16"/>
                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jcn-FF-toq" userLabel="duration">
+                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jcn-FF-toq" userLabel="duration">
                         <rect key="frame" x="43" y="40" width="180" height="21"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="21" id="8g7-hN-DcC"/>
+                            <constraint firstAttribute="width" constant="180" id="Mqc-IQ-TrV"/>
+                        </constraints>
                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                         <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aTE-IP-JgS" userLabel="icon">
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="aTE-IP-JgS" userLabel="icon">
                         <rect key="frame" x="11" y="27" width="16" height="16"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="16" id="Lxc-kN-UGd"/>
+                            <constraint firstAttribute="width" constant="16" id="VVi-je-ik1"/>
+                        </constraints>
                     </imageView>
-                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MCX-Dk-kTD" userLabel="status">
+                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MCX-Dk-kTD" userLabel="status">
                         <rect key="frame" x="199" y="40" width="101" height="19"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="19" id="cd3-hX-2vM"/>
+                            <constraint firstAttribute="width" constant="101" id="dBA-zH-1en"/>
+                        </constraints>
                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                         <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                         <nil key="highlightedColor"/>
@@ -42,17 +58,31 @@
                             <constraint firstAttribute="height" constant="1" id="Cxk-95-4YU"/>
                         </constraints>
                     </imageView>
-                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ejk-Rs-Tn3" userLabel="timeLabel">
+                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ejk-Rs-Tn3" userLabel="timeLabel">
                         <rect key="frame" x="215" y="11" width="85" height="21"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="85" id="VnY-mf-6Ka"/>
+                            <constraint firstAttribute="height" constant="21" id="qsm-nh-ify"/>
+                        </constraints>
                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
                         <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                         <nil key="highlightedColor"/>
                     </label>
                 </subviews>
                 <constraints>
+                    <constraint firstAttribute="trailingMargin" secondItem="MCX-Dk-kTD" secondAttribute="trailing" constant="12" id="0sm-9x-7m5"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="ejk-Rs-Tn3" secondAttribute="trailing" constant="12" id="6pV-G6-Oz7"/>
+                    <constraint firstItem="aTE-IP-JgS" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" constant="3" id="7zB-vF-nMj"/>
+                    <constraint firstItem="jcn-FF-toq" firstAttribute="leading" secondItem="aTE-IP-JgS" secondAttribute="trailing" constant="16" id="CM4-i4-dgp"/>
+                    <constraint firstItem="jcn-FF-toq" firstAttribute="top" secondItem="LJb-M7-HZb" secondAttribute="bottom" constant="8" id="Elg-OT-hrc"/>
                     <constraint firstAttribute="trailingMargin" secondItem="Clx-be-wTU" secondAttribute="trailing" constant="-8" id="JFF-Tr-A1m"/>
                     <constraint firstAttribute="bottomMargin" secondItem="Clx-be-wTU" secondAttribute="bottom" constant="-8" id="Xqv-6O-xjv"/>
+                    <constraint firstItem="ejk-Rs-Tn3" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="3" id="bPa-Dv-yQJ"/>
                     <constraint firstItem="Clx-be-wTU" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" constant="-8" id="bft-RO-uhQ"/>
+                    <constraint firstItem="LJb-M7-HZb" firstAttribute="leading" secondItem="aTE-IP-JgS" secondAttribute="trailing" constant="16" id="d2g-9g-2D5"/>
+                    <constraint firstItem="aTE-IP-JgS" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="dYv-DC-lrt"/>
+                    <constraint firstItem="MCX-Dk-kTD" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="32" id="sjp-pe-d4U"/>
+                    <constraint firstItem="LJb-M7-HZb" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="3" id="t9R-gh-G47"/>
                 </constraints>
             </tableViewCellContentView>
             <connections>
@@ -67,9 +97,4 @@
     <resources>
         <image name="hrzt_line" width="600" height="1"/>
     </resources>
-    <simulatedMetricsContainer key="defaultSimulatedMetrics">
-        <simulatedStatusBarMetrics key="statusBar"/>
-        <simulatedOrientationMetrics key="orientation"/>
-        <simulatedScreenMetrics key="destination" type="retina4"/>
-    </simulatedMetricsContainer>
 </document>
