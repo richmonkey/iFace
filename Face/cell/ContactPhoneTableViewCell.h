@@ -12,5 +12,5 @@
 @interface ContactPhoneTableViewCell : UITableViewCell
 @property (weak, nonatomic) IBOutlet UILabel *phoneTypeLabel;
 @property (weak, nonatomic) IBOutlet UILabel *phoneNumLabel;
-
++(id)fromXib;
 @end

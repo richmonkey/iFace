@@ -16,4 +16,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *jobLabel;
 @property (weak, nonatomic) IBOutlet UILabel *companyLabel;
 
++(id)fromXib;
+
 @end

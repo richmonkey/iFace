@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="7706" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9532" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
@@ -39,12 +39,18 @@
                 <constraint firstAttribute="trailing" secondItem="hnG-Y1-AME" secondAttribute="trailing" constant="8" id="L4K-HZ-l3M"/>
                 <constraint firstItem="hnG-Y1-AME" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="8" id="LcO-vb-gkm"/>
                 <constraint firstAttribute="trailing" secondItem="9tn-AN-umG" secondAttribute="trailing" constant="8" id="NcF-W3-Hwy"/>
+                <constraint firstItem="hnG-Y1-AME" firstAttribute="top" secondItem="9tn-AN-umG" secondAttribute="bottom" constant="21" id="OcK-b8-Qkx"/>
                 <constraint firstItem="9tn-AN-umG" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="SsQ-gd-DnP"/>
                 <constraint firstAttribute="bottom" secondItem="hnG-Y1-AME" secondAttribute="bottom" id="fOi-68-ttm"/>
                 <constraint firstItem="9tn-AN-umG" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="8" id="fvq-ez-9eu"/>
             </constraints>
             <nil key="simulatedStatusBarMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <variation key="default">
+                <mask key="constraints">
+                    <exclude reference="fOi-68-ttm"/>
+                </mask>
+            </variation>
             <connections>
                 <outlet property="videoBtn" destination="hnG-Y1-AME" id="3Ln-kQ-ZHT"/>
                 <outlet property="voiceBtn" destination="9tn-AN-umG" id="ntx-ur-Nsb"/>

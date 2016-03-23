@@ -76,15 +76,12 @@ typedef enum {
     
     self.title = @"详细资料";
     
-    [self.view setBackgroundColor:[UIColor whiteColor]];
+//    [self.view setBackgroundColor:[UIColor whiteColor]];
     
-    CGRect rect = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
-    self.tableview = [[UITableView alloc] initWithFrame:rect style: UITableViewStyleGrouped];
     self.tableview.dataSource = self;
     self.tableview.delegate = self;
-    [self.view addSubview:self.tableview];
     
-    ContactHeaderView *headerView = [[[NSBundle mainBundle]loadNibNamed:@"ContactHeaderView" owner:self options:nil] lastObject];
+    ContactHeaderView *headerView = [ContactHeaderView fromXib];
     
     
     [self.tableview setTableHeaderView: headerView];
@@ -126,7 +123,7 @@ typedef enum {
         ContactIMUserTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"ContactIMUserTableViewCell"];
         
         if (cell == nil) {
-            cell = [[[NSBundle mainBundle]loadNibNamed:@"ContactIMUserTableViewCell" owner:self options:nil] lastObject];
+            cell = [ContactIMUserTableViewCell fromXib];
         }
         
         IMUser *u = [self.contact.users objectAtIndex:indexPath.row];
@@ -141,7 +138,7 @@ typedef enum {
         ContactPhoneTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"ContactPhoneTableViewCell"];
         
         if (cell == nil) {
-            cell = [[[NSBundle mainBundle]loadNibNamed:@"ContactPhoneTableViewCell" owner:self options:nil] lastObject];
+            cell = [ContactPhoneTableViewCell fromXib];
         }
         NSDictionary *phoneDic = [self.contact.phoneDictionaries objectAtIndex:indexPath.row];
         [cell.phoneNumLabel setText:[phoneDic objectForKey:@"value"]];
@@ -154,9 +151,8 @@ typedef enum {
 
 
 #pragma mark - UITableViewDelegate
-
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    return 108;
+    return 138;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{

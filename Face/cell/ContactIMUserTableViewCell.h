@@ -14,4 +14,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *lastOnlineLabel;
 @property (weak, nonatomic) IBOutlet UILabel *personnalStatusLabel;
 
++(id)fromXib;
+
 @end
