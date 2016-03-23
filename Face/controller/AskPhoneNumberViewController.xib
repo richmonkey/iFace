@@ -17,18 +17,18 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Tdf-EG-gTT">
-                    <rect key="frame" x="8" y="184" width="304" height="238"/>
+                    <rect key="frame" x="8" y="120" width="304" height="238"/>
                     <subviews>
                         <view alpha="0.54999999999999982" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lcl-vP-bmM" userLabel="topline">
-                            <rect key="frame" x="0.0" y="71" width="304" height="1"/>
-                            <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                            <rect key="frame" x="20" y="71" width="264" height="1"/>
+                            <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="1" id="wAz-oh-gCv"/>
                             </constraints>
                         </view>
                         <view alpha="0.5499999999999996" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lpx-Hk-19w" userLabel="bottomline">
-                            <rect key="frame" x="0.0" y="187" width="304" height="1"/>
-                            <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                            <rect key="frame" x="20" y="187" width="264" height="1"/>
+                            <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="1" id="Msf-AG-oN3"/>
                             </constraints>
@@ -84,16 +84,16 @@
                     </subviews>
                     <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <constraints>
-                        <constraint firstItem="lcl-vP-bmM" firstAttribute="leading" secondItem="Tdf-EG-gTT" secondAttribute="leading" id="8QJ-tO-jR0"/>
-                        <constraint firstAttribute="trailing" secondItem="lpx-Hk-19w" secondAttribute="trailing" id="AMd-gv-03N"/>
+                        <constraint firstItem="lcl-vP-bmM" firstAttribute="leading" secondItem="Tdf-EG-gTT" secondAttribute="leading" constant="20" id="8QJ-tO-jR0"/>
+                        <constraint firstAttribute="trailing" secondItem="lpx-Hk-19w" secondAttribute="trailing" constant="20" id="AMd-gv-03N"/>
                         <constraint firstItem="lcl-vP-bmM" firstAttribute="top" secondItem="Tdf-EG-gTT" secondAttribute="top" constant="71" id="RCb-iT-hVH"/>
                         <constraint firstAttribute="bottom" secondItem="lpx-Hk-19w" secondAttribute="bottom" constant="50" id="TJH-Ww-5XE"/>
                         <constraint firstItem="CfQ-pG-g2I" firstAttribute="centerX" secondItem="Tdf-EG-gTT" secondAttribute="centerX" id="acw-SW-REk"/>
                         <constraint firstAttribute="height" constant="238" id="ax5-Hs-3LY"/>
-                        <constraint firstAttribute="trailing" secondItem="lcl-vP-bmM" secondAttribute="trailing" id="bDP-AY-EPu"/>
+                        <constraint firstAttribute="trailing" secondItem="lcl-vP-bmM" secondAttribute="trailing" constant="20" id="bDP-AY-EPu"/>
                         <constraint firstItem="CfQ-pG-g2I" firstAttribute="top" secondItem="Tdf-EG-gTT" secondAttribute="top" constant="9" id="duz-IF-vUe"/>
                         <constraint firstItem="yyc-jx-2Hh" firstAttribute="centerX" secondItem="Tdf-EG-gTT" secondAttribute="centerX" id="pIt-vr-8CJ"/>
-                        <constraint firstItem="lpx-Hk-19w" firstAttribute="leading" secondItem="Tdf-EG-gTT" secondAttribute="leading" id="pkZ-DN-Jrw"/>
+                        <constraint firstItem="lpx-Hk-19w" firstAttribute="leading" secondItem="Tdf-EG-gTT" secondAttribute="leading" constant="20" id="pkZ-DN-Jrw"/>
                         <constraint firstItem="yyc-jx-2Hh" firstAttribute="top" secondItem="Tdf-EG-gTT" secondAttribute="top" constant="111" id="s4c-sB-z3i"/>
                     </constraints>
                 </view>
@@ -101,7 +101,7 @@
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <constraints>
                 <constraint firstAttribute="trailing" secondItem="Tdf-EG-gTT" secondAttribute="trailing" constant="8" id="9cd-2v-0rU"/>
-                <constraint firstItem="Tdf-EG-gTT" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" constant="19" id="Bv8-NC-qpO"/>
+                <constraint firstItem="Tdf-EG-gTT" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" constant="-45" id="Bv8-NC-qpO"/>
                 <constraint firstItem="Tdf-EG-gTT" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="8" id="Gqn-zg-IDh"/>
                 <constraint firstItem="Tdf-EG-gTT" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="Tcf-re-Mng"/>
             </constraints>
