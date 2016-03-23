@@ -540,6 +540,7 @@
     
     self.history.flag = self.history.flag|FLAG_UNRECEIVED;
     
+    [self.voip hangUp];
     [self dismiss];
 }
 
