@@ -1,3 +1,6 @@
 Face/third_party/webrtc
 xcuserdata
 project.xcworkspace
+*~
+Pods
+Face.xcworkspace
