@@ -10,9 +10,9 @@
 #import "APIRequest.h"
 #import "MBProgressHUD.h"
 #import "CheckVerifyCodeController.h"
-#import "UIApplication+Util.h"
 #import "UIView+Toast.h"
 #import "Constants.h"
+#import "UIApplication+Util.h"
 
 @interface AskPhoneNumberViewController ()
 

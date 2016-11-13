@@ -1,0 +1,37 @@
+PODS:
+  - FMDB (2.6.2):
+    - FMDB/standard (= 2.6.2)
+  - FMDB/standard (2.6.2)
+  - JSBadgeView (1.4.1)
+  - leveldb-library (1.18.2)
+  - MBProgressHUD (1.0.0)
+  - ReflectionView (1.2)
+  - SDWebImage (3.8.2):
+    - SDWebImage/Core (= 3.8.2)
+  - SDWebImage/Core (3.8.2)
+  - Toast (3.1.0)
+  - UIImageView-Letters (1.1.3)
+
+DEPENDENCIES:
+  - FMDB
+  - JSBadgeView
+  - leveldb-library (~> 1.18.2)
+  - MBProgressHUD
+  - ReflectionView
+  - SDWebImage
+  - Toast
+  - UIImageView-Letters (= 1.1.3)
+
+SPEC CHECKSUMS:
+  FMDB: 854a0341b4726e53276f2a8996f06f1b80f9259a
+  JSBadgeView: 3861ddee41094284d9468e6d0af5107f703aaac5
+  leveldb-library: ef0453697c0fda3a9e550e5650e52976e6724548
+  MBProgressHUD: 4890f671c94e8a0f3cf959aa731e9de2f036d71a
+  ReflectionView: be2a06e597ec6734c0077423c797ff02de765947
+  SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
+  Toast: 14a93686d6c8bfe2727afd342414e35660a8a1f3
+  UIImageView-Letters: dc75ea479e4d280fbe6c3e00daa62918da3e8d64
+
+PODFILE CHECKSUM: 87f2dac831e8f55269d6304c30179b1333c93b1a
+
+COCOAPODS: 1.1.1
