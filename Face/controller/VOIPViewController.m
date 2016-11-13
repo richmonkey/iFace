@@ -6,11 +6,7 @@
 //  Copyright (c) 2014年 beetle. All rights reserved.
 //
 
-#include <arpa/inet.h>
-#import <AVFoundation/AVAudioSession.h>
-#import <voipengine/VOIPEngine.h>
 #import "VOIPViewController.h"
-
 #import "User.h"
 #import "UserDB.h"
 #import "UserPresent.h"
@@ -104,24 +100,9 @@
     NSLog(@"voip view controller dealloc");
 }
 
--(BOOL)isP2P {
-    if (self.voip.localNatMap.ip != 0 && self.voip.peerNatMap.ip != 0 ) {
-        return YES;
-    }
-    
-    return NO;
-}
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    
-}
-
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
-    
     
     self.conversationDuration = 0;
     
@@ -242,43 +223,16 @@
     [self.view addSubview:self.cancelButton];
     [self.reDialingButton setHidden:YES];
     
-    
-    if (self.isCaller) {
-        self.acceptButton.hidden = YES;
-        self.refuseButton.hidden = YES;
-    } else {
-        self.hangUpButton.hidden = YES;
-    }
+
     
     self.voip = [[VOIPSession alloc] init];
     self.voip.currentUID = [UserPresent instance].uid;
     self.voip.peerUID = self.peerUser.uid;
     self.voip.delegate = self;
-    [self.voip holePunch];
     [[VOIPService instance] pushVOIPObserver:self.voip];
     
-    [[AVAudioSession sharedInstance] requestRecordPermission:^(BOOL granted) {
-        if (granted) {
-            [[UIDevice currentDevice] setProximityMonitoringEnabled:YES];
-            
-            if (self.isCaller) {
-                
-                [self makeDialing];
-                
-            } else {
-                [self playDialIn];
-            }
-            
-        } else {
-            NSLog(@"can't grant record permission");
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [self dismissViewControllerAnimated:NO completion:^{
-                    [[VOIPService instance] popVOIPObserver:self.voip];
-                }];
-            });
-        }
-    }];
-    
+    [[VOIPService instance] addRTMessageObserver:self];
+
 }
 
 -(void)dismiss {
@@ -287,6 +241,8 @@
     [self dismissViewControllerAnimated:YES completion:^{
         
         [[VOIPService instance] popVOIPObserver:self.voip];
+        [[VOIPService instance] removeRTMessageObserver:self];
+        
         [[HistoryDB instance] addHistory:self.history];
         
         NSNotification* notification = [NSNotification notificationWithName:ON_NEW_CALL_HISTORY_NOTIFY object:self.history];
@@ -348,7 +304,7 @@
 }
 
 -(void)redialing:(id)sender{
-    [self makeDialing];
+    [self dial];
     
     [self.hangUpButton setHidden:NO];
     [self.cancelButton setHidden:YES];
@@ -373,21 +329,20 @@
 }
 
 
--(void)dial {
-    
-}
 
 - (void)startStream {
     self.history.beginTimestamp = time(NULL);
+    [super startStream];
 }
 
 
 -(void)stopStream {
     self.history.endTimestamp = time(NULL);
+    [super stopStream];
 }
 
 
--(int)SetLoudspeakerStatus:(BOOL)enable {
+-(int)setLoudspeakerStatus:(BOOL)enable {
     AVAudioSession* session = [AVAudioSession sharedInstance];
     NSString* category = session.category;
     AVAudioSessionCategoryOptions options = session.categoryOptions;
@@ -432,8 +387,6 @@
 
 
 -(void)playDialIn {
-    [self SetLoudspeakerStatus:YES];
-    
     NSString *path = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"start.mp3"];
     NSURL *u = [NSURL fileURLWithPath:path];
     self.player = [[AVAudioPlayer alloc] initWithContentsOfURL:u error:nil];
@@ -463,8 +416,16 @@
  *
  *  @param voip  VOIP
  */
--(void) makeDialing{
-    [self dial];
+-(void) dial {
+    self.acceptButton.hidden = YES;
+    self.refuseButton.hidden = YES;
+    [[UIDevice currentDevice] setProximityMonitoringEnabled:YES];
+    [self playDialOut];
+}
+
+-(void)waitAccept {
+    self.hangUpButton.hidden = YES;
+    [[UIDevice currentDevice] setProximityMonitoringEnabled:YES];
     [self playDialOut];
 }
 

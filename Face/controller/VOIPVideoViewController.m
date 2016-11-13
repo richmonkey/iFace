@@ -7,21 +7,13 @@
 //
 
 #import "VOIPVideoViewController.h"
-
-#include <arpa/inet.h>
-#import <AVFoundation/AVAudioSession.h>
-#import <UIKit/UIKit.h>
-#import <voipengine/VOIPEngine.h>
-#import <voipengine/VOIPRenderView.h>
-
 #import <voipsession/VOIPSession.h>
 #import "UserPresent.h"
 #import "Token.h"
 
-@interface VOIPVideoViewController ()
+@interface VOIPVideoViewController ()<RTCEAGLVideoViewDelegate>
 
-@property(nonatomic) VOIPRenderView *remoteRender;
-@property(nonatomic) VOIPRenderView *localRender;
+
 @property BOOL showCancel;
 
 @end
@@ -42,24 +34,102 @@
     [self.hangUpButton setAlpha:0.6f];
     
     self.durationCenter = CGPointMake(self.view.frame.size.width/2, 40);
+  
+
     
-    self.remoteRender = [[VOIPRenderView alloc] initWithFrame:self.view.bounds];
-    [self.view insertSubview:self.remoteRender atIndex:0];
+    RTCEAGLVideoView *remoteVideoView = [[RTCEAGLVideoView alloc] initWithFrame:self.view.bounds];
+    remoteVideoView.delegate = self;
     
+    self.remoteVideoView = remoteVideoView;
+    [self.view insertSubview:self.remoteVideoView atIndex:0];
+    
+    RTCCameraPreviewView *localVideoView = [[RTCCameraPreviewView alloc] initWithFrame:CGRectMake(200, 380, 72, 96)];
+    self.localVideoView = localVideoView;
+    [self.view insertSubview:self.localVideoView aboveSubview:self.remoteVideoView];
+    
+    
+    self.localVideoView.hidden = YES;
+    self.remoteVideoView.hidden = YES;
     
     UITapGestureRecognizer*tapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapAction:)];
-    [self.remoteRender addGestureRecognizer:tapGesture];
-    
-    self.localRender = [[VOIPRenderView alloc] initWithFrame:CGRectMake(230, 380, 72, 96)];
-    [self.view insertSubview:self.localRender aboveSubview:self.remoteRender];
-    
-    self.localRender.hidden = YES;
-    self.remoteRender.hidden = YES;
+    [self.remoteVideoView addGestureRecognizer:tapGesture];
     
     self.showCancel = YES;
     
+    AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
+    if(authStatus == AVAuthorizationStatusAuthorized) {
+        // do your logic
+        AVAuthorizationStatus audioAuthStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeAudio];
+        if(audioAuthStatus == AVAuthorizationStatusAuthorized) {
+            if (self.isCaller) {
+                [self dial];
+            } else {
+                [self waitAccept];
+            }
+        } else if(audioAuthStatus == AVAuthorizationStatusDenied){
+            // denied
+        } else if(audioAuthStatus == AVAuthorizationStatusRestricted){
+            // restricted, normally won't happen
+        } else if(audioAuthStatus == AVAuthorizationStatusNotDetermined){
+            [[AVAudioSession sharedInstance] requestRecordPermission:^(BOOL granted) {
+                if (granted) {
+                    if (self.isCaller) {
+                        [self dial];
+                    } else {
+                        [self waitAccept];
+                    }
+                } else {
+                    NSLog(@"can't grant record permission");
+                }
+            }];
+            
+        }
+        
+    } else if(authStatus == AVAuthorizationStatusDenied){
+        // denied
+    } else if(authStatus == AVAuthorizationStatusRestricted){
+        // restricted, normally won't happen
+    } else if(authStatus == AVAuthorizationStatusNotDetermined){
+        // not determined?!
+        [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted) {
+            if(granted){
+                NSLog(@"Granted access to %@", AVMediaTypeVideo);
+                AVAuthorizationStatus audioAuthStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeAudio];
+                if(audioAuthStatus == AVAuthorizationStatusAuthorized) {
+                    if (self.isCaller) {
+                        [self dial];
+                    } else {
+                        [self waitAccept];
+                    }
+                } else if(audioAuthStatus == AVAuthorizationStatusDenied){
+                    // denied
+                } else if(audioAuthStatus == AVAuthorizationStatusRestricted){
+                    // restricted, normally won't happen
+                } else if(audioAuthStatus == AVAuthorizationStatusNotDetermined){
+                    [[AVAudioSession sharedInstance] requestRecordPermission:^(BOOL granted) {
+                        if (granted) {
+                            
+                            if (self.isCaller) {
+                                [self dial];
+                            } else {
+                                [self waitAccept];
+                            }
+                        } else {
+                            NSLog(@"can't grant record permission");
+                        }
+                    }];
+                }
+            } else {
+                NSLog(@"Not granted access to %@", AVMediaTypeVideo);
+            }
+        }];
+    }
 }
 
+
+- (void)videoView:(RTCEAGLVideoView *)videoView didChangeVideoSize:(CGSize)size {
+    
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -67,7 +137,12 @@
 
 -(void)switchCamera:(id)sender {
     NSLog(@"switch camera");
-    [self.engine switchCamera];
+    
+    RTCVideoSource* source = self.localVideoTrack.source;
+    if ([source isKindOfClass:[RTCAVFoundationVideoSource class]]) {
+        RTCAVFoundationVideoSource* avSource = (RTCAVFoundationVideoSource*)source;
+        avSource.useBackCamera = !avSource.useBackCamera;
+    }
 }
 
 -(void)tapAction:(id)sender{
@@ -109,74 +184,23 @@
 }
 
 - (void)dial {
+    [super dial];
     [self.voip dialVideo];
 }
 
 - (void)startStream {
     [super startStream];
     [self tapAction:nil];
-    
-    if (self.voip.localNatMap != nil) {
-        struct in_addr addr;
-        addr.s_addr = htonl(self.voip.localNatMap.ip);
-        NSLog(@"local nat map:%s:%d", inet_ntoa(addr), self.voip.localNatMap.port);
-    }
-    if (self.voip.peerNatMap != nil) {
-        struct in_addr addr;
-        addr.s_addr = htonl(self.voip.peerNatMap.ip);
-        NSLog(@"peer nat map:%s:%d", inet_ntoa(addr), self.voip.peerNatMap.port);
-    }
-    
-    if (self.isP2P) {
-        struct in_addr addr;
-        addr.s_addr = htonl(self.voip.peerNatMap.ip);
-        NSLog(@"peer address:%s:%d", inet_ntoa(addr), self.voip.peerNatMap.port);
-        NSLog(@"start p2p stream");
-    } else {
-        NSLog(@"start stream");
-    }
-    
-    if (self.engine != nil) {
-        return;
-    }
-    
-    self.engine = [[VOIPEngine alloc] init];
-    NSLog(@"relay ip:%@", self.voip.relayIP);
-    self.engine.relayIP = self.voip.relayIP;
-    self.engine.voipPort = self.voip.voipPort;
-    self.engine.caller = [UserPresent instance].uid;
-    self.engine.callee = self.peerUser.uid;
-    self.engine.token = [Token instance].accessToken;
-    self.engine.isCaller = self.isCaller;
-    self.engine.videoEnabled = YES;
-    
-    self.engine.remoteRender = self.remoteRender;
-    self.engine.localRender = self.localRender;
-    
-    
-    if (self.isP2P) {
-        self.engine.calleeIP = self.voip.peerNatMap.ip;
-        self.engine.calleePort = self.voip.peerNatMap.port;
-    }
-    
-    [self.engine startStream];
-    
     [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
-    
-    self.localRender.hidden = NO;
-    self.remoteRender.hidden = NO;
-    
-    [self SetLoudspeakerStatus:YES];
+    self.localVideoView.hidden = NO;
+    self.remoteVideoView.hidden = NO;
+    [self setLoudspeakerStatus:YES];
 }
 
 
 -(void)stopStream {
     [super stopStream];
-    if (self.engine == nil) {
-        return;
-    }
-    NSLog(@"stop stream");
-    [self.engine stopStream];
+
     
     [[UIApplication sharedApplication] setIdleTimerDisabled:NO];
 }

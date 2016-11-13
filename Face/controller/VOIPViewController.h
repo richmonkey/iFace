@@ -9,17 +9,17 @@
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
 #import "ReflectionView.h"
-
+#import "WebRTCViewController.h"
 
 @class VOIPEngine;
 @class VOIPSession;
 @class User;
 
-@interface VOIPViewController : UIViewController<AVAudioPlayerDelegate>
+@interface VOIPViewController : WebRTCViewController<AVAudioPlayerDelegate>
     
 @property(nonatomic) VOIPEngine *engine;
 @property(nonatomic) VOIPSession *voip;
-@property(nonatomic, assign) BOOL isCaller;
+
 @property(nonatomic) User* peerUser;
 
 @property(nonatomic) UIButton *switchButton;
@@ -33,9 +33,10 @@
 -(id)initWithCallerUID:(int64_t)uid;
 
 
--(BOOL)isP2P;
--(int)SetLoudspeakerStatus:(BOOL)enable;
+
+-(int)setLoudspeakerStatus:(BOOL)enable;
 -(void)dial;
+-(void)waitAccept;
 -(void)startStream;
 -(void)stopStream;
 
