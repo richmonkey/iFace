@@ -21,7 +21,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1.7.0</string>
+	<string>1.7.1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -31,6 +31,10 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>This app requires access to camera.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>This app requires access to contacts.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app requires access to microphone.</string>
 	<key>UIBackgroundModes</key>
 	<array/>
 	<key>UIRequiredDeviceCapabilities</key>
