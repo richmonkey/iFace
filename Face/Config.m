@@ -40,7 +40,7 @@
 }
 
 -(NSString*)sdkHost {
-    return @"imnode.gobelieve.io";
+    return @"imnode2.gobelieve.io";
 }
 #else
 -(NSString*)URL {

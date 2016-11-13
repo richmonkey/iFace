@@ -24,10 +24,10 @@
 @implementation VOIPVoiceViewController
 
 - (void)viewDidLoad {
+    self.isAudioOnly = NO;
+    
     [super viewDidLoad];
     // Do any additional setup after loading the view.
- 
-    self.isAudioOnly = YES;
     
     AVAuthorizationStatus audioAuthStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeAudio];
     if(audioAuthStatus == AVAuthorizationStatusAuthorized) {

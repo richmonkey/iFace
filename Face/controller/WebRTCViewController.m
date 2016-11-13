@@ -87,7 +87,7 @@ static NSString * const kARDVideoTrackId = @"ARDAMSv0";
     RTCConfiguration *config = [[RTCConfiguration alloc] init];
     RTCIceServer *server = [[RTCIceServer alloc] initWithURLStrings:@[@"stun:stun.counterpath.net:3478"]];
     
-    int64_t appid = 7;
+    int64_t appid = 1006;
     int64_t uid = self.currentUID;
     NSString *username = [NSString stringWithFormat:@"%lld_%lld", appid, uid];
     NSString *credential = self.token;

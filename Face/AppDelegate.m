@@ -25,7 +25,7 @@
     
     //配置im server地址
     [VOIPService instance].host = [Config instance].sdkHost;
-
+    [VOIPService instance].isSync = NO;
     
     [VOIPService instance].deviceID = [[[UIDevice currentDevice] identifierForVendor] UUIDString];
     [[VOIPService instance] startRechabilityNotifier];

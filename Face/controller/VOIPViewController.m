@@ -104,6 +104,10 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    self.currentUID = [Token instance].uid;
+    self.token = [Token instance].accessToken;
+    self.peerUID = self.peerUser.uid;
+    
     self.conversationDuration = 0;
     
     // Do any additional setup after loading the view, typically from a nib.
@@ -150,24 +154,20 @@
     [self.durationLabel setCenter:self.durationCenter];
     
     self.acceptButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    
-    self.acceptButton.frame = CGRectMake(30.0f, self.view.frame.size.height - kBtnHeight - kBtnHeight, kBtnWidth, kBtnHeight);
-    
+    self.acceptButton.frame = CGRectMake(0,0, kBtnWidth, kBtnHeight);
     [self.acceptButton setBackgroundImage: [UIImage imageNamed:@"Call_Ans"] forState:UIControlStateNormal];
-    
     [self.acceptButton setBackgroundImage:[UIImage imageNamed:@"Call_Ans_p"] forState:UIControlStateHighlighted];
     [self.acceptButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.acceptButton addTarget:self
                           action:@selector(acceptCall:)
                 forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.acceptButton];
-    [self.acceptButton setCenter:CGPointMake(self.view.frame.size.width/4, kBtnYposition)];
+    [self.acceptButton setCenter:CGPointMake(self.view.frame.size.width/4 + self.view.frame.size.width/2, kBtnYposition)];
+   
     
     
     self.refuseButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    
-    self.refuseButton.frame = CGRectMake(0,0, kBtnWidth, kBtnHeight);
-    
+    self.refuseButton.frame = CGRectMake(30.0f, self.view.frame.size.height - kBtnHeight - kBtnHeight, kBtnWidth, kBtnHeight);
     [self.refuseButton setBackgroundImage:[UIImage imageNamed:@"Call_hangup"] forState:UIControlStateNormal];
     [self.refuseButton setBackgroundImage:[UIImage imageNamed:@"Call_hangup_p"] forState:UIControlStateHighlighted];
     [self.refuseButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
@@ -175,7 +175,7 @@
                           action:@selector(refuseCall:)
                 forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.refuseButton];
-    [self.refuseButton setCenter:CGPointMake(self.view.frame.size.width/4 + self.view.frame.size.width/2, kBtnYposition)];
+    [self.refuseButton setCenter:CGPointMake(self.view.frame.size.width/4, kBtnYposition)];
     
     
     self.hangUpButton = [[UIButton alloc] initWithFrame:CGRectMake(0,0, kBtnSqureWidth, kBtnSqureHeight)];

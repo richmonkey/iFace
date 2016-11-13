@@ -21,7 +21,10 @@
 @implementation VOIPVideoViewController
 
 - (void)viewDidLoad {
+    self.isAudioOnly = NO;
+    
     [super viewDidLoad];
+    
     self.switchButton = [[UIButton alloc] initWithFrame:CGRectMake(240,27,42,24)];
     [self.switchButton setImage:[UIImage imageNamed:@"switch"] forState:UIControlStateNormal];
     [self.switchButton addTarget:self
@@ -43,7 +46,10 @@
     self.remoteVideoView = remoteVideoView;
     [self.view insertSubview:self.remoteVideoView atIndex:0];
     
-    RTCCameraPreviewView *localVideoView = [[RTCCameraPreviewView alloc] initWithFrame:CGRectMake(200, 380, 72, 96)];
+    
+    CGRect rect = self.view.bounds;
+    CGRect frame = CGRectMake(rect.size.width*0.72, rect.size.height*0.72, rect.size.width*0.25, rect.size.height*0.25);
+    RTCCameraPreviewView *localVideoView = [[RTCCameraPreviewView alloc] initWithFrame:frame];
     self.localVideoView = localVideoView;
     [self.view insertSubview:self.localVideoView aboveSubview:self.remoteVideoView];
     
