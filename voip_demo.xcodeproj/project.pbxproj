@@ -32,7 +32,14 @@
 		6D5C195D1AC935360047A9A3 /* CallConnected.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6D5C19591AC935360047A9A3 /* CallConnected.mp3 */; };
 		6D5C195E1AC935360047A9A3 /* end.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6D5C195A1AC935360047A9A3 /* end.mp3 */; };
 		6D5C195F1AC935360047A9A3 /* start.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6D5C195B1AC935360047A9A3 /* start.mp3 */; };
-		6D5C19641AD2B79B0047A9A3 /* libvoipengine.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D5C19631AD2B79B0047A9A3 /* libvoipengine.a */; };
+		6D8DC80E1DD3524700803380 /* WebRTC.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6D8DC8071DD3520100803380 /* WebRTC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6D8DC8121DD35C3800803380 /* ARDSDPUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D8DC8111DD35C3800803380 /* ARDSDPUtils.m */; };
+		6D8DC8141DD3607000803380 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D8DC8131DD3607000803380 /* WebKit.framework */; };
+		6D8DC8191DD370AB00803380 /* RTCIceCandidate+JSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D8DC8161DD370AB00803380 /* RTCIceCandidate+JSON.m */; };
+		6D8DC81A1DD370AB00803380 /* RTCSessionDescription+JSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D8DC8181DD370AB00803380 /* RTCSessionDescription+JSON.m */; };
+		6D8DC81D1DD370C400803380 /* ARDSignalingMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D8DC81C1DD370C400803380 /* ARDSignalingMessage.m */; };
+		6D8DC8201DD3711A00803380 /* ARDUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D8DC81F1DD3711A00803380 /* ARDUtilities.m */; };
+		6DD491E81DD87D0700A7ABE3 /* WebRTCViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DD491E71DD87D0700A7ABE3 /* WebRTCViewController.m */; };
 		6DF6F78F1B92CBF600774961 /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF6F78E1B92CBF600774961 /* VideoToolbox.framework */; };
 /* End PBXBuildFile section */
 
@@ -65,28 +72,21 @@
 			remoteGlobalIDString = 6D401BD41AAC7D2F0041ABC6;
 			remoteInfo = voipsession;
 		};
-		6D5C196B1AD2B8530047A9A3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6D5C18C91AC903ED0047A9A3 /* voipengine.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 6D0331771AAB73E3004AA39F;
-			remoteInfo = voipengine;
-		};
-		6D5C196D1AD2B8530047A9A3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6D5C18C91AC903ED0047A9A3 /* voipengine.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 6D0331821AAB73E3004AA39F;
-			remoteInfo = voipengineTests;
-		};
-		6D5C19711AD2B85B0047A9A3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6D5C18C91AC903ED0047A9A3 /* voipengine.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 6D0331761AAB73E3004AA39F;
-			remoteInfo = voipengine;
-		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		6D8DC80F1DD3524700803380 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				6D8DC80E1DD3524700803380 /* WebRTC.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		6D2A40D61B9D6C9200FB6A5A /* VOIPVideoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VOIPVideoViewController.h; sourceTree = "<group>"; };
@@ -106,7 +106,6 @@
 		6D5C18B21AC8FDB70047A9A3 /* voip_demoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = voip_demoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D5C18B71AC8FDB70047A9A3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6D5C18B81AC8FDB70047A9A3 /* demoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = demoTests.m; sourceTree = "<group>"; };
-		6D5C18C91AC903ED0047A9A3 /* voipengine.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = voipengine.xcodeproj; path = voipengine/voipengine.xcodeproj; sourceTree = "<group>"; };
 		6D5C18D21AC903F70047A9A3 /* voipsession.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = voipsession.xcodeproj; path = voipsession/voipsession.xcodeproj; sourceTree = "<group>"; };
 		6D5C19001AC9296E0047A9A3 /* VOIPViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VOIPViewController.h; sourceTree = "<group>"; };
 		6D5C19011AC9296E0047A9A3 /* VOIPViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VOIPViewController.m; sourceTree = "<group>"; };
@@ -128,7 +127,20 @@
 		6D5C19591AC935360047A9A3 /* CallConnected.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = CallConnected.mp3; sourceTree = "<group>"; };
 		6D5C195A1AC935360047A9A3 /* end.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = end.mp3; sourceTree = "<group>"; };
 		6D5C195B1AC935360047A9A3 /* start.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = start.mp3; sourceTree = "<group>"; };
-		6D5C19631AD2B79B0047A9A3 /* libvoipengine.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvoipengine.a; path = "../../../Library/Developer/Xcode/DerivedData/voip_demo-ghegouphrmfjtsbdqtgolwbghldy/Build/Products/Debug-iphoneos/libvoipengine.a"; sourceTree = "<group>"; };
+		6D8DC8071DD3520100803380 /* WebRTC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebRTC.framework; sourceTree = "<group>"; };
+		6D8DC8101DD35C3800803380 /* ARDSDPUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARDSDPUtils.h; sourceTree = "<group>"; };
+		6D8DC8111DD35C3800803380 /* ARDSDPUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARDSDPUtils.m; sourceTree = "<group>"; };
+		6D8DC8131DD3607000803380 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+		6D8DC8151DD370AB00803380 /* RTCIceCandidate+JSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RTCIceCandidate+JSON.h"; sourceTree = "<group>"; };
+		6D8DC8161DD370AB00803380 /* RTCIceCandidate+JSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RTCIceCandidate+JSON.m"; sourceTree = "<group>"; };
+		6D8DC8171DD370AB00803380 /* RTCSessionDescription+JSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RTCSessionDescription+JSON.h"; sourceTree = "<group>"; };
+		6D8DC8181DD370AB00803380 /* RTCSessionDescription+JSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RTCSessionDescription+JSON.m"; sourceTree = "<group>"; };
+		6D8DC81B1DD370C400803380 /* ARDSignalingMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARDSignalingMessage.h; sourceTree = "<group>"; };
+		6D8DC81C1DD370C400803380 /* ARDSignalingMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARDSignalingMessage.m; sourceTree = "<group>"; };
+		6D8DC81E1DD3711A00803380 /* ARDUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARDUtilities.h; sourceTree = "<group>"; };
+		6D8DC81F1DD3711A00803380 /* ARDUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARDUtilities.m; sourceTree = "<group>"; };
+		6DD491E61DD87D0700A7ABE3 /* WebRTCViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebRTCViewController.h; sourceTree = "<group>"; };
+		6DD491E71DD87D0700A7ABE3 /* WebRTCViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebRTCViewController.m; sourceTree = "<group>"; };
 		6DF6F78E1B92CBF600774961 /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = System/Library/Frameworks/VideoToolbox.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -137,8 +149,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6D8DC8141DD3607000803380 /* WebKit.framework in Frameworks */,
 				6DF6F78F1B92CBF600774961 /* VideoToolbox.framework in Frameworks */,
-				6D5C19641AD2B79B0047A9A3 /* libvoipengine.a in Frameworks */,
 				6D5C19551AC9306A0047A9A3 /* GLKit.framework in Frameworks */,
 				6D5C19531AC9305E0047A9A3 /* libstdc++.dylib in Frameworks */,
 				6D5C19511AC92DDB0047A9A3 /* AVFoundation.framework in Frameworks */,
@@ -186,8 +198,20 @@
 				6D5C19071AC92A180047A9A3 /* third_party */,
 				6D5C18A01AC8FDB70047A9A3 /* AppDelegate.h */,
 				6D5C18A11AC8FDB70047A9A3 /* AppDelegate.m */,
+				6D8DC81E1DD3711A00803380 /* ARDUtilities.h */,
+				6D8DC81F1DD3711A00803380 /* ARDUtilities.m */,
+				6D8DC81B1DD370C400803380 /* ARDSignalingMessage.h */,
+				6D8DC81C1DD370C400803380 /* ARDSignalingMessage.m */,
+				6D8DC8151DD370AB00803380 /* RTCIceCandidate+JSON.h */,
+				6D8DC8161DD370AB00803380 /* RTCIceCandidate+JSON.m */,
+				6D8DC8171DD370AB00803380 /* RTCSessionDescription+JSON.h */,
+				6D8DC8181DD370AB00803380 /* RTCSessionDescription+JSON.m */,
+				6D8DC8101DD35C3800803380 /* ARDSDPUtils.h */,
+				6D8DC8111DD35C3800803380 /* ARDSDPUtils.m */,
 				6D5C18A31AC8FDB70047A9A3 /* ViewController.h */,
 				6D5C18A41AC8FDB70047A9A3 /* ViewController.m */,
+				6DD491E61DD87D0700A7ABE3 /* WebRTCViewController.h */,
+				6DD491E71DD87D0700A7ABE3 /* WebRTCViewController.m */,
 				6D5C19001AC9296E0047A9A3 /* VOIPViewController.h */,
 				6D5C19011AC9296E0047A9A3 /* VOIPViewController.m */,
 				6D2A40D61B9D6C9200FB6A5A /* VOIPVideoViewController.h */,
@@ -232,7 +256,6 @@
 			isa = PBXGroup;
 			children = (
 				6D5C18D21AC903F70047A9A3 /* voipsession.xcodeproj */,
-				6D5C18C91AC903ED0047A9A3 /* voipengine.xcodeproj */,
 			);
 			name = Projects;
 			sourceTree = "<group>";
@@ -296,8 +319,9 @@
 		6D5C19561AC931B30047A9A3 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				6D8DC8131DD3607000803380 /* WebKit.framework */,
+				6D8DC8071DD3520100803380 /* WebRTC.framework */,
 				6DF6F78E1B92CBF600774961 /* VideoToolbox.framework */,
-				6D5C19631AD2B79B0047A9A3 /* libvoipengine.a */,
 				6D5C19541AC9306A0047A9A3 /* GLKit.framework */,
 				6D5C19521AC9305E0047A9A3 /* libstdc++.dylib */,
 				6D5C19501AC92DDA0047A9A3 /* AVFoundation.framework */,
@@ -319,15 +343,6 @@
 			path = sound;
 			sourceTree = "<group>";
 		};
-		6D5C19661AD2B8530047A9A3 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				6D5C196C1AD2B8530047A9A3 /* libvoipengine.a */,
-				6D5C196E1AD2B8530047A9A3 /* voipengineTests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -338,11 +353,11 @@
 				6D5C18951AC8FDB70047A9A3 /* Sources */,
 				6D5C18961AC8FDB70047A9A3 /* Frameworks */,
 				6D5C18971AC8FDB70047A9A3 /* Resources */,
+				6D8DC80F1DD3524700803380 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				6D5C19721AD2B85B0047A9A3 /* PBXTargetDependency */,
 				6D5C18DC1AC9040F0047A9A3 /* PBXTargetDependency */,
 			);
 			name = voip_demo;
@@ -400,10 +415,6 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 6D5C19661AD2B8530047A9A3 /* Products */;
-					ProjectRef = 6D5C18C91AC903ED0047A9A3 /* voipengine.xcodeproj */;
-				},
-				{
 					ProductGroup = 6D5C18D31AC903F70047A9A3 /* Products */;
 					ProjectRef = 6D5C18D21AC903F70047A9A3 /* voipsession.xcodeproj */;
 				},
@@ -429,20 +440,6 @@
 			fileType = wrapper.cfbundle;
 			path = voipsessionTests.xctest;
 			remoteRef = 6D5C18D91AC903F70047A9A3 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		6D5C196C1AD2B8530047A9A3 /* libvoipengine.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libvoipengine.a;
-			remoteRef = 6D5C196B1AD2B8530047A9A3 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		6D5C196E1AD2B8530047A9A3 /* voipengineTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = voipengineTests.xctest;
-			remoteRef = 6D5C196D1AD2B8530047A9A3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -477,10 +474,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				6D5C18A51AC8FDB70047A9A3 /* ViewController.m in Sources */,
+				6D8DC8191DD370AB00803380 /* RTCIceCandidate+JSON.m in Sources */,
+				6D8DC81D1DD370C400803380 /* ARDSignalingMessage.m in Sources */,
 				6D5C18A21AC8FDB70047A9A3 /* AppDelegate.m in Sources */,
+				6D8DC8121DD35C3800803380 /* ARDSDPUtils.m in Sources */,
 				6D5C19451AC92A560047A9A3 /* UIView+Toast.m in Sources */,
 				6D2A40DB1B9D6D4B00FB6A5A /* VOIPVoiceViewController.m in Sources */,
+				6DD491E81DD87D0700A7ABE3 /* WebRTCViewController.m in Sources */,
+				6D8DC8201DD3711A00803380 /* ARDUtilities.m in Sources */,
 				6D5C189F1AC8FDB70047A9A3 /* main.m in Sources */,
+				6D8DC81A1DD370AB00803380 /* RTCSessionDescription+JSON.m in Sources */,
 				6D5C19411AC92A440047A9A3 /* ReflectionView.m in Sources */,
 				6D5C193D1AC92A330047A9A3 /* MBProgressHUD.m in Sources */,
 				6D5C19491AC92A860047A9A3 /* VWWWaterView.m in Sources */,
@@ -509,11 +512,6 @@
 			isa = PBXTargetDependency;
 			name = voipsession;
 			targetProxy = 6D5C18DB1AC9040F0047A9A3 /* PBXContainerItemProxy */;
-		};
-		6D5C19721AD2B85B0047A9A3 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = voipengine;
-			targetProxy = 6D5C19711AD2B85B0047A9A3 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -622,12 +620,16 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = demo/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -650,8 +652,12 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = demo/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",

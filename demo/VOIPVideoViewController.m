@@ -7,152 +7,147 @@
 //
 
 #import "VOIPVideoViewController.h"
+#import <VOIPSession/VOIPSession.h>
 
-#include <arpa/inet.h>
-#import <AVFoundation/AVAudioSession.h>
-#import <UIKit/UIKit.h>
-#import <voipengine/VOIPEngine.h>
-#import <voipengine/VOIPRenderView.h>
-#import <voipengine/VOIPCapture.h>
-#import <voipsession/VOIPSession.h>
+@interface VOIPVideoViewController ()<RTCEAGLVideoViewDelegate>
 
-
-@interface VOIPVideoViewController ()
-@property(nonatomic) VOIPRenderView *remoteRender;
-@property(nonatomic) VOIPRenderView *localRender;
-@property(nonatomic) VOIPCapture *voipCapture;
 @end
 
 @implementation VOIPVideoViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
     
+    self.isAudioOnly = NO;
     
     UIButton *switchButton = [[UIButton alloc] initWithFrame:CGRectMake(240, 50, 80, 40)];
-
+    
     [switchButton setTitle:@"切换" forState:UIControlStateNormal];
     [switchButton addTarget:self
-                          action:@selector(switchCamera:)
-                forControlEvents:UIControlEventTouchUpInside];
+                     action:@selector(switchCamera:)
+           forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:switchButton];
     
     
-    self.remoteRender = [[VOIPRenderView alloc] initWithFrame:self.view.bounds];
-    [self.view insertSubview:self.remoteRender atIndex:0];
+    RTCEAGLVideoView *remoteVideoView = [[RTCEAGLVideoView alloc] initWithFrame:self.view.bounds];
+    remoteVideoView.delegate = self;
     
-    self.localRender = [[VOIPRenderView alloc] initWithFrame:CGRectMake(200, 380, 72, 96)];
-    [self.view insertSubview:self.localRender aboveSubview:self.remoteRender];
+    self.remoteVideoView = remoteVideoView;
+    [self.view insertSubview:self.remoteVideoView atIndex:0];
     
-    self.localRender.hidden = YES;
-    self.remoteRender.hidden = YES;
+    RTCCameraPreviewView *localVideoView = [[RTCCameraPreviewView alloc] initWithFrame:CGRectMake(200, 380, 72, 96)];
+    self.localVideoView = localVideoView;
+    [self.view insertSubview:self.localVideoView aboveSubview:self.remoteVideoView];
     
     
-    self.voipCapture = [[VOIPCapture alloc] init];
-    self.voipCapture.render = self.remoteRender;
-    self.remoteRender.hidden = NO;
-
-    [self.voipCapture startCapture];
     
+    
+    
+    AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
+    if(authStatus == AVAuthorizationStatusAuthorized) {
+        // do your logic
+        AVAuthorizationStatus audioAuthStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeAudio];
+        if(audioAuthStatus == AVAuthorizationStatusAuthorized) {
+            if (self.isCaller) {
+                [self dial];
+            } else {
+                [self waitAccept];
+            }
+        } else if(audioAuthStatus == AVAuthorizationStatusDenied){
+            // denied
+        } else if(audioAuthStatus == AVAuthorizationStatusRestricted){
+            // restricted, normally won't happen
+        } else if(audioAuthStatus == AVAuthorizationStatusNotDetermined){
+            [[AVAudioSession sharedInstance] requestRecordPermission:^(BOOL granted) {
+                if (granted) {
+                    if (self.isCaller) {
+                        [self dial];
+                    } else {
+                        [self waitAccept];
+                    }
+                } else {
+                    NSLog(@"can't grant record permission");
+                }
+            }];
+            
+        }
+        
+    } else if(authStatus == AVAuthorizationStatusDenied){
+        // denied
+    } else if(authStatus == AVAuthorizationStatusRestricted){
+        // restricted, normally won't happen
+    } else if(authStatus == AVAuthorizationStatusNotDetermined){
+        // not determined?!
+        [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted) {
+            if(granted){
+                NSLog(@"Granted access to %@", AVMediaTypeVideo);
+                AVAuthorizationStatus audioAuthStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeAudio];
+                if(audioAuthStatus == AVAuthorizationStatusAuthorized) {
+                    if (self.isCaller) {
+                        [self dial];
+                    } else {
+                        [self waitAccept];
+                    }
+                } else if(audioAuthStatus == AVAuthorizationStatusDenied){
+                    // denied
+                } else if(audioAuthStatus == AVAuthorizationStatusRestricted){
+                    // restricted, normally won't happen
+                } else if(audioAuthStatus == AVAuthorizationStatusNotDetermined){
+                    [[AVAudioSession sharedInstance] requestRecordPermission:^(BOOL granted) {
+                        if (granted) {
+                            
+                            if (self.isCaller) {
+                                [self dial];
+                            } else {
+                                [self waitAccept];
+                            }
+                        } else {
+                            NSLog(@"can't grant record permission");
+                        }
+                    }];
+                }
+            } else {
+                NSLog(@"Not granted access to %@", AVMediaTypeVideo);
+            }
+        }];
+    }
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+
+- (void)videoView:(RTCEAGLVideoView *)videoView didChangeVideoSize:(CGSize)size {
+    
 }
 
 -(void)switchCamera:(id)sender {
     NSLog(@"switch camera");
-    [self.engine switchCamera];
+    
+    RTCVideoSource* source = self.localVideoTrack.source;
+    if ([source isKindOfClass:[RTCAVFoundationVideoSource class]]) {
+        RTCAVFoundationVideoSource* avSource = (RTCAVFoundationVideoSource*)source;
+        avSource.useBackCamera = !avSource.useBackCamera;
+    }
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 -(void)dismiss {
     [super dismiss];
-    [self.voipCapture stopCapture];
-    self.voipCapture = nil;
 }
 
 - (void)dial {
+    [super dial];
     [self.voip dialVideo];
 }
 
+
 - (void)startStream {
-    if (self.voip.localNatMap != nil) {
-        struct in_addr addr;
-        addr.s_addr = htonl(self.voip.localNatMap.ip);
-        NSLog(@"local nat map:%s:%d", inet_ntoa(addr), self.voip.localNatMap.port);
-    }
-    if (self.voip.peerNatMap != nil) {
-        struct in_addr addr;
-        addr.s_addr = htonl(self.voip.peerNatMap.ip);
-        NSLog(@"peer nat map:%s:%d", inet_ntoa(addr), self.voip.peerNatMap.port);
-    }
-    
-    if (self.isP2P) {
-        struct in_addr addr;
-        addr.s_addr = htonl(self.voip.peerNatMap.ip);
-        NSLog(@"peer address:%s:%d", inet_ntoa(addr), self.voip.peerNatMap.port);
-        NSLog(@"start p2p stream");
-    } else {
-        NSLog(@"start stream");
-    }
-    
-    [self.voipCapture stopCapture];
-    self.voipCapture = nil;
-    
-    if (self.engine != nil) {
-        return;
-    }
-    
-    self.engine = [[VOIPEngine alloc] init];
-    NSLog(@"relay ip:%@", self.voip.relayIP);
-    self.engine.relayIP = self.voip.relayIP;
-    self.engine.voipPort = self.voip.voipPort;
-    self.engine.caller = self.currentUID;
-    self.engine.callee = self.peerUID;
-    self.engine.token = self.token;
-    self.engine.isCaller = self.isCaller;
-    self.engine.videoEnabled = YES;
-    
-    self.engine.remoteRender = self.remoteRender;
-    self.engine.localRender = self.localRender;
-    
-    
-    if (self.isP2P) {
-        self.engine.calleeIP = self.voip.peerNatMap.ip;
-        self.engine.calleePort = self.voip.peerNatMap.port;
-    }
-    
-    [self.engine startStream];
-    
     [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
-    
-    self.localRender.hidden = NO;
-    self.remoteRender.hidden = NO;
-    
-    [self SetLoudspeakerStatus:YES];
+    [self setLoudspeakerStatus:YES];
+    [super startStream];
+
 }
 
-
--(void)stopStream {
-    if (self.engine == nil) {
-        return;
-    }
-    NSLog(@"stop stream");
-    [self.engine stopStream];
-    
+- (void)stopStream {
     [[UIApplication sharedApplication] setIdleTimerDisabled:NO];
+    [super stopStream];
 }
-
 
 @end

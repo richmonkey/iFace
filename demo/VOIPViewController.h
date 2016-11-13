@@ -9,22 +9,24 @@
 
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
+#import "WebRTCViewController.h"
 
 @class VOIPEngine;
 @class VOIPSession;
+@class RTCPeerConnectionFactory;
+@class RTCPeerConnection;
 
-@interface VOIPViewController : UIViewController<AVAudioPlayerDelegate>
-@property(nonatomic) int64_t currentUID;
-@property(nonatomic) int64_t peerUID;
-@property(nonatomic, copy) NSString *peerName;
-@property(nonatomic, copy) NSString *token;
-//当前用户是否是主动呼叫方
-@property(nonatomic) BOOL isCaller;
+@interface VOIPViewController : WebRTCViewController<AVAudioPlayerDelegate>
 
-@property(nonatomic) VOIPEngine *engine;
 @property(nonatomic) VOIPSession *voip;
 
--(BOOL)isP2P;
--(int)SetLoudspeakerStatus:(BOOL)enable;
+
+
+
+-(int)setLoudspeakerStatus:(BOOL)enable;
 -(void)dismiss;
+
+-(void)dial;
+-(void)waitAccept;
+
 @end
